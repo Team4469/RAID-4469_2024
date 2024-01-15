@@ -62,12 +62,9 @@ public class DriveSubsystem extends SubsystemBase {
   TunableNumber ANGULAR_VELOCITY_COEFFICIENT =
       new TunableNumber("Drive/AngularVeloCoefficient", ANGULAR_VELOCITY_COEFFICIENT_DEFAULT);
 
-  TunableNumber DRIVE_SPEED_MULTIPLIER = 
-      new TunableNumber("Drive/SpeedMultiplier", 1);
+  TunableNumber DRIVE_SPEED_MULTIPLIER = new TunableNumber("Drive/SpeedMultiplier", 1);
 
-      TunableNumber ROTATION_SPEED_MULTIPLIER = 
-      new TunableNumber("Drive/RotationMultiplier", 1);
-
+  TunableNumber ROTATION_SPEED_MULTIPLIER = new TunableNumber("Drive/RotationMultiplier", 1);
 
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft =

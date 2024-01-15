@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.utils.TunableNumber;
-
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
@@ -26,7 +25,7 @@ public class DRIVE_WITH_HEADING extends Command {
   private final DriveSubsystem drive;
 
   Optional<Alliance> ally;
-  
+
   private double DESIRED_HEADING_RADIANS;
 
   // input suppliers from joysticks
@@ -107,10 +106,8 @@ public class DRIVE_WITH_HEADING extends Command {
       rotationOutput = rotationController.calculate(drive.getPose().getRotation().getRadians());
     }
 
-    double xVelo =
-        m_translationXSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
-    double yVelo =
-        m_translationYSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
+    double xVelo = m_translationXSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
+    double yVelo = m_translationYSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
 
     if (ally.isPresent() && ally.get() == Alliance.Red) {
       xVelo *= -1;

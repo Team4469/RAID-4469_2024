@@ -8,19 +8,30 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.LaserCan.RangingMode;
+import au.grapplerobotics.LaserCan.RegionOfInterest;
+import au.grapplerobotics.LaserCan.TimingBudget;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.GlobalSensors;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.LevetatorSubsystem;
+import java.util.List;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,12 +42,24 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem();
 
   private final SendableChooser<Command> autoChooser;
 
   // The driver's controller
   CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
+  CommandXboxController m_operatorController =
+      new CommandXboxController(OIConstants.kOperatorControllerPort);
+
+  LaserCan m_FrontIntakeForwardLaserCan = new LaserCan(GlobalSensors.kFrontIntakeForwardLaserCanID);
+  LaserCan m_FrontIntakeRearLaserCan = new LaserCan(GlobalSensors.kFrontIntakeRearLaserCanID);
+
+  Trigger forwardLaserCanTrigger =
+      new Trigger(
+          () ->
+              (m_FrontIntakeForwardLaserCan.getMeasurement().distance_mm > 10
+                  && m_FrontIntakeForwardLaserCan.getMeasurement().distance_mm < 100));
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -54,17 +77,20 @@ public class RobotContainer {
             () ->
                 m_robotDrive.drive(
                     -MathUtil.applyDeadband(
-                            m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(
-                            m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(
-                            m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                        m_driverController.getRightX(), OIConstants.kDriveDeadband),
                     true,
                     true),
             m_robotDrive));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     SmartDashboard.putData("Auto Mode", autoChooser);
+    m_FrontIntakeForwardLaserCan.setRangingMode(RangingMode.SHORT);
+    m_FrontIntakeForwardLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+    m_FrontIntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
   }
 
   /**
@@ -150,6 +176,31 @@ public class RobotContainer {
                 () ->
                     new Rotation2d(
                         m_driverController.getRightX(), -m_driverController.getRightY())));
+
+    // Run Levetator to 20mm
+    m_operatorController
+        .a()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  m_levetator.setGoal(20); // goal is in mm
+                  m_levetator.enable();
+                },
+                m_levetator));
+
+    // Run Levetator to 0mm
+    m_operatorController
+        .b()
+        .onTrue(
+            Commands.runOnce(
+                () -> {
+                  m_levetator.setGoal(0);
+                  m_levetator.enable();
+                },
+                m_levetator));
+
+    // Disable the arm controller when Y is pressed.
+    m_driverController.y().onTrue(Commands.runOnce(m_levetator::disable));
   }
 
     public Command getAutonomousCommand() {

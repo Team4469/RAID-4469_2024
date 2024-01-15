@@ -23,7 +23,43 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
+  }
+
+  public static final class GlobalSensors {
+    public static final int kFrontIntakeForwardLaserCanID = 52;
+    public static final int kFrontIntakeRearLaserCanID = 53;
+    public static final int kFeedWheelsLaserCanID = 54;
+  }
+
+  public static final class FrontWristConstants {
+    public static final int kFrontWristMotorID = 34;
+
+    public static final double kMaxVelocity = 1; // rad/sec
+    public static final double kMaxAcceleration = 1; // rad/sec/sec
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final int kSmartCurrentLimit = 60; // A
+
+    public static final double kMinRads = Units.degreesToRadians(90);
+    public static final double kMaxRads = Units.degreesToRadians(315);
+    public static final double kStowedRads = Units.degreesToRadians(300);
+  }
+
+  public static final class LevetatorConstants {
+    public static final int kLevetatorMotorID = 39;
+    public static final int kLevetatorLaserCanID = 55;
+
+    public static final double kMaxVelocity = 1.75; // mm/s
+    public static final double kMaxAcceleration = 0.75; // mm/s^2
+    public static final double kP = 1.3;
+    public static final double kI = 0.0;
+    public static final double kD = 0.7;
+    public static final double kS = 1.1;
+    public static final double kG = 1.2;
+    public static final double kV = 1.3;
   }
 
   public static final class DriveConstants {
