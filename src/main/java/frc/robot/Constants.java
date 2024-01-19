@@ -39,16 +39,20 @@ public final class Constants {
     public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
 
     // Chassis configuration
-    public static final double kTrackWidth = Units.inchesToMeters(20.5);
+    public static final double kModuleInsetMeters = Units.inchesToMeters(1.75);
+    public static final double kRobotChassisLengthMeters = Units.inchesToMeters(27);
+    public static final double kRobotChassisWidthMeters = Units.inchesToMeters(27);
+    public static final double kTrackWidthMeters = kRobotChassisLengthMeters - (2 * kModuleInsetMeters);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBase = Units.inchesToMeters(20.5);
+    public static final double kWheelBaseMeters = kRobotChassisWidthMeters - (2 * kModuleInsetMeters);
     // Distance between front and back wheels on robot
+    public static final double kRobotDriveRadiusMeters = Math.abs(Math.hypot(kTrackWidthMeters/2, kWheelBaseMeters/2));
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
-            new Translation2d(kWheelBase / 2, kTrackWidth / 2),
-            new Translation2d(kWheelBase / 2, -kTrackWidth / 2),
-            new Translation2d(-kWheelBase / 2, kTrackWidth / 2),
-            new Translation2d(-kWheelBase / 2, -kTrackWidth / 2));
+            new Translation2d(kWheelBaseMeters / 2, kTrackWidthMeters / 2),
+            new Translation2d(kWheelBaseMeters / 2, -kTrackWidthMeters / 2),
+            new Translation2d(-kWheelBaseMeters / 2, kTrackWidthMeters / 2),
+            new Translation2d(-kWheelBaseMeters / 2, -kTrackWidthMeters / 2));
 
     // Angular offsets of the modules relative to the chassis in radians
     public static final double kFrontLeftChassisAngularOffset = -Math.PI / 2;
