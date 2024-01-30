@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -13,13 +14,13 @@ import com.revrobotics.CANSparkMax;
 import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LevetatorConstants;
-import frc.utils.TunableNumber;
+import frc.robot.SetPoints.LevetatorSetpoints;
 
 public class LevetatorSubsystem extends ProfiledPIDSubsystem {
-
-  TunableNumber kPTunableNumber = new TunableNumber("levetator/kP", LevetatorConstants.kP);
 
   private final CANSparkMax m_levetatorMotor =
       new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
@@ -44,14 +45,14 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
     m_levetatorMotor.restoreFactoryDefaults();
 
     m_levetatorMotor.setIdleMode(IdleMode.kBrake);
-    m_levetatorMotor.setSmartCurrentLimit(65);
+    m_levetatorMotor.setSmartCurrentLimit(85);
     m_levetatorMotor.burnFlash();
 
-    m_distanceLaserCan.setRangingMode(LaserCan.RangingMode.SHORT);
+    m_distanceLaserCan.setRangingMode(RangingMode.SHORT);
     m_distanceLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
     m_distanceLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
 
-    setGoal(0); // goal should be in millimeters!!!
+    setGoal(m_distanceLaserCan.getMeasurement().distance_mm / 1000.0); // meters
   }
 
   @Override
@@ -66,6 +67,61 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
   public double getMeasurement() {
     // Return the process variable measurement here
     LaserCan.Measurement distance = m_distanceLaserCan.getMeasurement();
-    return distance.distance_mm;
+    return (distance.distance_mm * 1000)
+        + LevetatorConstants.kLevetatorOffset; // position is in meters
+  }
+
+  public Command positionIntake() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kIntake);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionStowed() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kStowed);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionSubwoofer() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kSubwoofer);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionAmpFront() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kAmpFront);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionAmpRear() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kAmpRear);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionTrap() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kTrap);
+          this.enable();
+        },
+        this);
   }
 }

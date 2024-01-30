@@ -14,10 +14,13 @@ import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.FrontWristConstants;
+import frc.robot.SetPoints.WristSetpoints;
 
-public class FrontWristSubsystem extends TrapezoidProfileSubsystem {
+public class WristSubsystem extends TrapezoidProfileSubsystem {
   private final CANSparkFlex m_wristMotor =
       new CANSparkFlex(FrontWristConstants.kFrontWristMotorID, MotorType.kBrushless);
 
@@ -29,7 +32,7 @@ public class FrontWristSubsystem extends TrapezoidProfileSubsystem {
   private final ArmFeedforward m_feedforward = new ArmFeedforward(0, 2.98, 0.02);
 
   /** Creates a new FrontWristIntake. */
-  public FrontWristSubsystem() {
+  public WristSubsystem() {
     super(
         // The constraints for the generated profiles
         new TrapezoidProfile.Constraints(
@@ -57,9 +60,9 @@ public class FrontWristSubsystem extends TrapezoidProfileSubsystem {
     m_wristPIDController.setPositionPIDWrappingEnabled(false);
     m_wristPIDController.setPositionPIDWrappingMaxInput(FrontWristConstants.kMaxRads);
     m_wristPIDController.setPositionPIDWrappingMinInput(FrontWristConstants.kMinRads);
-    m_wristPIDController.setP(0);
-    m_wristPIDController.setI(0);
-    m_wristPIDController.setD(0);
+    m_wristPIDController.setP(0.000001, 0);
+    m_wristPIDController.setI(0, 0);
+    m_wristPIDController.setD(0, 0);
   }
 
   @Override
@@ -68,6 +71,60 @@ public class FrontWristSubsystem extends TrapezoidProfileSubsystem {
     double feedforward = m_feedforward.calculate(setpoint.position, setpoint.velocity);
     // Add the feedforward to the PID output to get the motor output
     m_wristPIDController.setReference(
-        setpoint.position, ControlType.kPosition, 1, feedforward / 12.0);
+        setpoint.position, ControlType.kPosition, 0, feedforward / 12.0);
+  }
+
+  public Command positionIntake() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kIntake);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionStowed() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kStowed);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionSubwoofer() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kSubwoofer);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionAmpFront() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kAmpFront);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionAmpRear() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kAmpRear);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionTrap() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(WristSetpoints.kTrap);
+          this.enable();
+        },
+        this);
   }
 }

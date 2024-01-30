@@ -9,7 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -32,6 +32,11 @@ import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
 
 public class DriveSubsystem extends SubsystemBase {
+  VisionSubsystem m_vision;
+
+  private double previousFrontTimestamp;
+  private double previousRearTimestamp;
+
   // Logging
   private ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
   private GenericEntry gyroEntry =
@@ -116,63 +121,53 @@ public class DriveSubsystem extends SubsystemBase {
             m_rearRight.getPosition()
           });
 
-  /** Creates a new DriveSubsystem. */
-  public DriveSubsystem() {
-    AutoBuilder.configureHolonomic(
-        this::getPose, 
-        this::resetOdometry,
-        this::getRobotRelativeSpeeds, 
-        this::driveRobotRelative, 
-        new HolonomicPathFollowerConfig(
-          new PIDConstants(5.0, 0, 0), 
-          new PIDConstants(5.0, 0, 0), 
-          DriveConstants.kMaxSpeedMetersPerSecond,
-          DriveConstants.kRobotDriveRadiusMeters,
-          new ReplanningConfig()), 
-            () -> {
-                // Boolean supplier that controls when the path will be mirrored for the red alliance
-                // This will flip the path being followed to the red side of the field.
-                // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+  SwerveDrivePoseEstimator m_poseEstimator =
+      new SwerveDrivePoseEstimator(
+          DriveConstants.kDriveKinematics,
+          Rotation2d.fromDegrees(getAngleCorrected()),
+          new SwerveModulePosition[] {
+            m_frontLeft.getPosition(),
+            m_frontRight.getPosition(),
+            m_rearLeft.getPosition(),
+            m_rearRight.getPosition()
+          },
+          new Pose2d());
 
-                var alliance = DriverStation.getAlliance();
-                if (alliance.isPresent()) {
-                    return alliance.get() == DriverStation.Alliance.Red;
-                }
-                return false;
-            },
+  /** Creates a new DriveSubsystem. */
+  public DriveSubsystem(VisionSubsystem vision) {
+    m_vision = vision;
+    AutoBuilder.configureHolonomic(
+        this::getPose,
+        this::resetOdometry,
+        this::getRobotRelativeSpeeds,
+        this::driveRobotRelative,
+        new HolonomicPathFollowerConfig(
+            new PIDConstants(5.0, 0, 0),
+            new PIDConstants(5.0, 0, 0),
+            DriveConstants.kMaxSpeedMetersPerSecond,
+            DriveConstants.kRobotDriveRadiusMeters,
+            new ReplanningConfig()),
+        () -> {
+          // Boolean supplier that controls when the path will be mirrored for the red alliance
+          // This will flip the path being followed to the red side of the field.
+          // THE ORIGIN WILL REMAIN ON THE BLUE SIDE
+
+          var alliance = DriverStation.getAlliance();
+          if (alliance.isPresent()) {
+            return alliance.get() == DriverStation.Alliance.Red;
+          }
+          return false;
+        },
         this);
+    previousFrontTimestamp = 0;
+    previousRearTimestamp = 0;
   }
 
   // COMMANDS
-  public Command setXCommand(){
+  public Command setXCommand() {
     return this.runOnce(this::setX);
-  };
-
-  @Override
-  public void periodic() {
-    // Update the odometry in the periodic block
-    m_odometry.update(
-        Rotation2d.fromDegrees(getAngleCorrected()),
-        new SwerveModulePosition[] {
-          m_frontLeft.getPosition(),
-          m_frontRight.getPosition(),
-          m_rearLeft.getPosition(),
-          m_rearRight.getPosition()
-        });
-
-    // LOGGING
-    gyroEntry.setDouble(m_gyro.getAngle());
-
-    flRealAngle.setDouble(m_frontLeft.getState().angle.getDegrees());
-    frRealAngle.setDouble(m_frontRight.getState().angle.getDegrees());
-    rlRealAngle.setDouble(m_rearLeft.getState().angle.getDegrees());
-    rrRealAngle.setDouble(m_rearRight.getState().angle.getDegrees());
-
-    flRealSpeed.setDouble(m_frontLeft.getState().speedMetersPerSecond);
-    frRealSpeed.setDouble(m_frontRight.getState().speedMetersPerSecond);
-    rlRealSpeed.setDouble(m_rearLeft.getState().speedMetersPerSecond);
-    rrRealSpeed.setDouble(m_rearRight.getState().speedMetersPerSecond);
   }
+  ;
 
   public Command zeroGyro() {
     return this.runOnce(this::zeroHeading);
@@ -315,9 +310,10 @@ public class DriveSubsystem extends SubsystemBase {
 
   private void drive(ChassisSpeeds speeds, boolean fieldRelative) {
     if (fieldRelative)
-        speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
+      speeds = ChassisSpeeds.fromFieldRelativeSpeeds(speeds, getPose().getRotation());
     var swerveModuleStates = DriveConstants.kDriveKinematics.toSwerveModuleStates(speeds);
-    SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
+    SwerveDriveKinematics.desaturateWheelSpeeds(
+        swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
     setModuleStates(swerveModuleStates);
   }
 
@@ -388,11 +384,67 @@ public class DriveSubsystem extends SubsystemBase {
 
   private SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
-            m_frontLeft.getState(),
-            m_frontRight.getState(),
-            m_rearLeft.getState(),
-            m_rearRight.getState()
+      m_frontLeft.getState(), m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState()
     };
   }
 
+  private boolean visionFrontUpdated() {
+    double time = m_vision.FrontTimestamp();
+    if (time == previousFrontTimestamp) {
+      return false;
+    }
+    previousFrontTimestamp = time;
+    return true;
+  }
+
+  private boolean visionRearUpdated() {
+    double time = m_vision.RearTimestamp();
+    if (time == previousRearTimestamp) {
+      return false;
+    }
+    previousRearTimestamp = time;
+    return true;
+  }
+
+  @Override
+  public void periodic() {
+    // Update the odometry in the periodic block
+    m_odometry.update(
+        Rotation2d.fromDegrees(getAngleCorrected()),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+        });
+
+    m_poseEstimator.update(
+        Rotation2d.fromDegrees(getAngleCorrected()),
+        new SwerveModulePosition[] {
+          m_frontLeft.getPosition(),
+          m_frontRight.getPosition(),
+          m_rearLeft.getPosition(),
+          m_rearRight.getPosition()
+        });
+
+    if (m_vision.FrontValid() && visionFrontUpdated()) {
+      m_poseEstimator.addVisionMeasurement(m_vision.FrontBotpose(), m_vision.FrontTimestamp());
+    }
+    if (m_vision.RearValid() && visionRearUpdated()) {
+      m_poseEstimator.addVisionMeasurement(m_vision.RearBotpose(), m_vision.RearTimestamp());
+    }
+
+    // LOGGING
+    gyroEntry.setDouble(m_gyro.getAngle());
+
+    flRealAngle.setDouble(m_frontLeft.getState().angle.getDegrees());
+    frRealAngle.setDouble(m_frontRight.getState().angle.getDegrees());
+    rlRealAngle.setDouble(m_rearLeft.getState().angle.getDegrees());
+    rrRealAngle.setDouble(m_rearRight.getState().angle.getDegrees());
+
+    flRealSpeed.setDouble(m_frontLeft.getState().speedMetersPerSecond);
+    frRealSpeed.setDouble(m_frontRight.getState().speedMetersPerSecond);
+    rlRealSpeed.setDouble(m_rearLeft.getState().speedMetersPerSecond);
+    rrRealSpeed.setDouble(m_rearRight.getState().speedMetersPerSecond);
+  }
 }
