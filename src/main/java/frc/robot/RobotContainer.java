@@ -21,6 +21,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.WristSubsystem;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,6 +32,9 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+
+  private final WristSubsystem m_wrist = new WristSubsystem  ();
+  
 
   private final SendableChooser<Command> autoChooser;
 
@@ -78,7 +82,10 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(m_robotDrive.setXCommand());
 
-    m_driverController
+/* This driver section commented out while the wrist commands are
+   active on the a button
+
+   m_driverController
         .a()
         .onTrue(
             new DRIVE_WITH_HEADING(
@@ -91,7 +98,16 @@ public class RobotContainer {
                             m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     180)
                 .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
+*/
 
+//  Wrist Motor Commands 
+//      Commented out to avoid controller conflicts.
+
+    m_driverController.a().onTrue(m_wrist.WristMotorIntakeCommand());
+    
+    m_driverController.a().onFalse(m_wrist.WristMotorSpeakerCommand());
+
+// More driving commands    
     m_driverController
         .y()
         .onTrue(

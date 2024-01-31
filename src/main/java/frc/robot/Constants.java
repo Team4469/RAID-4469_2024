@@ -158,4 +158,19 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
+  public static final class WristConstants {
+    public static final int    kWristMotor = 7;
+    public static final double kWristMotorIntakeGoal  = .75;
+    public static final double kWristMotorAmpGoal     = .50;
+    public static final double kWristMotorSpeakerGoal = .50;
+    public static final double kWristMotorTrapGoal    = .50;
+    public static final int    kWristMotorCurrentLimit = 40;
+    public static final double kPWristMotor = .001;
+    public static final double kIWristMotor = 0;
+    public static final double kDWristMotor = .001;
+    public static final double kWristMotorMaxA = 0;
+    public static final double kWristMotorMaxV = 0;
+
+
 }
