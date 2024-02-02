@@ -15,7 +15,8 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LevetatorConstants;
 
 public class LevetatorSubsystem extends ProfiledPIDSubsystem {
-  private final CANSparkMax LevetatorMotor = new CANSparkMax(LevetatorConstants.kLevetatorMotor, MotorType.kBrushless);
+  private final CANSparkMax LevetatorMotor;
+  private LaserCan LevetatorLaserCan;
 
   /** Creates a new LevetatorSubsystem. */
   public LevetatorSubsystem() {
@@ -28,22 +29,14 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(LevetatorConstants.kMaxVelocity, LevetatorConstants.kMaxAcceleration)));
   
+  LevetatorLaserCan = new LaserCan(LevetatorConstants.kLaserCan);
+
+  LevetatorMotor = new CANSparkMax(LevetatorConstants.kLevetatorMotor, MotorType.kBrushless);
   LevetatorMotor.restoreFactoryDefaults();
-
   LevetatorMotor.setIdleMode(IdleMode.kCoast);
-
   LevetatorMotor.setSmartCurrentLimit(LevetatorConstants.kSmartCurrentLimit);
-
   LevetatorMotor.burnFlash();
   }
-@Override
-public void robotInit () {
-  LaserCan = new LaserCan(LevetatorConstants.kLevetatorLaserCan)
-  try {
-    LaserCan.setRangingMode(LaserCan.RangingMode.SHORT);
-    
-  }
-}
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {

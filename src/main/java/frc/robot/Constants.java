@@ -166,6 +166,6 @@ public final class Constants {
     public static final double kMaxAcceleration = 3;
     public static final int kLevetatorMotor = 17;
     public static final int kSmartCurrentLimit = 40;
-    public static final int kLevetatorLaserCan = 0;
+    public static final int kLaserCan = 0;
   }
 }
