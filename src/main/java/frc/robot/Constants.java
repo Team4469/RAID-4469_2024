@@ -158,14 +158,20 @@ public final class Constants {
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
   }
+
   public static final class LevetatorConstants {
+    public static final int kLevetatorMotor = 17;
     public static final double kP = .01;
     public static final double kI = 0;
     public static final double kD = 0; 
     public static final double kMaxVelocity = 3;
     public static final double kMaxAcceleration = 3;
-    public static final int kLevetatorMotor = 17;
     public static final int kSmartCurrentLimit = 40;
     public static final int kLaserCan = 0;
+    public static final double kStowGoal = 20;
+    public static final double kIntakeGoal = 90;
+    public static final double kAmpGoal = 150;
+    public static final double kSpeakerGoal = 300;
+    public static final double kTrapGoal = 330;
   }
 }
