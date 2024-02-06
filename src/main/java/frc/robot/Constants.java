@@ -28,9 +28,26 @@ public final class Constants {
     public static final double kDriveDeadband = 0.05;
   }
 
-  public static final class GlobalSensors {
-    public static final int kIntakeForwardLaserCanID = 52;
-    public static final int kIntakeRearLaserCanID = 53;
+  public static final class GlobalConstants {
+    public enum AmpDirection {
+      FRONT,
+      REAR
+    }
+
+    public enum StageLocationAlliance {
+      STAGE_LEFT_BLUE,
+      STAGE_RIGHT_BLUE,
+      CENTER_STAGE_BLUE,
+      STAGE_LEFT_RED,
+      STAGE_RIGHT_RED,
+      CENTER_STAGE_RED
+    }
+
+    public enum StageLoc {
+      STAGE_LEFT,
+      STAGE_RIGHT,
+      CENTER_STAGE
+    }
   }
 
   public static final class PathFollowingConstraints {
@@ -41,8 +58,8 @@ public final class Constants {
   public static final class FrontWristConstants {
     public static final int kFrontWristMotorID = 34;
 
-    public static final double kMaxVelocity = 1; // rad/sec
-    public static final double kMaxAcceleration = 1; // rad/sec/sec
+    public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
+    public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
@@ -263,6 +280,11 @@ public final class Constants {
   public static final class IntakeConstants {
     public static final int kMotorID = 32;
     public static final int kCurrentLimit = 80;
+
+    public static final int kIntakeForwardLaserCanID = 52;
+    public static final int kIntakeRearLaserCanID = 53;
+
+    public static final int kDetectionDistanceMM = 6;
   }
 
   public static final class LevetatorPivotConstants {

@@ -14,6 +14,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.SetPoints.PivotSetpoints;
 
@@ -72,7 +73,25 @@ public class PivotSubsystem extends ProfiledPIDSubsystem {
     return m_encoder.getPosition() + PivotConstants.kPivotOffsetRads;
   }
 
-  public Command positionIntake() {
+  public Command pivotAmpSmartCommand(AmpDirection ampDirection) {
+    double point;
+    switch (ampDirection) {
+      case FRONT:
+        point = PivotSetpoints.kAmpFront;
+        break;
+      default:
+        point = PivotSetpoints.kAmpRear;
+        break;
+    }
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(point);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command pivotIntakePositionCommand() {
     return Commands.runOnce(
         () -> {
           this.setGoal(PivotSetpoints.kIntake);
@@ -121,6 +140,15 @@ public class PivotSubsystem extends ProfiledPIDSubsystem {
     return Commands.runOnce(
         () -> {
           this.setGoal(PivotSetpoints.kTrap);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionIntake() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(PivotSetpoints.kIntake);
           this.enable();
         },
         this);

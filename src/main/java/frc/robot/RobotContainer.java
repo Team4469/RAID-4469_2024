@@ -4,44 +4,42 @@
 
 package frc.robot;
 
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.LaserCan.RangingMode;
-import au.grapplerobotics.LaserCan.RegionOfInterest;
-import au.grapplerobotics.LaserCan.TimingBudget;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.GlobalSensors;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
+// import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.Constants.LeftClimberConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PathFollowingConstraints;
 import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.ClimberSetpoints;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
-import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LedSubsystem;
+// import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.LevetatorSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import java.util.Map;
+import java.util.Optional;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -50,11 +48,6 @@ import java.util.Map;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
-  private enum AmpDirection {
-    FRONT,
-    REAR
-  }
 
   // The robot's subsystems
   private final VisionSubsystem m_vision = new VisionSubsystem();
@@ -68,7 +61,7 @@ public class RobotContainer {
   private final PivotSubsystem m_pivot = new PivotSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final WristSubsystem m_wrist = new WristSubsystem();
-  private final LedSubsystem m_LedSubsystem = new LedSubsystem();
+//   private final LedSubsystem m_LedSubsystem = new LedSubsystem();
 
   // The driver's controller
   CommandXboxController m_driverController =
@@ -76,16 +69,105 @@ public class RobotContainer {
   CommandXboxController m_operatorController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
 
+  private AmpDirection ampDirection = AmpDirection.REAR;
+
   private final SendableChooser<Command> autoChooser;
+
+//   private final SendableChooser<StageLoc> StageChooser;
 
   private AmpDirection selectAmpDirection() {
     double robotHeading = m_robotDrive.getHeading();
     if (robotHeading > 0) {
+      ampDirection = AmpDirection.FRONT;
       return AmpDirection.FRONT;
     } else {
+      ampDirection = AmpDirection.REAR;
       return AmpDirection.REAR;
     }
   }
+
+  private boolean allianceIsRed() {
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent() && ally.get() == Alliance.Red) {
+      return true;
+    } else return false;
+  }
+
+  //   private StageLocationAlliance selectStageLocation() {
+  //     Optional<Alliance> ally = DriverStation.getAlliance();
+  //     StageLocationAlliance stage;
+  //     if (ally.isPresent()) {
+  //         if (ally.get() == Alliance.Red) {
+  //             switch (StageChooser.getSelected()) {
+  //                 case STAGE_LEFT:
+  //                     stage = StageLocationAlliance.STAGE_LEFT_RED;
+  //                     break;
+  //                 case STAGE_RIGHT:
+  //                     stage = StageLocationAlliance.STAGE_RIGHT_RED;
+  //                 default:
+  //                     stage = StageLocationAlliance.CENTER_STAGE_RED;
+  //                     break;
+  //             }
+  //         } else {
+  //             switch (StageChooser.getSelected()) {
+  //                 case STAGE_LEFT:
+  //                     stage = StageLocationAlliance.STAGE_LEFT_BLUE;
+  //                     break;
+  //                 case STAGE_RIGHT:
+  //                     stage = StageLocationAlliance.STAGE_RIGHT_BLUE;
+  //                 default:
+  //                     stage = StageLocationAlliance.CENTER_STAGE_BLUE;
+  //                     break;
+  //             }
+  //         }
+  //     } else {
+  //         stage = StageLocationAlliance.CENTER_STAGE_BLUE;
+  //     }
+  //     return stage;
+  //   }
+
+  public Command m_alignSlBlueCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("SL_BLUE");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  public Command m_alignSrBlueCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("SR_BLUE");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  public Command m_alignCsBlueCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("CS_BLUE");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  public Command m_alignSlRedCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("SL_RED");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  public Command m_alignSrRedCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("SR_RED");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  public Command m_alignCsRedCommand() {
+    PathPlannerPath path = PathPlannerPath.fromPathFile("CS_RED");
+    path.preventFlipping = true;
+    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
+  }
+
+  private final ConditionalCommand m_stageRightConditional =
+      new ConditionalCommand(m_alignSrRedCommand(), m_alignSrBlueCommand(), this::allianceIsRed);
+  private final ConditionalCommand m_stageLeftConditional =
+      new ConditionalCommand(m_alignSlRedCommand(), m_alignSlBlueCommand(), this::allianceIsRed);
+  private final ConditionalCommand m_stageCenterConditional =
+      new ConditionalCommand(m_alignCsRedCommand(), m_alignCsBlueCommand(), this::allianceIsRed);
 
   private final Command m_ampScoringSelectCommand =
       new SelectCommand<>(
@@ -115,11 +197,18 @@ public class RobotContainer {
                       270)))),
           this::selectAmpDirection);
 
-
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
+    NamedCommands.registerCommand(
+        "ExtendLeftClimber_Trap", m_leftClimber.extendClimber(ClimberSetpoints.kTrapHeight));
+    NamedCommands.registerCommand(
+        "ExtendRightClimber_Trap", m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight));
+
+    SmartDashboard.putData(m_wrist);
+    SmartDashboard.putData(m_levetator);
+    SmartDashboard.putData(m_pivot);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -152,9 +241,13 @@ public class RobotContainer {
             m_robotDrive));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
+    // StageChooser = new SendableChooser<>();
+    // StageChooser.setDefaultOption("Stage Right", StageLoc.STAGE_RIGHT);
+    // StageChooser.addOption("Stage Left", StageLoc.STAGE_LEFT);
+    // StageChooser.addOption("Center Stage", StageLoc.CENTER_STAGE);
 
+    // SmartDashboard.putData("Stage Selector", StageChooser);
     SmartDashboard.putData("Auto Mode", autoChooser);
-
   }
 
   /**
@@ -164,29 +257,48 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+    /* DRIVER CONTROLS */
     // Set X
     m_driverController.rightBumper().whileTrue(m_robotDrive.setXCommand());
 
-    // Rotate to amp heading
+    // Intake
+    m_driverController
+        .rightTrigger()
+        .onTrue(
+            (m_levetator.positionIntake())
+                .andThen(m_pivot.positionIntake().alongWith(m_wrist.positionIntake()))
+                .andThen(m_intake.intakeAutoIntake()));
+
+    // Rotate to amp and go to position
     m_driverController
         .a()
-        .onTrue(
-            m_ampScoringSelectCommand.until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
+        .whileTrue(
+            (m_ampScoringSelectCommand.alongWith(
+                    (m_levetator.positionMovement())
+                        .andThen(
+                            m_pivot
+                                .pivotAmpSmartCommand(ampDirection)
+                                .alongWith(
+                                    m_wrist
+                                        .wristAmpSmartCommand(ampDirection)
+                                        .andThen(
+                                            m_levetator.levetatorAmpSmartCommand(ampDirection))))))
+                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
 
-    // Zero IMU heading
-    m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
-
+    // Shoot into amp
     m_driverController
-        .b()
+        .a()
+        .and(m_driverController.leftTrigger())
         .onTrue(
-            AutoBuilder.pathfindToPose(
-                FieldPositions.StagePositions.CenterStage_Blue,
-                PathFollowingConstraints.kStagePathConstraints,
-                0));
+            m_intake
+                .intakeAmpSmartCommand(ampDirection)
+                .alongWith(m_shooter.shooterAmpSmartCommand(ampDirection))
+                .withTimeout(1));
 
     // Subwoofer shot
     m_driverController
-        .leftTrigger()
+        .leftTrigger(.9)
         .onTrue(
             ((m_shooter.shooterSpeakerShot())
                     .andThen(
@@ -194,37 +306,44 @@ public class RobotContainer {
                             m_levetator.positionSubwoofer(),
                             m_wrist.positionSubwoofer(),
                             m_pivot.positionSubwoofer()))))
-                .andThen(m_intake.intakeIntake())
+                .andThen(m_intake.intakeTransferFwd())
                 .withTimeout(3));
-
-    // Use right stick as pure heading direction
+    
     m_driverController
-        .rightTrigger(.9)
-        .whileTrue(
-            new DRIVE_WITH_HEADING_SUPPLIER(
-                m_robotDrive,
-                () ->
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                () ->
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                () ->
-                    new Rotation2d(
-                        m_driverController.getRightX(), -m_driverController.getRightY())));
-
-    // Intake
-    m_operatorController
-        .a()
+        .leftTrigger(.2)
         .onTrue(
-            (m_levetator.positionIntake())
-                .andThen(m_pivot.positionIntake().alongWith(m_wrist.positionIntake()))
-                .andThen(m_intake.intakeIntake())
-                .until(m_intake.laserCanTrigger_FORWARD));
+            ((m_shooter.shooterSpeakerShot())
+                    .andThen(
+                        (new ParallelCommandGroup(
+                            m_levetator.positionSubwoofer(),
+                            m_wrist.positionSubwoofer(),
+                            m_pivot.positionSubwoofer())))));
 
+
+
+    // Zero IMU heading
+    m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
+
+    // // Use right stick as pure heading direction
+    // m_driverController
+    //     .rightTrigger(.9)
+    //     .whileTrue(
+    //         new DRIVE_WITH_HEADING_SUPPLIER(
+    //             m_robotDrive,
+    //             () ->
+    //                 -MathUtil.applyDeadband(
+    //                     m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+    //             () ->
+    //                 -MathUtil.applyDeadband(
+    //                     m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+    //             () ->
+    //                 new Rotation2d(
+    //                     m_driverController.getRightX(), -m_driverController.getRightY())));
+
+    /* OPERATOR CONTROLS */
     // Amp Rear
     m_operatorController
-        .b()
+        .leftBumper()
         .onTrue(
             (m_levetator.positionAmpRear())
                 .andThen((m_pivot.positionAmpRear()).alongWith(m_wrist.positionAmpRear()))
@@ -233,7 +352,7 @@ public class RobotContainer {
 
     // Amp Front
     m_operatorController
-        .x()
+        .rightBumper()
         .onTrue(
             (m_levetator.positionAmpFront())
                 .andThen((m_pivot.positionAmpFront()).alongWith(m_wrist.positionAmpFront()))
@@ -241,15 +360,19 @@ public class RobotContainer {
                 .withTimeout(1));
 
     // Automated Trap Sequence
+    m_operatorController.y().onTrue(m_stageLeftConditional);
+
+    m_operatorController.a().onTrue(m_stageRightConditional);
+
+    m_operatorController.b().onTrue(m_stageCenterConditional);
+
     m_operatorController
-        .y()
+        .rightTrigger()
+        .and(m_operatorController.a().or(m_operatorController.b()).or(m_operatorController.y()))
         .whileTrue(
-            ((m_leftClimber.extendClimber(ClimberSetpoints.kTrapHeight))
-                    .alongWith(m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight)))
-                .andThen(
-                    (m_pivot.positionTrap())
-                        .andThen(m_wrist.positionTrap())
-                        .andThen(m_levetator.positionTrap()))
+            (m_pivot.positionTrap())
+                .andThen(m_wrist.positionTrap())
+                .andThen(m_levetator.positionTrap())
                 .andThen(
                     m_leftClimber
                         .climbClimber(ClimberSetpoints.kRetractedHeight)
@@ -264,15 +387,15 @@ public class RobotContainer {
                 .alongWith(Commands.runOnce(m_pivot::disable), Commands.runOnce(m_wrist::disable)));
 
     m_operatorController
-        .rightTrigger()
+        .povUp()
         .onTrue(
             m_leftClimber
                 .extendClimber(ClimberSetpoints.kTrapHeight)
                 .alongWith(m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight)));
 
     m_operatorController
-        .rightTrigger()
-        .onFalse(
+        .povDown()
+        .onTrue(
             m_leftClimber
                 .retractClimber(ClimberSetpoints.kRetractedHeight)
                 .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
@@ -289,10 +412,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    // Load the path you want to follow using its name in the GUI
-    PathPlannerPath path = PathPlannerPath.fromPathFile("4 Note Auto Near Amp");
-
-    // Create a path following command using AutoBuilder. This will also trigger event markers.
-    return AutoBuilder.followPath(path);
+    return autoChooser.getSelected();
   }
 }

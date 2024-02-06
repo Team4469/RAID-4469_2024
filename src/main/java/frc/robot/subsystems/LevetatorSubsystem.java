@@ -17,6 +17,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LevetatorConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 
@@ -69,6 +70,33 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
     LaserCan.Measurement distance = m_distanceLaserCan.getMeasurement();
     return (distance.distance_mm * 1000)
         + LevetatorConstants.kLevetatorOffset; // position is in meters
+  }
+
+  public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
+    double point;
+    switch (ampDirection) {
+      case FRONT:
+        point = LevetatorSetpoints.kAmpFront;
+        break;
+      default:
+        point = LevetatorSetpoints.kAmpRear;
+        break;
+    }
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(point);
+          this.enable();
+        },
+        this);
+  }
+
+  public Command positionMovement() {
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(LevetatorSetpoints.kMovement);
+          this.enable();
+        },
+        this);
   }
 
   public Command positionIntake() {

@@ -1,0 +1,73 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 12.65,
+        "y": 2.41
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 12.6,
+        "y": 2.4966025403784444
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 12.15,
+        "y": 3.28
+      },
+      "prevControl": {
+        "x": 12.235514293055477,
+        "y": 3.1318848996545805
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [
+    {
+      "name": "ExtendClimbers",
+      "waypointRelativePos": 0.5,
+      "command": {
+        "type": "deadline",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "ExtendLeftClimber_Trap"
+              }
+            },
+            {
+              "type": "named",
+              "data": {
+                "name": "ExtendRightClimber_Trap"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 3.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.0,
+    "rotation": -60.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Stage Alignment",
+  "previewStartingState": null,
+  "useDefaultConstraints": false
+}

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.FrontWristConstants;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.SetPoints.WristSetpoints;
 
 public class WristSubsystem extends TrapezoidProfileSubsystem {
@@ -36,7 +37,8 @@ public class WristSubsystem extends TrapezoidProfileSubsystem {
     super(
         // The constraints for the generated profiles
         new TrapezoidProfile.Constraints(
-            FrontWristConstants.kMaxVelocity, FrontWristConstants.kMaxAcceleration),
+            FrontWristConstants.kMaxVelocityRadPerSecond,
+            FrontWristConstants.kMaxAccelerationRadPerSecSquared),
         // The initial position of the mechanism
         FrontWristConstants.kStowedRads);
 
@@ -72,6 +74,24 @@ public class WristSubsystem extends TrapezoidProfileSubsystem {
     // Add the feedforward to the PID output to get the motor output
     m_wristPIDController.setReference(
         setpoint.position, ControlType.kPosition, 0, feedforward / 12.0);
+  }
+
+  public Command wristAmpSmartCommand(AmpDirection ampDirection) {
+    double point;
+    switch (ampDirection) {
+      case FRONT:
+        point = WristSetpoints.kAmpFront;
+        break;
+      default:
+        point = WristSetpoints.kAmpRear;
+        break;
+    }
+    return Commands.runOnce(
+        () -> {
+          this.setGoal(point);
+          this.enable();
+        },
+        this);
   }
 
   public Command positionIntake() {

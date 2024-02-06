@@ -35,6 +35,7 @@ public final class SetPoints {
     public static final double kTrap = Units.inchesToMeters(20);
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(12);
+    public static final double kMovement = Units.inchesToMeters(3);
   }
 
   public final class ClimberSetpoints {

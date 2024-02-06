@@ -4,38 +4,44 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.CANSparkFlex;
-import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
+import com.revrobotics.CANSparkFlex;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.GlobalSensors;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.IntakeConstants;
 import frc.utils.TunableNumber;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkFlex m_intakeMotor;
 
-  TunableNumber INTAKE_SPEED = new TunableNumber("Intake/Intake speed", .5);
+  TunableNumber INTAKE_SPEED = new TunableNumber("Intake/Intake speed", .75);
   TunableNumber OUTTAKE_SPEED =
-      new TunableNumber("Intake/Outtake speed", -.5); // FOR AMP FROM FRONT
-  TunableNumber TRANSFER_FORWARD_SPEED = new TunableNumber("Intake/Transfer fwd speed", .1);
-  TunableNumber TRANSFER_BACKWARD_SPEED = new TunableNumber("Intake/Transfer bck speed", -.1);
+      new TunableNumber("Intake/Outtake speed", -.85); // FOR AMP FROM FRONT
+  TunableNumber TRANSFER_FORWARD_SPEED = new TunableNumber("Intake/Transfer fwd speed", .2);
+  TunableNumber TRANSFER_BACKWARD_SPEED = new TunableNumber("Intake/Transfer bck speed", -.2);
 
-  LaserCan m_IntakeForwardLaserCan = new LaserCan(GlobalSensors.kIntakeForwardLaserCanID);
-  LaserCan m_IntakeRearLaserCan = new LaserCan(GlobalSensors.kIntakeRearLaserCanID);
+  LaserCan m_IntakeForwardLaserCan = new LaserCan(IntakeConstants.kIntakeForwardLaserCanID);
+  LaserCan m_IntakeRearLaserCan = new LaserCan(IntakeConstants.kIntakeRearLaserCanID);
 
   public final Trigger laserCanTrigger_FORWARD =
-      new Trigger(() -> (m_IntakeForwardLaserCan.getMeasurement().distance_mm < 100));
+      new Trigger(
+          () ->
+              (m_IntakeForwardLaserCan.getMeasurement().distance_mm
+                  < IntakeConstants.kDetectionDistanceMM));
 
   public final Trigger laserCanTrigger_REAR =
-      new Trigger(() -> (m_IntakeRearLaserCan.getMeasurement().distance_mm < 100));
-
+      new Trigger(
+          () ->
+              (m_IntakeRearLaserCan.getMeasurement().distance_mm
+                  < IntakeConstants.kDetectionDistanceMM));
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -54,28 +60,71 @@ public class IntakeSubsystem extends SubsystemBase {
     m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
     m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
     m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
-
   }
 
   /* Commands */
+  public Command intakeAutoIntake() {
+    Debouncer debounce = new Debouncer(.25, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to intaking speed
+        .andThen(
+            run(() -> {
+                  setSpeed(INTAKE_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> debounce.calculate(laserCanTrigger_REAR.getAsBoolean())))
+        .andThen(
+            runOnce(
+                () -> {
+                  debounce.calculate(false);
+                }))
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_BACKWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> debounce.calculate(laserCanTrigger_FORWARD.getAsBoolean())))
+        // stop motor power
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
+  }
+
+  public Command intakeAmpSmartCommand(AmpDirection ampDirection) {
+    double speed;
+    switch (ampDirection) {
+      case FRONT:
+        speed = OUTTAKE_SPEED.get();
+        break;
+      default:
+        speed = TRANSFER_FORWARD_SPEED.get();
+        break;
+    }
+    return Commands.run(() -> setSpeed(speed));
+  }
+
   public Command intakeIntake() {
-    return run(() -> setSpeed(INTAKE_SPEED.get()));
+    return Commands.run(() -> setSpeed(INTAKE_SPEED.get()));
   }
 
   public Command intakeOuttake() {
-    return run(() -> setSpeed(OUTTAKE_SPEED.get()));
+    return Commands.run(() -> setSpeed(OUTTAKE_SPEED.get()));
   }
 
   public Command intakeTransferFwd() {
-    return run(() -> setSpeed(TRANSFER_FORWARD_SPEED.get()));
+    return Commands.run(() -> setSpeed(TRANSFER_FORWARD_SPEED.get()));
   }
 
   public Command intakeTransferBck() {
-    return run(() -> setSpeed(TRANSFER_BACKWARD_SPEED.get()));
+    return Commands.run(() -> setSpeed(TRANSFER_BACKWARD_SPEED.get()));
   }
 
   public Command intakeStop() {
-    return runOnce(() -> setSpeed(0));
+    return Commands.runOnce(() -> setSpeed(0));
   }
 
   /* Methods */

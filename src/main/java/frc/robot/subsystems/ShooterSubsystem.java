@@ -11,7 +11,9 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.TunableNumber;
 
@@ -71,20 +73,33 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /* Command Factory */
   public Command shooterSpeakerShot() {
-    return runOnce(() -> shootPIDControl(SHOOTER_SPEED_CLOSED_LOOP.get()));
+    return Commands.runOnce(() -> shootPIDControl(SHOOTER_SPEED_CLOSED_LOOP.get()));
   }
 
   public Command shooterStop() {
-    return runOnce(this::shootStop);
+    return Commands.runOnce(this::shootStop);
   }
 
   public Command shooterFeed() {
-    return runOnce(() -> shootFeed(SHOOTER_SPEED_OPEN_LOOP.get()));
+    return Commands.runOnce(() -> setSpeed(SHOOTER_SPEED_OPEN_LOOP.get()));
+  }
+
+  public Command shooterAmpSmartCommand(AmpDirection ampDirection) {
+    double speed;
+    switch (ampDirection) {
+      case FRONT:
+        speed = 0;
+        break;
+      default:
+        speed = SHOOTER_SPEED_OPEN_LOOP.get();
+        break;
+    }
+    return Commands.run(() -> setSpeed(speed));
   }
 
   /* Methods */
 
-  private void shootFeed(double speed) {
+  private void setSpeed(double speed) {
     m_rightShooterMotor.set(speed);
     m_leftShooterMotor.set(speed);
   }
