@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import frc.robot.subsystems.ProfiledPivotSubsystem;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
@@ -154,6 +155,19 @@ public final class Constants {
         new TrapezoidProfile.Constraints(
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
+
+  public static final class LevitatorPivotConstants {
+      public static final double kSpeedDefault = 0.1;
+      public static final int kSmartCurrentLimit = 120;
+      public static final double kLPRotationGoal = 0;
+      public static final int kLPMotorL = 5;
+      public static final int kLPMotorR = 8;
+      public static final double kP = 0.001;
+      public static final double kI = 0;
+      public static final double kD = 0;
+      public static final double kMinOutput = -1;
+      public static final double kMaxOutput = 1;
+    }
 
   public static final class NeoMotorConstants {
     public static final double kFreeSpeedRpm = 5676;
