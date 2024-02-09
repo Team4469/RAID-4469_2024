@@ -16,10 +16,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 import frc.robot.Constants.LevetatorConstants;
+import frc.robot.Setpoints.LevetatorSetPoints;
 
 public class LevetatorSubsystem extends ProfiledPIDSubsystem {
-  private final CANSparkMax LevetatorMotor;
-  private LaserCan LevetatorLaserCan;
+  private final CANSparkMax m_Motor;
+  private LaserCan m_laserCan;
 
 
   /** Creates a new LevetatorSubsystem. */
@@ -33,69 +34,69 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
             // The motion profile constraints
             new TrapezoidProfile.Constraints(LevetatorConstants.kMaxVelocity, LevetatorConstants.kMaxAcceleration)));
   
-  LevetatorLaserCan = new LaserCan(LevetatorConstants.kLaserCan); 
+  m_laserCan = new LaserCan(LevetatorConstants.kLaserCanId); 
 
-  LevetatorMotor = new CANSparkMax(LevetatorConstants.kLevetatorMotor, MotorType.kBrushless);
-  LevetatorMotor.restoreFactoryDefaults();
-  LevetatorMotor.setIdleMode(IdleMode.kCoast);
-  LevetatorMotor.setSmartCurrentLimit(LevetatorConstants.kSmartCurrentLimit);
-  LevetatorMotor.burnFlash();
-  }
-
-  public Command LevetatorStowCommand() {
-    return Commands.runOnce(
-      () -> {
-        this.setGoal(LevetatorConstants.kStowGoal);
-        this.enable();
-      },
-    this );
-  }
-
-  public Command LevetatorIntakeCommand() {
-    return Commands.runOnce(
-      () -> {
-        this.setGoal(LevetatorConstants.kIntakeGoal);
-        this.enable();
-      },
-    this );
-  }
-
-  public Command LevetatorAmpCommand() {
-    return Commands.runOnce(
-      () -> {
-        this.setGoal(LevetatorConstants.kAmpGoal);
-        this.enable();
-      },
-    this );
-  }
-
-  public Command LevetatorSpeakerCommand() {
-    return Commands.runOnce(
-      () -> {
-        this.setGoal(LevetatorConstants.kSpeakerGoal);
-        this.enable();
-      },
-    this );
-  }
-
-  public Command LevetatorTrapCommand() {
-    return Commands.runOnce(
-      () -> {
-        this.setGoal(LevetatorConstants.kTrapGoal);
-        this.enable();
-      },
-    this );
+  m_Motor = new CANSparkMax(LevetatorConstants.kMotorCanId, MotorType.kBrushless);
+  m_Motor.restoreFactoryDefaults();
+  m_Motor.setIdleMode(IdleMode.kCoast);
+  m_Motor.setSmartCurrentLimit(LevetatorConstants.kSmartCurrentLimit);
+  m_Motor.burnFlash();
   }
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Use the output (and optionally the setpoint) here
-    LevetatorMotor.setVoltage(output);
+    m_Motor.setVoltage(output);
   }
 
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
-   return LevetatorLaserCan.getMeasurement().distance_mm;
+   return m_laserCan.getMeasurement().distance_mm;
+  }
+
+  public Command LevetatorStowPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(LevetatorSetPoints.kStowGoal);
+        this.enable();
+      },
+      this);
+  }
+
+    public Command LevetatorIntakePositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(LevetatorSetPoints.kIntakeGoal);
+        this.enable();
+      },
+      this);
+  }
+
+    public Command LevetatorForwardAmpPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(LevetatorSetPoints.kAmpForwardGoal);
+        this.enable();
+      },
+      this);
+  }
+
+    public Command LevetatorSubwooferPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(LevetatorSetPoints.kSubwooferGoal);
+        this.enable();
+      },
+      this);
+  }
+
+    public Command LevetatorTrapPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(LevetatorSetPoints.kTrapGoal);
+        this.enable();
+      },
+      this);
   }
 }
