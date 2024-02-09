@@ -156,17 +156,19 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class LevitatorPivotConstants {
+  public static final class LevetatorPivotConstants {
       public static final double kSpeedDefault = 0.1;
       public static final int kSmartCurrentLimit = 120;
-      public static final double kLPRotationGoal = 0;
-      public static final int kLPMotorL = 5;
-      public static final int kLPMotorR = 8;
+      public static final double kLPRotationGoal = 10; //Temporary Value. Will be changed 
+      public static final int kLPLeadMotorCanId = 5;
+      public static final int kLPFollowMotorCanId = 8;
       public static final double kP = 0.001;
       public static final double kI = 0;
       public static final double kD = 0;
       public static final double kMinOutput = -1;
       public static final double kMaxOutput = 1;
+      public static final double kVelocityConversionFactor = 11;
+      public static final double kPositionConversionFactor = 12;
     }
 
   public static final class NeoMotorConstants {

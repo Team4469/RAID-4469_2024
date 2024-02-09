@@ -15,7 +15,8 @@ import frc.utils.TunableNumber;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants.LevatatorPivotConstants;
+import frc.robot.Setpoints;
+import frc.robot.Constants.LevetatorPivotConstants;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
@@ -24,48 +25,52 @@ import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
 
 public class ProfiledPivotSubsystem extends ProfiledPIDSubsystem {
   
-  private final CANSparkFlex LPMotorL = new CANSparkFlex(LevatatorPivotConstants.kLPMotorL, MotorType.kBrushless);
-  private final CANSparkFlex LPMotorR = new CANSparkFlex(LevatatorPivotConstants.kLPMotorR, MotorType.kBrushless);
-  private final AbsoluteEncoder LPEncoder = LPMotorL.getAbsoluteEncoder(Type.kDutyCycle);
+  private final CANSparkFlex m_leadMotor = new CANSparkFlex(LevetatorPivotConstants.kLPLeadMotorCanId, MotorType.kBrushless);
+  private final CANSparkFlex m_followMotor = new CANSparkFlex(LevetatorPivotConstants.kLPFollowMotorCanId, MotorType.kBrushless);
+  private final AbsoluteEncoder m_encoder = m_leadMotor.getAbsoluteEncoder(Type.kDutyCycle);
   
   /** Creates a new LevatatorPivotPID. */
   public ProfiledPivotSubsystem() {
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
-            LevatatorPivotConstants.kP,
-            LevatatorPivotConstants.kI,
-            LevatatorPivotConstants.kD,
+            LevetatorPivotConstants.kP,
+            LevetatorPivotConstants.kI,
+            LevetatorPivotConstants.kD,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(LevatatorPivotConstants.kMinOutput, LevatatorPivotConstants.kMaxOutput)));
+            new TrapezoidProfile.Constraints(LevetatorPivotConstants.kMinOutput, LevetatorPivotConstants.kMaxOutput)));
       
 
       
-      LPMotorL.restoreFactoryDefaults();
-      LPMotorR.restoreFactoryDefaults();
+      m_leadMotor.restoreFactoryDefaults();
+      m_followMotor.restoreFactoryDefaults();
   
-      LPMotorL.setIdleMode(IdleMode.kCoast);
-      LPMotorR.setIdleMode(IdleMode.kCoast);
-  
-      LPMotorL.setSmartCurrentLimit(LevatatorPivotConstants.kSmartCurrentLimit);
-      LPMotorR.setSmartCurrentLimit(LevatatorPivotConstants.kSmartCurrentLimit);
-  
-      LPMotorR.follow(LPMotorL);
+      m_leadMotor.setIdleMode(IdleMode.kBrake);
+      m_followMotor.setIdleMode(IdleMode.kBrake);
 
+      m_leadMotor.setSmartCurrentLimit(LevetatorPivotConstants.kSmartCurrentLimit);
+      m_followMotor.setSmartCurrentLimit(LevetatorPivotConstants.kSmartCurrentLimit);
   
-      LPMotorL.burnFlash();
-      LPMotorR.burnFlash(); 
+      m_followMotor.follow(m_leadMotor, false);
+      m_leadMotor.setInverted(m_enabled);
+
+      m_encoder.setInverted(m_enabled);
+      m_encoder.setPositionConversionFactor(LevetatorPivotConstants.kPositionConversionFactor);
+      m_encoder.setVelocityConversionFactor(LevetatorPivotConstants.kVelocityConversionFactor);
+  
+      m_leadMotor.burnFlash();
+      m_followMotor.burnFlash(); 
         
   }
 
 
     // Create variables
-    //private final CANSparkFlex LPMotorL;
-    //private final CANSparkFlex LPMotorR;
+    //private final CANSparkFlex m_leadMotor;
+    //private final CANSparkFlex m_followMotor;
     
   
     TunableNumber PIVOT_SPEED =
-    new TunableNumber("Intake/Pivot", LevatatorPivotConstants.kSpeedDefault);
+    new TunableNumber("Intake/Pivot", LevetatorPivotConstants.kSpeedDefault);
   
     
     public Command RunShooterCommand() {
@@ -78,32 +83,88 @@ public class ProfiledPivotSubsystem extends ProfiledPIDSubsystem {
   
     public void MotorsOn(double speed){
       if(Math.abs(speed) > 1) {speed = 1 * Math.signum(speed);}
-      LPMotorL.set(speed);
+      m_leadMotor.set(speed);
     }
   
     public void MotorsOff(){
-      LPMotorL.set(0);
+      m_leadMotor.set(0);
     }
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Use the output (and optionally the setpoint) here
+    m_leadMotor.setVoltage(output);
   }
 
 
   @Override
   public double getMeasurement() {
     // Return the process variable measurement her
-    return LPEncoder.getPosition();
+    return m_encoder.getPosition();
   }
 
    public Command LPRotationGoalCommand(){
     return Commands.runOnce(
       () -> {
-            this.setGoal(LevatatorPivotConstants.kLPRotationGoal);
+            this.setGoal(LevetatorPivotConstants.kLPRotationGoal);
             this.enable();
       },
     this);
   }
+
+  public Command StowPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kStowGoal);
+        this.enable();
+      },
+    this);
+  }
+
+    public Command IntakePositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kIntakeGoal);
+        this.enable();
+      },
+    this);
+  }
+
+    public Command SubwooferPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kSubwooferGoal);
+        this.enable();
+      },
+    this);
+  }
+
+    public Command AmpForwardPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kAmpForwardGoal);
+        this.enable();
+      },
+    this);
+  }
+
+    public Command AmpBackPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kAmpBackGoal);
+        this.enable();
+      },
+    this);
+  }
+
+    public Command TrapPositionCommand() {
+    return Commands.runOnce(
+      () -> {
+        this.setGoal(Setpoints.LevetatorPivotSetpoints.kTrapGoal);
+        this.enable();
+      },
+    this);
+  }
+
 
 }
