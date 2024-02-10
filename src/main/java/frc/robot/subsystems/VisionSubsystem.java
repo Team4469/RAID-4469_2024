@@ -37,11 +37,11 @@ public class VisionSubsystem extends SubsystemBase {
   }
 
   public Pose2d FrontBotpose() {
-    return m_frontLimelightResults.targetingResults.getBotPose2d();
+    return m_frontLimelightResults.targetingResults.getBotPose2d_wpiBlue();
   }
 
   public Pose2d RearBotpose() {
-    return m_rearLimelightResults.targetingResults.getBotPose2d();
+    return m_rearLimelightResults.targetingResults.getBotPose2d_wpiBlue();
   }
 
   public boolean FrontValid() {

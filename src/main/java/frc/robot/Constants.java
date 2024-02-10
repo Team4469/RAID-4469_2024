@@ -217,11 +217,13 @@ public final class Constants {
   public static final class LeftClimberConstants {
     public static final int kMotorID = 30;
     public static final int kSensorID = 50;
+    public static final boolean kMotorInverted = false;
   }
 
   public static final class RightClimberConstants {
     public static final int kMotorID = 31;
     public static final int kSensorID = 51;
+    public static final boolean kMotorInverted = true;
   }
 
   public static final class VisionConstants {
@@ -313,15 +315,18 @@ public final class Constants {
     public static final double kVVoltSecondPerRad = 0.5;
     public static final double kAVoltSecondSquaredPerRad = 0.1;
 
-    public static final double kMaxVelocityRadPerSecond = 1;
-    public static final double kMaxAccelerationRadPerSecSquared = 2;
+    public static final double kMaxVelocityRadPerSecond = .5;
+    public static final double kMaxAccelerationRadPerSecSquared = 1;
 
     public static final double kPivotEncoderPositionFactor = Units.degreesToRadians(360); // rads
     public static final double kPivotEncoderVelocityFactor =
         Units.degreesToRadians(360.0) / 60.0; // rads per second
 
+    public static final float kForwardSoftLimit = (float) Units.degreesToRadians(200);
+    public static final float kReverseSoftLimit = (float) Units.degreesToRadians(85);
+
     // The offset of the arm from the horizontal in its neutral position,
     // measured from the horizontal
-    public static final double kPivotOffsetRads = 0.5;
+    public static final double kPivotOffsetRads = Units.degreesToRadians(180);
   }
 }

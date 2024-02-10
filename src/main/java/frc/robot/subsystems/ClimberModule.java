@@ -4,13 +4,18 @@
 
 package frc.robot.subsystems;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
@@ -18,6 +23,7 @@ import frc.robot.Constants.ClimberConstants;
 public class ClimberModule extends SubsystemBase {
 
   private final CANSparkMax m_climbingMotor;
+  private final RelativeEncoder m_encoder;
 
   private final LaserCan m_distanceSensor;
 
@@ -26,6 +32,14 @@ public class ClimberModule extends SubsystemBase {
 
     m_climbingMotor = new CANSparkMax(MotorCanID, MotorType.kBrushless);
 
+    m_encoder = m_climbingMotor.getEncoder();
+
+    m_encoder.setPositionConversionFactor(Units.inchesToMeters(Math.PI)); // Rotations to meters
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(2.6));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(26.875));
+    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
     m_climbingMotor.restoreFactoryDefaults();
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
@@ -33,11 +47,19 @@ public class ClimberModule extends SubsystemBase {
     m_climbingMotor.burnFlash();
     m_climbingMotor.setInverted(MotorInverted);
 
+  
+
     m_distanceSensor = new LaserCan(LaserCanID);
 
+    try {
     m_distanceSensor.setRangingMode(RangingMode.SHORT);
     m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 2, 2));
     m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
+
+    m_encoder.setPosition(m_distanceSensor.getMeasurement().distance_mm/1000);
   }
 
   // Commands

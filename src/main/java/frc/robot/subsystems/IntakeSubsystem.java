@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
@@ -53,13 +54,17 @@ public class IntakeSubsystem extends SubsystemBase {
 
     m_intakeMotor.burnFlash();
 
+    try {
     m_IntakeForwardLaserCan.setRangingMode(RangingMode.SHORT);
     m_IntakeForwardLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
     m_IntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
 
     m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
     m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-    m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+    m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS); 
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
   }
 
   /* Commands */

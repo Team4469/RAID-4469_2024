@@ -52,13 +52,13 @@ public class RobotContainer {
   // The robot's subsystems
   private final VisionSubsystem m_vision = new VisionSubsystem();
   private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_vision);
-  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem();
+    private final PivotSubsystem m_pivot = new PivotSubsystem();
+  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem(m_pivot);
   private final ClimberModule m_rightClimber =
-      new ClimberModule(RightClimberConstants.kMotorID, RightClimberConstants.kSensorID, false);
+      new ClimberModule(RightClimberConstants.kMotorID, RightClimberConstants.kSensorID, RightClimberConstants.kMotorInverted);
   private final ClimberModule m_leftClimber =
-      new ClimberModule(LeftClimberConstants.kMotorID, LeftClimberConstants.kSensorID, true);
+      new ClimberModule(LeftClimberConstants.kMotorID, LeftClimberConstants.kSensorID, LeftClimberConstants.kMotorInverted);
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-  private final PivotSubsystem m_pivot = new PivotSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final WristSubsystem m_wrist = new WristSubsystem();
 //   private final LedSubsystem m_LedSubsystem = new LedSubsystem();
@@ -219,7 +219,7 @@ public class RobotContainer {
 
     m_levetator.setDefaultCommand(m_levetator.positionStowed());
 
-    m_pivot.setDefaultCommand(m_pivot.positionStowed());
+    m_pivot.setDefaultCommand(m_pivot.positionIntake());
 
     m_wrist.setDefaultCommand(m_wrist.positionStowed());
 

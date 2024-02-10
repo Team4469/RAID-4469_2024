@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
@@ -49,6 +50,13 @@ public class PivotSubsystem extends ProfiledPIDSubsystem {
 
     m_leadMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
 
+    m_leadMotor.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardSoftLimit);
+    m_leadMotor.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kReverseSoftLimit);
+    m_leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    m_leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+
+    m_encoder.setZeroOffset(PivotConstants.kPivotOffsetRads);
+
     m_followMotor.follow(m_leadMotor, false);
 
     m_encoder.setPositionConversionFactor(PivotConstants.kPivotEncoderPositionFactor);
@@ -57,20 +65,26 @@ public class PivotSubsystem extends ProfiledPIDSubsystem {
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
 
-    setGoal(PivotConstants.kPivotOffsetRads);
+    setGoal(PivotSetpoints.kStowed);
   }
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     double feedforward = m_armFeedforward.calculate(setpoint.position, setpoint.velocity);
+
+    // + feedforward later
     // Use the output (and optionally the setpoint) here
-    m_leadMotor.setVoltage(output + feedforward);
+    m_leadMotor.setVoltage(output);
   }
 
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
-    return m_encoder.getPosition() + PivotConstants.kPivotOffsetRads;
+    return m_encoder.getPosition();
+  }
+
+  public double getRadiansFromHorizontal() {
+    return m_encoder.getPosition() - PivotConstants.kPivotOffsetRads;
   }
 
   public Command pivotAmpSmartCommand(AmpDirection ampDirection) {
@@ -86,15 +100,6 @@ public class PivotSubsystem extends ProfiledPIDSubsystem {
     return Commands.runOnce(
         () -> {
           this.setGoal(point);
-          this.enable();
-        },
-        this);
-  }
-
-  public Command pivotIntakePositionCommand() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(PivotSetpoints.kIntake);
           this.enable();
         },
         this);

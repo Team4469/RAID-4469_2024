@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
@@ -23,16 +24,17 @@ import frc.robot.SetPoints.LevetatorSetpoints;
 
 public class LevetatorSubsystem extends ProfiledPIDSubsystem {
 
-  private final CANSparkMax m_levetatorMotor =
-      new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
+  private final CANSparkMax m_levetatorMotor;
 
-  private final LaserCan m_distanceLaserCan = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+  private final LaserCan m_distanceLaserCan;
 
   private final ElevatorFeedforward m_elevatorFeedforward =
       new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG, LevetatorConstants.kV);
 
+  private final PivotSubsystem m_pivot;
+
   /** Creates a new LevetatorSubsystem. */
-  public LevetatorSubsystem() {
+  public LevetatorSubsystem(PivotSubsystem pivot) {
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
@@ -43,15 +45,25 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
             new TrapezoidProfile.Constraints(
                 LevetatorConstants.kMaxVelocity, LevetatorConstants.kMaxAcceleration)));
 
+    m_pivot = pivot;
+
+    m_levetatorMotor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
+
+    m_distanceLaserCan = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+
     m_levetatorMotor.restoreFactoryDefaults();
 
     m_levetatorMotor.setIdleMode(IdleMode.kBrake);
     m_levetatorMotor.setSmartCurrentLimit(85);
     m_levetatorMotor.burnFlash();
-
+    
+    try {
     m_distanceLaserCan.setRangingMode(RangingMode.SHORT);
     m_distanceLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-    m_distanceLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+    m_distanceLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);}
+    catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
 
     setGoal(m_distanceLaserCan.getMeasurement().distance_mm / 1000.0); // meters
   }
@@ -59,7 +71,7 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
     // Use the output (and optionally the setpoint) here
-    double feedforward = m_elevatorFeedforward.calculate(setpoint.position, setpoint.velocity);
+    double feedforward = m_elevatorFeedforward.calculate(setpoint.position, setpoint.velocity)*Math.sin(m_pivot.getRadiansFromHorizontal());
     // Add the feedforward to the PID output to get the motor output
     m_levetatorMotor.setVoltage(output + feedforward);
   }
@@ -68,8 +80,7 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
   public double getMeasurement() {
     // Return the process variable measurement here
     LaserCan.Measurement distance = m_distanceLaserCan.getMeasurement();
-    return (distance.distance_mm * 1000)
-        + LevetatorConstants.kLevetatorOffset; // position is in meters
+    return (distance.distance_mm * 1000); // position is in meters
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
