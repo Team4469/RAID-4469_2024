@@ -21,6 +21,7 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.ProfiledPivotSubsystem;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -31,6 +32,7 @@ import frc.robot.subsystems.DriveSubsystem;
 public class RobotContainer {
   // The robot's subsystems
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
+  private final ProfiledPivotSubsystem m_PivotSubsystem = new ProfiledPivotSubsystem();
 
   private final SendableChooser<Command> autoChooser;
 
@@ -74,7 +76,7 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    m_driverController
+   /*  m_driverController
         .rightBumper()
         .whileTrue(m_robotDrive.setXCommand());
 
@@ -132,9 +134,13 @@ public class RobotContainer {
                         -MathUtil.applyDeadband(
                             m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     90)
-                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
+                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)); */
 
-    m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
+   // m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
+
+    m_driverController.x().onTrue(m_PivotSubsystem.StowPositionCommand());
+    m_driverController.b().onTrue(m_PivotSubsystem.SubwooferPositionCommand());
+    m_driverController.y().onTrue(m_PivotSubsystem.TrapPositionCommand());
 
     m_driverController
         .rightTrigger(.9)

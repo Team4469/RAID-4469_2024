@@ -9,11 +9,11 @@ import edu.wpi.first.math.util.Units;
 public class Setpoints {
     public static final class LevetatorPivotSetpoints {
 
-    public static final double kStowGoal = Units.degreesToRadians(5);
-    public static final double kIntakeGoal = Units.degreesToRadians(11);
-    public static final double kSubwooferGoal = Units.degreesToRadians(100);
-    public static final double kAmpForwardGoal = Units.degreesToRadians(140);
-    public static final double kAmpBackGoal = Units.degreesToRadians(25);
+    public static final double kStowGoal = Units.degreesToRadians(90);
+    public static final double kIntakeGoal = Units.degreesToRadians(135);
+    public static final double kSubwooferGoal = Units.degreesToRadians(75);
+    public static final double kAmpForwardGoal = Units.degreesToRadians(155);
+    public static final double kAmpBackGoal = Units.degreesToRadians(135);
     public static final double kTrapGoal = Units.degreesToRadians(50);
     public static final double kLPRotationGoal = Units.degreesToRadians(10); //Temporary Value. Will be changed 
     }
