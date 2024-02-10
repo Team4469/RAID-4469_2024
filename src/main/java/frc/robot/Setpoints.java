@@ -3,18 +3,18 @@
 // the WPILib BSD license file in the root directory of this project.
 
 package frc.robot;
-
-import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
+import edu.wpi.first.math.util.Units;
 
 /** Add your docs here. */
 public class Setpoints {
     public static final class LevetatorPivotSetpoints {
 
-    public static final int kStowGoal = 5;
-    public static final double kIntakeGoal = 11;
-    public static final double kSubwooferGoal = 100;
-    public static final double kAmpForwardGoal = 140;
-    public static final double kAmpBackGoal = 25;
-    public static final double kTrapGoal = 50;
+    public static final double kStowGoal = Units.degreesToRadians(5);
+    public static final double kIntakeGoal = Units.degreesToRadians(11);
+    public static final double kSubwooferGoal = Units.degreesToRadians(100);
+    public static final double kAmpForwardGoal = Units.degreesToRadians(140);
+    public static final double kAmpBackGoal = Units.degreesToRadians(25);
+    public static final double kTrapGoal = Units.degreesToRadians(50);
+    public static final double kLPRotationGoal = Units.degreesToRadians(10); //Temporary Value. Will be changed 
     }
 }

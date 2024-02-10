@@ -159,7 +159,6 @@ public final class Constants {
   public static final class LevetatorPivotConstants {
       public static final double kSpeedDefault = 0.1;
       public static final int kSmartCurrentLimit = 120;
-      public static final double kLPRotationGoal = 10; //Temporary Value. Will be changed 
       public static final int kLPLeadMotorCanId = 5;
       public static final int kLPFollowMotorCanId = 8;
       public static final double kP = 0.001;
@@ -167,8 +166,14 @@ public final class Constants {
       public static final double kD = 0;
       public static final double kMinOutput = -1;
       public static final double kMaxOutput = 1;
-      public static final double kVelocityConversionFactor = 11;
-      public static final double kPositionConversionFactor = 12;
+      public static final double kVelocityConversionFactor = 2.0 * Math.PI;
+      public static final double kPositionConversionFactor = ( 2.0 * Math.PI ) / 60;
+      public static final double kPivotOffset = Units.degreesToRadians(90);
+      public static final double kPivotOffsetRads = Units.degreesToRadians(180);
+      public static final float kForwardSoftLimit = (float) Units.degreesToRadians(200);
+      public static final float kReverseSoftLimit = (float) Units.degreesToRadians(85);  
+      public static final boolean kLeadMotorInverted = false;
+      public static final boolean kEncoderInverted = true;
     }
 
   public static final class NeoMotorConstants {
