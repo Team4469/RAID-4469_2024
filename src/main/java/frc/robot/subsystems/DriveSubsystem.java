@@ -21,6 +21,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -219,9 +220,18 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
 
+    var alliance = DriverStation.getAlliance();
+    var invert = 1;
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+        invert = -1;
+    }
+
     xSpeed *= DRIVE_SPEED_MULTIPLIER.get();
     ySpeed *= DRIVE_SPEED_MULTIPLIER.get();
     rot *= ROTATION_SPEED_MULTIPLIER.get();
+
+    xSpeed *= invert;
+    ySpeed *= invert;
 
     double xSpeedCommanded;
     double ySpeedCommanded;
