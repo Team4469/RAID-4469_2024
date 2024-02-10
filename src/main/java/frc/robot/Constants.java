@@ -160,17 +160,16 @@ public final class Constants {
   }
 
   public static final class WristConstants {
-    public static final int    kWristMotor = 7;
-    public static final double kWristMotorIntakeGoal  = .75;
-    public static final double kWristMotorAmpGoal     = .50;
-    public static final double kWristMotorSpeakerGoal = .50;
-    public static final double kWristMotorTrapGoal    = .50;
-    public static final int    kWristMotorCurrentLimit = 40;
-    public static final double kPWristMotor = .001;
-    public static final double kIWristMotor = 0;
-    public static final double kDWristMotor = .001;
-    public static final double kWristMotorMaxA = 0;
-    public static final double kWristMotorMaxV = 0;
-
-
-}
+    public static final int    kWristMotorCanid = 7;
+    public static final double kIntakeGoal      = .75;
+    public static final double kAmpGoal         = .50;
+    public static final double kSpeakerGoal     = .50;
+    public static final double kTrapGoal        = .50;
+    public static final int    kCurrentLimit    = 40;
+    
+    public static final double kP       = .001;
+    public static final double kI       = 0;
+    public static final double kD       = .001;
+    public static final double kMaxAccelerationMetersPerSecondSquared    = 0;
+    public static final double kMaxVelocityRadiansPerSecond    = 0;
+    }

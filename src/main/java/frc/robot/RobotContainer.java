@@ -82,9 +82,6 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(m_robotDrive.setXCommand());
 
-/* This driver section commented out while the wrist commands are
-   active on the a button
-
    m_driverController
         .a()
         .onTrue(
@@ -98,14 +95,20 @@ public class RobotContainer {
                             m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     180)
                 .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
-*/
 
-//  Wrist Motor Commands 
+
+
+/*  This Wrist section commented out until driver station design
+    is finalized
+
+//  Wrist Commands 
 //      Commented out to avoid controller conflicts.
 
-    m_driverController.a().onTrue(m_wrist.WristMotorIntakeCommand());
+    m_driverController.a().onTrue(m_wrist.WristIntakePositionCommand());
     
-    m_driverController.a().onFalse(m_wrist.WristMotorSpeakerCommand());
+    m_driverController.a().onFalse(m_wrist.WristSpeakerPositionCommand());
+
+*/
 
 // More driving commands    
     m_driverController

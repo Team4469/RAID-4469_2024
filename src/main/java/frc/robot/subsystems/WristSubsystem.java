@@ -19,63 +19,66 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import frc.robot.Constants.WristConstants;
-import frc.utils.TunableNumber;
 
 
 
 public class WristSubsystem extends ProfiledPIDSubsystem {
   /** Creates a new WristSubsystem. */
 
-  private final CANSparkFlex WristMotor = new CANSparkFlex(WristConstants.kWristMotor, MotorType.kBrushless);
-
-  private final AbsoluteEncoder m_encoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-  
+  private final CANSparkFlex WristMotor;
+  private final AbsoluteEncoder WristEncoder;
+    
   public WristSubsystem() {
+
     super(
         // The ProfiledPIDController used by the subsystem
         new ProfiledPIDController(
-            WristConstants.kPWristMotor,
-            WristConstants.kIWristMotor,
-            WristConstants.kDWristMotor,
+            WristConstants.kP,
+            WristConstants.kI,
+            WristConstants.kD,
             // The motion profile constraints
             new TrapezoidProfile.Constraints(
-                    WristConstants.kWristMotorMaxV, 
-                    WristConstants.kWristMotorMaxA)));
+                    WristConstants.kMaxVelocityRadiansPerSecond, 
+                    WristConstants.kMaxAccelerationMetersPerSecondSquared)));
 
+    WristMotor = new CANSparkFlex(WristConstants.kWristMotorCanid, MotorType.kBrushless);
     WristMotor.restoreFactoryDefaults();
     WristMotor.setIdleMode(IdleMode.kCoast);
-    WristMotor.setSmartCurrentLimit(WristConstants.kWristMotorCurrentLimit);
-          }
+    WristMotor.setSmartCurrentLimit(WristConstants.kCurrentLimit);
+
+    WristEncoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
+
+}
 
 
-  public Command WristMotorIntakeCommand() {
+  public Command WristIntakePositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kWristMotorIntakeGoal);
+              this.setGoal(WristConstants.kIntakeGoal);
               this.enable();
           },  
               this );
           }
   
 
-  public Command WristMotorAmpCommand() {
+  public Command WristAmpPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kWristMotorAmpGoal);
+              this.setGoal(WristConstants.kAmpGoal);
               this.enable();
           },  
               this );
           }
 
-  public Command WristMotorSpeakerCommand() {
+  public Command WristSpeakerPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kWristMotorSpeakerGoal);
+              this.setGoal(WristConstants.kSpeakerGoal);
               this.enable();
           },  
               this );
           }
 
-  public Command WristMotorTrapCommand() {
+  public Command WristTrapPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kWristMotorTrapGoal);
+              this.setGoal(WristConstants.kTrapGoal);
               this.enable();
           },  
               this );
@@ -84,12 +87,13 @@ public class WristSubsystem extends ProfiledPIDSubsystem {
 
   @Override
   public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
+  // Use the output (and optionally the setpoint) here
+    WristMotor.setVoltage(output);
   }
 
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
-    return m_encoder.getPosition();
+    return WristEncoder.getPosition();
   }
 }
