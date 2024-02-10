@@ -32,9 +32,9 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
             LevetatorConstants.kI,
             LevetatorConstants.kD,
             // The motion profile constraints
-            new TrapezoidProfile.Constraints(LevetatorConstants.kMaxVelocity, LevetatorConstants.kMaxAcceleration)));
-  
-  m_laserCan = new LaserCan(LevetatorConstants.kLaserCanId); 
+            new TrapezoidProfile.Constraints(LevetatorConstants.kMaxVelocityMetersPerSec, LevetatorConstants.kMaxAccelerationMetersPerSecSquared)));
+
+   m_laserCan = new LaserCan(LevetatorConstants.kLaserCanId); 
 
   m_Motor = new CANSparkMax(LevetatorConstants.kMotorCanId, MotorType.kBrushless);
   m_Motor.restoreFactoryDefaults();
@@ -52,7 +52,7 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
   @Override
   public double getMeasurement() {
     // Return the process variable measurement here
-   return m_laserCan.getMeasurement().distance_mm;
+   return m_laserCan.getMeasurement().distance_mm/1000;
   }
 
   public Command LevetatorStowPositionCommand() {
