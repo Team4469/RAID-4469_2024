@@ -161,11 +161,9 @@ public final class Constants {
 
   public static final class WristConstants {
     public static final int    kWristMotorCanid = 7;
-    public static final double kIntakeGoal      = .75;
-    public static final double kAmpGoal         = .50;
-    public static final double kSpeakerGoal     = .50;
-    public static final double kTrapGoal        = .50;
     public static final int    kCurrentLimit    = 40;
+    public static final double kVelocityConversionFactor = 2*Math.PI/60;
+    public static final double kPositionConversionFactor = 2*Math.PI;
     
     public static final double kP       = .001;
     public static final double kI       = 0;
@@ -173,3 +171,4 @@ public final class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared    = 0;
     public static final double kMaxVelocityRadiansPerSecond    = 0;
     }
+  }

@@ -19,6 +19,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
 import frc.robot.Constants.WristConstants;
+import frc.robot.Setpoints.WristSetpoints;
 
 
 
@@ -47,13 +48,14 @@ public class WristSubsystem extends ProfiledPIDSubsystem {
     WristMotor.setSmartCurrentLimit(WristConstants.kCurrentLimit);
 
     WristEncoder = WristMotor.getAbsoluteEncoder(Type.kDutyCycle);
-
+    WristEncoder.setPositionConversionFactor(WristConstants.kPositionConversionFactor);
+    WristEncoder.setVelocityConversionFactor(WristConstants.kVelocityConversionFactor);
 }
 
 
   public Command WristIntakePositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kIntakeGoal);
+              this.setGoal(WristSetpoints.kIntakeGoal);
               this.enable();
           },  
               this );
@@ -62,7 +64,7 @@ public class WristSubsystem extends ProfiledPIDSubsystem {
 
   public Command WristAmpPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kAmpGoal);
+              this.setGoal(WristSetpoints.kAmpGoal);
               this.enable();
           },  
               this );
@@ -70,7 +72,7 @@ public class WristSubsystem extends ProfiledPIDSubsystem {
 
   public Command WristSpeakerPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kSpeakerGoal);
+              this.setGoal(WristSetpoints.kSpeakerGoal);
               this.enable();
           },  
               this );
@@ -78,7 +80,7 @@ public class WristSubsystem extends ProfiledPIDSubsystem {
 
   public Command WristTrapPositionCommand() {
           return Commands.runOnce( () -> {
-              this.setGoal(WristConstants.kTrapGoal);
+              this.setGoal(WristSetpoints.kTrapGoal);
               this.enable();
           },  
               this );
