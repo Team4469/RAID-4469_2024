@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,8 +39,9 @@ import frc.robot.subsystems.LevetatorSubsystem;
 // import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
-import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.robot.subsystems.utils.Limelight;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -52,8 +54,9 @@ import java.util.Optional;
 public class RobotContainer {
 
   // The robot's subsystems
-  private final VisionSubsystem m_vision = new VisionSubsystem();
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_vision);
+  private final Limelight m_frontLimelight = new Limelight("limelight-front");
+  private final Limelight m_rearLimelight = new Limelight("limelight-rear");
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_frontLimelight, m_rearLimelight);
   private final PivotSubsystem m_pivot = new PivotSubsystem();
   private final LevetatorSubsystem m_levetator = new LevetatorSubsystem(m_pivot);
   private final ClimberModule m_rightClimber =
@@ -255,41 +258,61 @@ public class RobotContainer {
     SmartDashboard.putData("Auto Mode", autoChooser);
   }
 
-
+  //
   private void configureTestButtonBindings() {
 
-        /* TEST CASES */
-    
-        /* INTAKE */
-        m_operatorController.a().onTrue(m_intake.intakeAutoIntake2());
-    
-        /* CLIMBERS */
-        m_operatorController
-            .povUp()
-            .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
-    
-        m_operatorController.povUp().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
-    
-        m_operatorController.povDown().onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
-    
-        m_operatorController.povDown().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
-        
-        /* PIVOT */
-    
-        // m_operatorController.a().onTrue(m_piv2.pivotTest1());
-        // m_operatorController.b().onTrue(m_piv2.pivotTest2());
-    
-        // m_operatorController.y().onTrue(m_piv2.pivotTest1().andThen(m_piv2.pivotTest2()));
-    
-        /* LEVETATOR */
-        // m_operatorController.a().onTrue(m_lev.levTest1());
-        // m_operatorController.b().onTrue(m_lev.levTest2());
-    
-        // m_operatorController.a().onTrue(m_lev.levForward());
-        //     m_operatorController.a().onFalse(m_lev.levStop());
-        // m_operatorController.b().onTrue(m_lev.levReverse());
-        //         m_operatorController.b().onFalse(m_lev.levStop());
-    
+    /* TEST CASES */
+
+    /* INTAKE */
+    m_operatorController
+        .a()
+        .onTrue(
+            m_intake
+                .intakeAutoIntake2()
+                .andThen(
+                    new RunCommand(
+                            () ->
+                                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1))
+                        .withTimeout(.5)));
+
+    /* CLIMBERS */
+    m_operatorController
+        .povUp()
+        .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+
+    m_operatorController
+        .povUp()
+        .onFalse(
+            m_rightClimber
+                .emergencyStopClimberCommand()
+                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+
+    m_operatorController
+        .povDown()
+        .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+
+    m_operatorController
+        .povDown()
+        .onFalse(
+            m_rightClimber
+                .emergencyStopClimberCommand()
+                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+
+    /* PIVOT */
+
+    // m_operatorController.a().onTrue(m_piv2.pivotTest1());
+    // m_operatorController.b().onTrue(m_piv2.pivotTest2());
+
+    // m_operatorController.y().onTrue(m_piv2.pivotTest1().andThen(m_piv2.pivotTest2()));
+
+    /* LEVETATOR */
+    // m_operatorController.a().onTrue(m_lev.levTest1());
+    // m_operatorController.b().onTrue(m_lev.levTest2());
+
+    // m_operatorController.a().onTrue(m_lev.levForward());
+    //     m_operatorController.a().onFalse(m_lev.levStop());
+    // m_operatorController.b().onTrue(m_lev.levReverse());
+    //         m_operatorController.b().onFalse(m_lev.levStop());
 
   }
 

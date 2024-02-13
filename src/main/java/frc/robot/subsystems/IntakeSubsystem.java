@@ -116,46 +116,46 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeAutoIntake2() {
-      Debouncer debounce = new Debouncer(.06, Debouncer.DebounceType.kRising);
-      return runOnce(
-              () -> {
-                debounce.calculate(false);
-              })
-          // set the intake to intaking speed
-          .andThen(
-              run(() -> {
-                    setSpeed(INTAKE_SPEED.get());
-                  })
-                  // Wait until trigger is detected for more than 0.25s
-                  .until(() -> debounce.calculate(getFilteredCurrent() > 20)))
-          .andThen(
-              runOnce(
-                  () -> {
-                    debounce.calculate(false);
-                  }))
-          .andThen(
-                      run(() -> {
-                            setSpeed(TRANSFER_FORWARD_SPEED.get());
-                          })
-                          // Wait until trigger is detected for more than 0.25s
-                          .until(() -> debounce.calculate(laserCanTrigger_REAR.getAsBoolean())))
-                  .andThen(
-                      runOnce(
-                          () -> {
-                            debounce.calculate(false);
-                          }))
-          .andThen(
-              run(() -> {
-                    setSpeed(TRANSFER_BACKWARD_SPEED.get());
-                  })
-                  // Wait until trigger is detected for more than 0.25s
-                  .until(() -> laserCanTrigger_FORWARD.getAsBoolean()))
-          // stop motor power
-          .finallyDo(
-              (interrupted) -> {
-                setSpeed(0);
-              });
-    }
+    Debouncer debounce = new Debouncer(.06, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to intaking speed
+        .andThen(
+            run(() -> {
+                  setSpeed(INTAKE_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> debounce.calculate(getFilteredCurrent() > 20)))
+        .andThen(
+            runOnce(
+                () -> {
+                  debounce.calculate(false);
+                }))
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_FORWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> debounce.calculate(laserCanTrigger_REAR.getAsBoolean())))
+        .andThen(
+            runOnce(
+                () -> {
+                  debounce.calculate(false);
+                }))
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_BACKWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> laserCanTrigger_FORWARD.getAsBoolean()))
+        // stop motor power
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
+  }
 
   // public Command intakeAutoIntake() {
   //   Debouncer debounce = new Debouncer(.06, Debouncer.DebounceType.kRising);

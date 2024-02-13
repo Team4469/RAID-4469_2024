@@ -90,10 +90,12 @@ public class ClimberModule extends SubsystemBase {
   }
 
   public Command climberForward() {
+    System.out.println(m_encoder.getPosition());
     return runOnce(() -> runClimber(.1));
   }
 
   public Command climberReverse() {
+    System.out.println(m_encoder.getPosition());
     return runOnce(() -> runClimber(-.1));
   }
 
@@ -160,6 +162,7 @@ public class ClimberModule extends SubsystemBase {
     if (!EncoderSet) {
       try {
         m_encoder.setPosition((measurement.distance_mm) / 1000.0);
+        System.out.println(ID + "encoder set at " + m_encoder.getPosition());
       } catch (Exception e) {
         // System.out.println("Encoder " + ID + " not yet set");
       }
