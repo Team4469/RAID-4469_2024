@@ -4,83 +4,78 @@
 
 package frc.robot.subsystems;
 
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.LaserCan.RangingMode;
-import au.grapplerobotics.LaserCan.RegionOfInterest;
-import au.grapplerobotics.LaserCan.TimingBudget;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
-import edu.wpi.first.math.controller.ElevatorFeedforward;
-import edu.wpi.first.math.controller.ProfiledPIDController;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
+// import edu.wpi.first.math.controller.ElevatorFeedforward;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ProfiledPIDSubsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LevetatorConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 
-public class LevetatorSubsystem extends ProfiledPIDSubsystem {
+public class LevetatorSubsystem extends SubsystemBase {
+  private final CANSparkMax m_motor;
 
-  private final CANSparkMax m_levetatorMotor;
+  private final RelativeEncoder m_encoder;
 
-  private final LaserCan m_distanceLaserCan;
+  private final SparkPIDController m_pidController;
 
-  private final ElevatorFeedforward m_elevatorFeedforward =
-      new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG, LevetatorConstants.kV);
+  private final double kGravity;
+
+  // private final ElevatorFeedforward m_elevatorFeedforward =
+  //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
+  // LevetatorConstants.kV);
 
   private final PivotSubsystem m_pivot;
 
-  /** Creates a new LevetatorSubsystem. */
+  /** Creates a new LevSub. */
   public LevetatorSubsystem(PivotSubsystem pivot) {
-    super(
-        // The ProfiledPIDController used by the subsystem
-        new ProfiledPIDController(
-            LevetatorConstants.kP,
-            LevetatorConstants.kI,
-            LevetatorConstants.kD,
-            // The motion profile constraints
-            new TrapezoidProfile.Constraints(
-                LevetatorConstants.kMaxVelocity, LevetatorConstants.kMaxAcceleration)));
+    m_motor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
+    m_motor.restoreFactoryDefaults();
 
     m_pivot = pivot;
 
-    m_levetatorMotor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
+    m_motor.setClosedLoopRampRate(3);
 
-    m_distanceLaserCan = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+    m_encoder = m_motor.getEncoder();
 
-    m_levetatorMotor.restoreFactoryDefaults();
+    m_encoder.setPositionConversionFactor(LevetatorConstants.kPositionConversionFactor);
+    m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
+    m_motor.setIdleMode(IdleMode.kBrake);
+    m_motor.setSoftLimit(SoftLimitDirection.kForward, (float) LevetatorConstants.kForwardSoftLimit);
+    m_motor.setSoftLimit(SoftLimitDirection.kReverse, (float) LevetatorConstants.kReverseSoftLimit);
+    m_motor.enableSoftLimit(SoftLimitDirection.kForward, true);
+    m_motor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    m_levetatorMotor.setIdleMode(IdleMode.kBrake);
-    m_levetatorMotor.setSmartCurrentLimit(85);
-    m_levetatorMotor.burnFlash();
-    
-    try {
-    m_distanceLaserCan.setRangingMode(RangingMode.SHORT);
-    m_distanceLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-    m_distanceLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);}
-    catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
+    m_motor.setOpenLoopRampRate(2);
 
-    setGoal(m_distanceLaserCan.getMeasurement().distance_mm / 1000.0); // meters
-  }
+    m_pidController = m_motor.getPIDController();
 
-  @Override
-  public void useOutput(double output, TrapezoidProfile.State setpoint) {
-    // Use the output (and optionally the setpoint) here
-    double feedforward = m_elevatorFeedforward.calculate(setpoint.position, setpoint.velocity)*Math.sin(m_pivot.getRadiansFromHorizontal());
-    // Add the feedforward to the PID output to get the motor output
-    m_levetatorMotor.setVoltage(output + feedforward);
-  }
+    m_pidController.setFeedbackDevice(m_encoder);
 
-  @Override
-  public double getMeasurement() {
-    // Return the process variable measurement here
-    LaserCan.Measurement distance = m_distanceLaserCan.getMeasurement();
-    return (distance.distance_mm * 1000); // position is in meters
+    m_pidController.setPositionPIDWrappingEnabled(false);
+    m_pidController.setPositionPIDWrappingMaxInput(Units.inchesToMeters(9));
+    m_pidController.setPositionPIDWrappingMinInput(Units.inchesToMeters(0));
+
+    m_pidController.setP(3.2);
+    m_pidController.setI(0);
+    m_pidController.setD(2);
+
+    m_pidController.setOutputRange(-.1, 1);
+
+    m_motor.setInverted(true);
+
+    m_motor.burnFlash();
+
+    kGravity = 1.6;
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
@@ -93,74 +88,79 @@ public class LevetatorSubsystem extends ProfiledPIDSubsystem {
         point = LevetatorSetpoints.kAmpRear;
         break;
     }
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(point);
-          this.enable();
-        },
-        this);
+    return Commands.run(() -> setDistance(point));
   }
 
-  public Command positionMovement() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kMovement);
-          this.enable();
-        },
-        this);
+  public Command levTest1() {
+    double setpoint = Units.inchesToMeters(2);
+    return Commands.run(() -> setDistance(setpoint)); // .until(() -> inRange(setpoint))
   }
 
-  public Command positionIntake() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kIntake);
-          this.enable();
-        },
-        this);
+  public Command levTest2() {
+    double setpoint = Units.inchesToMeters(6);
+    return Commands.run(() -> setDistance(setpoint)); // .until(() -> inRange(setpoint))
   }
 
-  public Command positionStowed() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kStowed);
-          this.enable();
-        },
-        this);
+  public Command levetatorSetpointPosition(double meters) {
+    double setpoint = meters;
+    return Commands.run(() -> setDistance(setpoint))
+        .until(() -> inRange(setpoint))
+        .finallyDo(this::levHold); // .until(() -> inRange(setpoint))
   }
 
-  public Command positionSubwoofer() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kSubwoofer);
-          this.enable();
-        },
-        this);
+  private boolean inRange(double setpoint) {
+    double measurement = getMeasurement();
+    if (setpoint > measurement - Units.inchesToMeters(.25)
+        && setpoint < measurement + Units.inchesToMeters(.25)) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
-  public Command positionAmpFront() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kAmpFront);
-          this.enable();
-        },
-        this);
+  private void levHold() {
+    m_motor.setVoltage(kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()));
   }
 
-  public Command positionAmpRear() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kAmpRear);
-          this.enable();
-        },
-        this);
+  private void setDistance(double meters) {
+    m_pidController.setReference(
+        meters,
+        ControlType.kPosition,
+        0,
+        kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()),
+        ArbFFUnits.kVoltage);
   }
 
-  public Command positionTrap() {
-    return Commands.runOnce(
-        () -> {
-          this.setGoal(LevetatorSetpoints.kTrap);
-          this.enable();
-        },
-        this);
+  public Command levForward() {
+    return run(this::speedFwd);
+  }
+
+  public Command levReverse() {
+    return run(this::speedRev);
+  }
+
+  public Command levStop() {
+    return runOnce(this::speedStop);
+  }
+
+  public void speedFwd() {
+    m_motor.set(.3);
+  }
+
+  public void speedRev() {
+    m_motor.set(-.1);
+  }
+
+  public void speedStop() {
+    m_motor.set(0);
+  }
+
+  private double getMeasurement() {
+    return m_encoder.getPosition();
+  }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
   }
 }

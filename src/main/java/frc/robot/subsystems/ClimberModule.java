@@ -14,7 +14,6 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
-
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,41 +24,47 @@ public class ClimberModule extends SubsystemBase {
   private final CANSparkMax m_climbingMotor;
   private final RelativeEncoder m_encoder;
 
-  private final LaserCan m_distanceSensor;
+  private LaserCan m_distanceSensor;
+
+  int ID;
+
+  private boolean EncoderSet = false;
 
   /** Creates a new ClimberModule. */
   public ClimberModule(int MotorCanID, int LaserCanID, boolean MotorInverted) {
 
     m_climbingMotor = new CANSparkMax(MotorCanID, MotorType.kBrushless);
 
+    m_climbingMotor.restoreFactoryDefaults();
+
     m_encoder = m_climbingMotor.getEncoder();
 
-    m_encoder.setPositionConversionFactor(Units.inchesToMeters(Math.PI)); // Rotations to meters
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(2.6));
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(26.875));
+    m_encoder.setPositionConversionFactor(
+        ClimberConstants.kPositionConversionFactor); // Rotations to meters
+    m_encoder.setVelocityConversionFactor(ClimberConstants.kPositionConversionFactor / 60);
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(20));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(3));
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    m_climbingMotor.restoreFactoryDefaults();
-
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
     m_climbingMotor.setSmartCurrentLimit(85);
-    m_climbingMotor.burnFlash();
     m_climbingMotor.setInverted(MotorInverted);
-
-  
+    m_climbingMotor.burnFlash();
 
     m_distanceSensor = new LaserCan(LaserCanID);
+    ID = LaserCanID;
 
     try {
-    m_distanceSensor.setRangingMode(RangingMode.SHORT);
-    m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 2, 2));
-    m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+      m_distanceSensor.setRangingMode(RangingMode.SHORT);
+      m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 12, 4, 4));
+      m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
 
-    m_encoder.setPosition(m_distanceSensor.getMeasurement().distance_mm/1000);
+    // LaserCan.Measurement measure = m_distanceSensor.getMeasurement();
+    // m_encoder.setPosition(measure.distance_mm / 1000);
   }
 
   // Commands
@@ -82,6 +87,14 @@ public class ClimberModule extends SubsystemBase {
     return run(this::retractClimber)
         .until(() -> hookAtSetpoint(Goal))
         .finallyDo((interrupted) -> this.stopClimber());
+  }
+
+  public Command climberForward() {
+    return runOnce(() -> runClimber(.1));
+  }
+
+  public Command climberReverse() {
+    return runOnce(() -> runClimber(-.1));
   }
 
   /**
@@ -115,6 +128,10 @@ public class ClimberModule extends SubsystemBase {
     m_climbingMotor.set(ClimberConstants.retractionSpeed);
   }
 
+  private void runClimber(double Speed) {
+    m_climbingMotor.set(Speed);
+  }
+
   private void holdClimber() {
     m_climbingMotor.setVoltage(1);
   }
@@ -124,5 +141,34 @@ public class ClimberModule extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    // // This method will be called once per scheduler run
+    LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
+    // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
+    // {
+    //   System.out.println("LaserCAN " + ID + ": The target is " + measurement.distance_mm + "mm
+    // away!");
+    // } else {
+    //   System.out.println("Oh no! The target is out of range, or we can't get a reliable
+    // measurement!");
+    //   // You can still use distance_mm in here, if you're ok tolerating a clamped value or an
+    // unreliable measurement.
+    // }
+
+    // m_encoder.setPosition(Units.inchesToMeters(5));
+
+    if (!EncoderSet) {
+      try {
+        m_encoder.setPosition((measurement.distance_mm) / 1000.0);
+      } catch (Exception e) {
+        // System.out.println("Encoder " + ID + " not yet set");
+      }
+    }
+
+    if (m_encoder.getPosition() != 0) {
+      EncoderSet = true;
+    }
+
+    // System.out.println(m_encoder.getPosition());
+  }
 }

@@ -55,37 +55,6 @@ public final class Constants {
         new PathConstraints(2, 2, Units.degreesToRadians(360), Units.degreesToRadians(540));
   }
 
-  public static final class FrontWristConstants {
-    public static final int kFrontWristMotorID = 34;
-
-    public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
-    public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
-    public static final double kP = 0;
-    public static final double kI = 0;
-    public static final double kD = 0;
-    public static final int kSmartCurrentLimit = 60; // A
-
-    public static final double kMinRads = Units.degreesToRadians(90);
-    public static final double kMaxRads = Units.degreesToRadians(315);
-    public static final double kStowedRads = Units.degreesToRadians(300);
-  }
-
-  public static final class LevetatorConstants {
-    public static final int kLevetatorMotorID = 39;
-    public static final int kLevetatorLaserCanID = 55;
-
-    public static final double kLevetatorOffset = Units.inchesToMeters(.875);
-
-    public static final double kMaxVelocity = 1.75; // m/s
-    public static final double kMaxAcceleration = 0.75; // m/s^2
-    public static final double kP = 1.3;
-    public static final double kI = 0.0;
-    public static final double kD = 0.7;
-    public static final double kS = 1.1;
-    public static final double kG = 1.2;
-    public static final double kV = 1.3;
-  }
-
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
@@ -211,24 +180,72 @@ public final class Constants {
   }
 
   public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
+    public static final double kFreeSpeedRpm = 6784;
   }
 
   public static final class LeftClimberConstants {
-    public static final int kMotorID = 30;
-    public static final int kSensorID = 50;
+    public static final int kMotorID = 36;
+    public static final int kSensorID = 3;
     public static final boolean kMotorInverted = false;
   }
 
   public static final class RightClimberConstants {
-    public static final int kMotorID = 31;
-    public static final int kSensorID = 51;
+    public static final int kMotorID = 35;
+    public static final int kSensorID = 0;
     public static final boolean kMotorInverted = true;
   }
 
+  public static final class WristConstants {
+    public static final int kWristMotorID = 50;
+
+    public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
+    public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final int kSmartCurrentLimit = 85; // A
+
+    public static final double kPositionConversionFactor = 2.0 * Math.PI;
+    public static final double kVelocityConversionFactor = (2.0 * Math.PI) / 60.0;
+
+    public static final double kMinRads = Units.degreesToRadians(90);
+    public static final double kMaxRads = Units.degreesToRadians(315);
+    public static final double kStowedRads = Units.degreesToRadians(300);
+  }
+
+  public static final class LevetatorConstants {
+    public static final int kLevetatorMotorID = 23;
+    public static final int kLevetatorLaserCanID = 5;
+
+    public static final int kCurrentLimit = 115;
+
+    public static final boolean kMotorInverted = true;
+
+    public static final double kLevetatorOffset = Units.inchesToMeters(.875);
+
+    public static final double kGearRatio = 5;
+    public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
+
+    public static final double kPositionConversionFactor =
+        kSprocketDiameterMeters * Math.PI * (1.0 / kGearRatio);
+    public static final double kVelocityConversionFactor = kPositionConversionFactor / 60;
+
+    public static final double kForwardSoftLimit = Units.inchesToMeters(8);
+    public static final double kReverseSoftLimit = Units.inchesToMeters(0);
+
+    public static final double kMaxVelocityMeterPerSecond = .5; // m/s
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
+    public static final double kP = .1;
+    public static final double kI = 0.0;
+    public static final double kD = 0;
+    public static final double kS = 0;
+    public static final double kG = .7;
+    public static final double kV = 0;
+  }
+
   public static final class VisionConstants {
-    public static final String kFrontLimelightName = "Front_Limelight";
-    public static final String kRearLimelightName = "Rear_Limelight";
+    public static final String kFrontLimelightName = "limelight-front";
+    public static final String kRearLimelightName = "limelight-rear";
   }
 
   public static final class ClimberConstants {
@@ -242,14 +259,19 @@ public final class Constants {
     public static final double kV = 1.3;
 
     public static final double extensionSpeed = .1;
-    public static final double retractionSpeed = .5;
+    public static final double retractionSpeed = -.5;
 
-    public static final double kSensorOffset = Units.inchesToMeters(2.5);
+    public static final double kGearRatio = 15.60;
+
+    public static final double kPositionConversionFactor =
+        Units.inchesToMeters(1) * Math.PI * (1.0 / kGearRatio);
+
+    public static final double kSensorOffset = Units.inchesToMeters(2.56);
   }
 
   public static final class ShooterConstants {
-    public static final int kLeftShooterCanID = 34;
-    public static final int kRightShooterCanID = 35;
+    public static final int kLeftShooterCanID = 21;
+    public static final int kRightShooterCanID = 20;
     public static final boolean kLeftMotorInverted = true;
     public static final boolean kRightMotorInverted = !kLeftMotorInverted;
     public static final int kCurrentLimit = 80; // Amps
@@ -272,19 +294,19 @@ public final class Constants {
   }
 
   public static final class IntakeConstants {
-    public static final int kMotorID = 32;
+    public static final int kMotorID = 22;
     public static final int kCurrentLimit = 80;
 
-    public static final int kIntakeForwardLaserCanID = 52;
-    public static final int kIntakeRearLaserCanID = 53;
+    public static final int kIntakeForwardLaserCanID = 1;
+    public static final int kIntakeRearLaserCanID = 4;
 
-    public static final int kDetectionDistanceMM = 6;
+    public static final int kDetectionDistanceMM = 25;
   }
 
   public static final class LevetatorPivotConstants {
-    public static final double kGearRatio = 111.1 / 1.0;
-    public static final int kLeadMotorId = 37;
-    public static final int kFollowerMotorId = 38;
+    public static final double kGearRatio = 120.0 / 1.0;
+    public static final int kLeadMotorId = 30;
+    public static final int kFollowerMotorId = 31;
     public static final int kMotorCurrentLimit = 85;
     public static final boolean kLeadMotorInverted = false;
     public static final boolean kEncoderInverted = true;
@@ -299,8 +321,8 @@ public final class Constants {
   }
 
   public static final class PivotConstants {
-    public static final int kLeadMotorPort = 37;
-    public static final int kFollowerMotorPort = 38;
+    public static final int kLeadMotorPort = 30;
+    public static final int kFollowerMotorPort = 31;
 
     public static final int kMotorCurrentLimit = 85;
 
@@ -315,8 +337,8 @@ public final class Constants {
     public static final double kVVoltSecondPerRad = 0.5;
     public static final double kAVoltSecondSquaredPerRad = 0.1;
 
-    public static final double kMaxVelocityRadPerSecond = .5;
-    public static final double kMaxAccelerationRadPerSecSquared = 1;
+    public static final double kMaxVelocityRadPerSecond = .25;
+    public static final double kMaxAccelerationRadPerSecSquared = .1;
 
     public static final double kPivotEncoderPositionFactor = Units.degreesToRadians(360); // rads
     public static final double kPivotEncoderVelocityFactor =
@@ -327,6 +349,6 @@ public final class Constants {
 
     // The offset of the arm from the horizontal in its neutral position,
     // measured from the horizontal
-    public static final double kPivotOffsetRads = Units.degreesToRadians(180);
+    public static final double kPivotOffsetRads = Units.degreesToRadians(90);
   }
 }
