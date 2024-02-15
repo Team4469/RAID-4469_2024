@@ -16,7 +16,9 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
+import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.TunableNumber;
+import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -92,6 +94,11 @@ public class ShooterSubsystem extends SubsystemBase {
   /* Command Factory */
   public Command shooterSpeakerShot() {
     return Commands.runOnce(() -> shootPIDControl(SHOOTER_SPEED_CLOSED_LOOP.get()));
+  }
+
+  public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
+    double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    return Commands.run(() -> shootPIDControl(target));
   }
 
   public Command shooterStop() {

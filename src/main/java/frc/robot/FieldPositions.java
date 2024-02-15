@@ -5,7 +5,9 @@
 package frc.robot;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 
@@ -72,5 +74,20 @@ public class FieldPositions {
 
     public static final Translation2d CS_RED_ADJUST =
         new Translation2d(Units.inchesToMeters(8), Rotation2d.fromDegrees(0));
+  }
+
+  public static final class SpeakerLocations {
+    public static final Pose3d SPEAKER_BLUE_POSE3D =
+        new Pose3d(
+            Units.inchesToMeters(0),
+            Units.inchesToMeters(218.42),
+            Units.inchesToMeters(80),
+            new Rotation3d());
+    public static final Pose3d SPEAKER_RED_POSE3D =
+        new Pose3d(
+            Units.inchesToMeters(651.23),
+            Units.inchesToMeters(218.42),
+            Units.inchesToMeters(80),
+            new Rotation3d());
   }
 }

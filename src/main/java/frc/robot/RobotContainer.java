@@ -32,6 +32,7 @@ import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
 // import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
+import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -41,6 +42,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
+import frc.utils.ShootingCalculators;
 import java.util.Map;
 import java.util.Optional;
 
@@ -313,6 +315,32 @@ public class RobotContainer {
     // m_operatorController.b().onTrue(m_lev.levReverse());
     //         m_operatorController.b().onFalse(m_lev.levStop());
 
+    /* VARIABLE SHOOTING */
+    // m_operatorController
+    //     .povRight()
+    //     .whileTrue(
+    //         m_wrist.wristAngleVariableSetpoint(
+    //             () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose)));
+
+    // m_operatorController
+    //     .povLeft()
+    //     .whileTrue(
+    //         m_shooter.shooterVariableSpeakerShot(
+    //             () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose)));
+
+    // m_driverController
+    //     .y()
+    //     .onTrue(
+    //         new DRIVE_WITH_HEADING_SUPPLIER(
+    //                 m_robotDrive,
+    //                 () ->
+    //                     -MathUtil.applyDeadband(
+    //                         m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+    //                 () ->
+    //                     -MathUtil.applyDeadband(
+    //                         m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+    //                 () -> ShootingCalculators.RotationToSpeaker(m_robotDrive::getPose))
+    //             .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
   }
 
   /**
@@ -389,6 +417,27 @@ public class RobotContainer {
 
     // Zero IMU heading
     m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
+
+    m_driverController
+        .y()
+        .whileTrue(
+            m_shooter
+                .shooterVariableSpeakerShot(
+                    () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose))
+                .alongWith(
+                    m_wrist.wristAngleVariableSetpoint(
+                        () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose)))
+                .alongWith(
+                    new DRIVE_WITH_HEADING_SUPPLIER(
+                        m_robotDrive,
+                        () ->
+                            -MathUtil.applyDeadband(
+                                m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                        () ->
+                            -MathUtil.applyDeadband(
+                                m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                        () -> ShootingCalculators.RotationToSpeaker(m_robotDrive::getPose)))
+                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
 
     // Use right stick as pure heading direction
     // m_driverController
