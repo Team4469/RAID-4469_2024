@@ -11,6 +11,8 @@ import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -55,17 +57,24 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeMotor.restoreFactoryDefaults();
 
     m_intakeMotor.setSmartCurrentLimit(IntakeConstants.kCurrentLimit);
+    
+    m_intakeMotor.setInverted(IntakeConstants.kMotorInverted);
 
     m_intakeMotor.burnFlash();
+
+    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, IntakeConstants.kStatus3PeriodMs);
+    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, IntakeConstants.kStatus4PeriodMs);
+    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, IntakeConstants.kStatus5PeriodMs);
+    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, IntakeConstants.kStatus6PeriodMs);
 
     try {
       m_IntakeForwardLaserCan.setRangingMode(RangingMode.SHORT);
       m_IntakeForwardLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-      m_IntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+      m_IntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
 
       m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
-      m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(6, 8, 4, 16));
-      m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+      m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+      m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }

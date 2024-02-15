@@ -211,11 +211,16 @@ public final class Constants {
     public static final double kMinRads = Units.degreesToRadians(90);
     public static final double kMaxRads = Units.degreesToRadians(315);
     public static final double kStowedRads = Units.degreesToRadians(300);
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 20;
+    
   }
 
   public static final class LevetatorConstants {
     public static final int kLevetatorMotorID = 23;
-    public static final int kLevetatorLaserCanID = 5;
+    public static final int kLevetatorLaserCanID = 10;
 
     public static final int kCurrentLimit = 115;
 
@@ -241,6 +246,10 @@ public final class Constants {
     public static final double kS = 0;
     public static final double kG = .7;
     public static final double kV = 0;
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 20;
   }
 
   public static final class VisionConstants {
@@ -267,6 +276,12 @@ public final class Constants {
         Units.inchesToMeters(1) * Math.PI * (1.0 / kGearRatio);
 
     public static final double kSensorOffset = Units.inchesToMeters(2.56);
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
   }
 
   public static final class ShooterConstants {
@@ -291,6 +306,12 @@ public final class Constants {
     public static final double kMaxOutput = 1;
     public static final double kMinOutput = -1;
     public static final double kMaxRPM = 6500;
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
   }
 
   public static final class IntakeConstants {
@@ -301,23 +322,13 @@ public final class Constants {
     public static final int kIntakeRearLaserCanID = 4;
 
     public static final int kDetectionDistanceMM = 25;
-  }
+    public static final boolean kMotorInverted = false;
 
-  public static final class LevetatorPivotConstants {
-    public static final double kGearRatio = 120.0 / 1.0;
-    public static final int kLeadMotorId = 30;
-    public static final int kFollowerMotorId = 31;
-    public static final int kMotorCurrentLimit = 85;
-    public static final boolean kLeadMotorInverted = false;
-    public static final boolean kEncoderInverted = true;
-    public static final int kPivotUpPIDSlot = 0;
-    public static final int kPivotDownPIDSlot = 1;
-    public static final double kPivotMinOutput = -1;
-    public static final double kPivotMaxOutput = 1;
-    public static final double kPivotEncoderPositionFactor = Units.degreesToRadians(360); // rads
-    public static final double kPivotEncoderVelocityFactor =
-        Units.degreesToRadians(360.0) / 60.0; // rads per second
-    public static final double kPivotOffset = Units.degreesToRadians(90);
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
   }
 
   public static final class PivotConstants {
@@ -350,5 +361,13 @@ public final class Constants {
     // The offset of the arm from the horizontal in its neutral position,
     // measured from the horizontal
     public static final double kPivotOffsetRads = Units.degreesToRadians(90);
+
+    public static final int kLeaderStatus0PeriodMs = 5;
+    public static final int kFollowerStatus0PeriodMs = 100;
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kLeaderStatus5PeriodMs = 20;
+    public static final int kFollowerStatus5PeriodMs = 500;
+    
   }
 }

@@ -4,19 +4,26 @@
 
 package frc.robot.subsystems;
 
+import java.util.Map;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.WristConstants;
 import frc.robot.SetPoints.WristSetpoints;
@@ -30,6 +37,15 @@ public class WristSubsystem extends SubsystemBase {
   private final AbsoluteEncoder m_encoder = m_wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
   private final ArmFeedforward m_feedforward = new ArmFeedforward(0, 2.98, 0.02);
+
+  public final Trigger m_tempTrigger = new Trigger(() -> (m_wristMotor.getMotorTemperature() > 65));
+
+  GenericEntry bolWristTempEntry = Shuffleboard.getTab("Wrist")
+  .add("WristMotorTemp", false)
+  .withWidget("Boolean Box")
+  .withProperties(Map.of("colorWhenTrue", "maroon", "colorWhenFalse", "green"))
+  .getEntry();
+  
 
   /** Creates a new WristIntake. */
   public WristSubsystem() {
@@ -52,6 +68,10 @@ public class WristSubsystem extends SubsystemBase {
     m_encoder.setPositionConversionFactor(2.0 * Math.PI);
     m_encoder.setVelocityConversionFactor((2.0 * Math.PI) / 60.0);
 
+    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, WristConstants.kStatus3PeriodMs);
+    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, WristConstants.kStatus4PeriodMs);
+    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, WristConstants.kStatus5PeriodMs);
+
     m_wristPIDController.setFeedbackDevice(m_encoder);
     m_wristPIDController.setPositionPIDWrappingEnabled(false);
     m_wristPIDController.setPositionPIDWrappingMaxInput(WristConstants.kMaxRads);
@@ -59,7 +79,9 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setP(0.000001, 0);
     m_wristPIDController.setI(0, 0);
     m_wristPIDController.setD(0, 0);
+
   }
+
 
   public Command wristForward() {
     return runOnce(() -> wristSpeed(1));
@@ -113,4 +135,12 @@ public class WristSubsystem extends SubsystemBase {
     }
     return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
   }
+  
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+
+    bolWristTempEntry.setBoolean(m_tempTrigger.getAsBoolean());
+  }
+
 }

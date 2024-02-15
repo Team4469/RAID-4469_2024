@@ -8,10 +8,17 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.LaserCan.RangingMode;
+import au.grapplerobotics.LaserCan.RegionOfInterest;
+import au.grapplerobotics.LaserCan.TimingBudget;
 // import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,6 +36,13 @@ public class LevetatorSubsystem extends SubsystemBase {
   private final SparkPIDController m_pidController;
 
   private final double kGravity;
+
+    private LaserCan m_distanceSensor;
+
+    int ID;
+
+    private boolean EncoderSet = false;
+
 
   // private final ElevatorFeedforward m_elevatorFeedforward =
   //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
@@ -65,17 +79,35 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_pidController.setPositionPIDWrappingMaxInput(Units.inchesToMeters(9));
     m_pidController.setPositionPIDWrappingMinInput(Units.inchesToMeters(0));
 
-    m_pidController.setP(3.2);
+    m_pidController.setP(3);
     m_pidController.setI(0);
     m_pidController.setD(2);
 
     m_pidController.setOutputRange(-.1, 1);
 
-    m_motor.setInverted(true);
+    m_motor.setInverted(LevetatorConstants.kMotorInverted);
 
     m_motor.burnFlash();
 
+    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, LevetatorConstants.kStatus3PeriodMs);
+    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, LevetatorConstants.kStatus4PeriodMs);
+    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, LevetatorConstants.kStatus5PeriodMs);
+
+
+
     kGravity = 1.6;
+
+    m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+    ID = LevetatorConstants.kLevetatorLaserCanID;
+
+    try {
+      m_distanceSensor.setRangingMode(RangingMode.SHORT);
+      m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 4, 4));
+      m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_33MS);
+    } catch (ConfigurationFailedException e) {
+      System.out.println("Configuration failed! " + e);
+    }
+
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
@@ -162,5 +194,21 @@ public class LevetatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
+
+    if (!EncoderSet) {
+      try {
+        m_encoder.setPosition(((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
+        System.out.println(ID + "encoder set at " + m_encoder.getPosition());
+      } catch (Exception e) {
+        // System.out.println("Encoder " + ID + " not yet set");
+      }
+    }
+
+    if (m_encoder.getPosition() != 0) {
+      EncoderSet = true;
+    }
+
+
   }
 }
