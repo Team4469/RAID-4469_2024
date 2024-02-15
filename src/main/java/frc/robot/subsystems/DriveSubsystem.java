@@ -24,6 +24,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -184,9 +185,18 @@ public class DriveSubsystem extends SubsystemBase {
   public void drive(
       double xSpeed, double ySpeed, double rot, boolean fieldRelative, boolean rateLimit) {
 
+    var alliance = DriverStation.getAlliance();
+    var invert = 1;
+    if (alliance.isPresent() && alliance.get() == Alliance.Red) {
+        invert = -1;
+    }
+
     xSpeed *= DRIVE_SPEED_MULTIPLIER.get();
     ySpeed *= DRIVE_SPEED_MULTIPLIER.get();
     rot *= ROTATION_SPEED_MULTIPLIER.get();
+
+    xSpeed *= invert;
+    ySpeed *= invert;
 
     double xSpeedCommanded;
     double ySpeedCommanded;
