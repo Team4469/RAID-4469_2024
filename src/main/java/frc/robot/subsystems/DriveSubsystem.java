@@ -188,7 +188,7 @@ public class DriveSubsystem extends SubsystemBase {
     var alliance = DriverStation.getAlliance();
     var invert = 1;
     if (alliance.isPresent() && alliance.get() == Alliance.Red) {
-        invert = -1;
+      invert = -1;
     }
 
     xSpeed *= DRIVE_SPEED_MULTIPLIER.get();

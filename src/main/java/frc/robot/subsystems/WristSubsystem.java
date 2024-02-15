@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.Map;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -19,7 +17,6 @@ import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -27,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.WristConstants;
 import frc.robot.SetPoints.WristSetpoints;
+import java.util.Map;
 
 public class WristSubsystem extends SubsystemBase {
   private final CANSparkFlex m_wristMotor =
@@ -40,12 +38,12 @@ public class WristSubsystem extends SubsystemBase {
 
   public final Trigger m_tempTrigger = new Trigger(() -> (m_wristMotor.getMotorTemperature() > 65));
 
-  GenericEntry bolWristTempEntry = Shuffleboard.getTab("Wrist")
-  .add("WristMotorTemp", false)
-  .withWidget("Boolean Box")
-  .withProperties(Map.of("colorWhenTrue", "maroon", "colorWhenFalse", "green"))
-  .getEntry();
-  
+  GenericEntry bolWristTempEntry =
+      Shuffleboard.getTab("Wrist")
+          .add("WristMotorTemp", false)
+          .withWidget("Boolean Box")
+          .withProperties(Map.of("colorWhenTrue", "maroon", "colorWhenFalse", "green"))
+          .getEntry();
 
   /** Creates a new WristIntake. */
   public WristSubsystem() {
@@ -79,9 +77,7 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setP(0.000001, 0);
     m_wristPIDController.setI(0, 0);
     m_wristPIDController.setD(0, 0);
-
   }
-
 
   public Command wristForward() {
     return runOnce(() -> wristSpeed(1));
@@ -135,12 +131,11 @@ public class WristSubsystem extends SubsystemBase {
     }
     return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
   }
-  
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
 
     bolWristTempEntry.setBoolean(m_tempTrigger.getAsBoolean());
   }
-
 }

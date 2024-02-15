@@ -12,7 +12,6 @@ import au.grapplerobotics.LaserCan.TimingBudget;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -57,7 +56,7 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeMotor.restoreFactoryDefaults();
 
     m_intakeMotor.setSmartCurrentLimit(IntakeConstants.kCurrentLimit);
-    
+
     m_intakeMotor.setInverted(IntakeConstants.kMotorInverted);
 
     m_intakeMotor.burnFlash();

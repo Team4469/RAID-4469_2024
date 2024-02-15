@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.TunableNumber;
- 
+
 public class ShooterSubsystem extends SubsystemBase {
 
   TunableNumber SHOOTER_SPEED_CLOSED_LOOP = new TunableNumber("Shooter/RPMSetpoint", 0);
@@ -57,15 +57,23 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
 
-    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
-    
+    m_rightShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
+    m_rightShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
+    m_rightShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
+    m_rightShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
+    m_leftShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
+    m_leftShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
+    m_leftShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
+    m_leftShooterMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
+
     m_rightPIDController.setP(ShooterConstants.kP_right);
     m_rightPIDController.setI(ShooterConstants.kI_right);
     m_rightPIDController.setD(ShooterConstants.kD_right);

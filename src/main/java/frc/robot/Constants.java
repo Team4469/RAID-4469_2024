@@ -215,7 +215,6 @@ public final class Constants {
     public static final int kStatus3PeriodMs = 500;
     public static final int kStatus4PeriodMs = 500;
     public static final int kStatus5PeriodMs = 20;
-    
   }
 
   public static final class LevetatorConstants {
@@ -281,7 +280,6 @@ public final class Constants {
     public static final int kStatus4PeriodMs = 500;
     public static final int kStatus5PeriodMs = 500;
     public static final int kStatus6PeriodMs = 500;
-    
   }
 
   public static final class ShooterConstants {
@@ -311,7 +309,6 @@ public final class Constants {
     public static final int kStatus4PeriodMs = 500;
     public static final int kStatus5PeriodMs = 500;
     public static final int kStatus6PeriodMs = 500;
-    
   }
 
   public static final class IntakeConstants {
@@ -328,7 +325,6 @@ public final class Constants {
     public static final int kStatus4PeriodMs = 500;
     public static final int kStatus5PeriodMs = 500;
     public static final int kStatus6PeriodMs = 500;
-    
   }
 
   public static final class PivotConstants {
@@ -368,6 +364,5 @@ public final class Constants {
     public static final int kStatus4PeriodMs = 500;
     public static final int kLeaderStatus5PeriodMs = 20;
     public static final int kFollowerStatus5PeriodMs = 500;
-    
   }
 }

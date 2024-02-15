@@ -79,16 +79,19 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
 
-    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, PivotConstants.kLeaderStatus0PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, PivotConstants.kLeaderStatus0PeriodMs);
     m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PivotConstants.kStatus3PeriodMs);
     m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PivotConstants.kStatus4PeriodMs);
-    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PivotConstants.kLeaderStatus5PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, PivotConstants.kLeaderStatus5PeriodMs);
 
-    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, PivotConstants.kFollowerStatus0PeriodMs);
+    m_followMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, PivotConstants.kFollowerStatus0PeriodMs);
     m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PivotConstants.kStatus3PeriodMs);
     m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PivotConstants.kStatus4PeriodMs);
-    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
-
+    m_followMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
   }
 
   public Command pivotForward() {

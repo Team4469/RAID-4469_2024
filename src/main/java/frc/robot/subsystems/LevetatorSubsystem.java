@@ -4,6 +4,12 @@
 
 package frc.robot.subsystems;
 
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.LaserCan.RangingMode;
+import au.grapplerobotics.LaserCan.RegionOfInterest;
+import au.grapplerobotics.LaserCan.TimingBudget;
+// import edu.wpi.first.math.controller.ElevatorFeedforward;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
@@ -13,13 +19,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
-
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.LaserCan.RangingMode;
-import au.grapplerobotics.LaserCan.RegionOfInterest;
-import au.grapplerobotics.LaserCan.TimingBudget;
-// import edu.wpi.first.math.controller.ElevatorFeedforward;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -37,12 +36,11 @@ public class LevetatorSubsystem extends SubsystemBase {
 
   private final double kGravity;
 
-    private LaserCan m_distanceSensor;
+  private LaserCan m_distanceSensor;
 
-    int ID;
+  int ID;
 
-    private boolean EncoderSet = false;
-
+  private boolean EncoderSet = false;
 
   // private final ElevatorFeedforward m_elevatorFeedforward =
   //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
@@ -93,8 +91,6 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, LevetatorConstants.kStatus4PeriodMs);
     m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, LevetatorConstants.kStatus5PeriodMs);
 
-
-
     kGravity = 1.6;
 
     m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
@@ -107,7 +103,6 @@ public class LevetatorSubsystem extends SubsystemBase {
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
-
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
@@ -198,7 +193,8 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     if (!EncoderSet) {
       try {
-        m_encoder.setPosition(((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
+        m_encoder.setPosition(
+            ((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
         System.out.println(ID + "encoder set at " + m_encoder.getPosition());
       } catch (Exception e) {
         // System.out.println("Encoder " + ID + " not yet set");
@@ -208,7 +204,5 @@ public class LevetatorSubsystem extends SubsystemBase {
     if (m_encoder.getPosition() != 0) {
       EncoderSet = true;
     }
-
-
   }
 }
