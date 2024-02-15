@@ -1,0 +1,52 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.2051783177640432,
+        "y": 6.8314006952087984
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 1.807810985992343,
+        "y": 6.294209611567372
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.320238783996087,
+        "y": 6.673616402788362
+      },
+      "prevControl": {
+        "x": 1.9975440737918515,
+        "y": 6.474619352016482
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "Note1_Intake"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 5.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0.5,
+    "rotation": 25.0,
+    "rotateFast": false
+  },
+  "reversed": false,
+  "folder": "4 Note Auto Near Amp",
+  "previewStartingState": {
+    "rotation": 50.0,
+    "velocity": 0.0
+  },
+  "useDefaultConstraints": true
+}

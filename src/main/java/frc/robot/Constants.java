@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -23,7 +24,35 @@ public final class Constants {
 
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
+    public static final int kOperatorControllerPort = 1;
     public static final double kDriveDeadband = 0.05;
+  }
+
+  public static final class GlobalConstants {
+    public enum AmpDirection {
+      FRONT,
+      REAR
+    }
+
+    public enum StageLocationAlliance {
+      STAGE_LEFT_BLUE,
+      STAGE_RIGHT_BLUE,
+      CENTER_STAGE_BLUE,
+      STAGE_LEFT_RED,
+      STAGE_RIGHT_RED,
+      CENTER_STAGE_RED
+    }
+
+    public enum StageLoc {
+      STAGE_LEFT,
+      STAGE_RIGHT,
+      CENTER_STAGE
+    }
+  }
+
+  public static final class PathFollowingConstraints {
+    public static final PathConstraints kStagePathConstraints =
+        new PathConstraints(2, 2, Units.degreesToRadians(360), Units.degreesToRadians(540));
   }
 
   public static final class DriveConstants {
@@ -42,11 +71,14 @@ public final class Constants {
     public static final double kModuleInsetMeters = Units.inchesToMeters(1.75);
     public static final double kRobotChassisLengthMeters = Units.inchesToMeters(27);
     public static final double kRobotChassisWidthMeters = Units.inchesToMeters(27);
-    public static final double kTrackWidthMeters = kRobotChassisLengthMeters - (2 * kModuleInsetMeters);
+    public static final double kTrackWidthMeters =
+        kRobotChassisLengthMeters - (2 * kModuleInsetMeters);
     // Distance between centers of right and left wheels on robot
-    public static final double kWheelBaseMeters = kRobotChassisWidthMeters - (2 * kModuleInsetMeters);
+    public static final double kWheelBaseMeters =
+        kRobotChassisWidthMeters - (2 * kModuleInsetMeters);
     // Distance between front and back wheels on robot
-    public static final double kRobotDriveRadiusMeters = Math.abs(Math.hypot(kTrackWidthMeters/2, kWheelBaseMeters/2));
+    public static final double kRobotDriveRadiusMeters =
+        Math.abs(Math.hypot(kTrackWidthMeters / 2, kWheelBaseMeters / 2));
     public static final SwerveDriveKinematics kDriveKinematics =
         new SwerveDriveKinematics(
             new Translation2d(kWheelBaseMeters / 2, kTrackWidthMeters / 2),
@@ -148,6 +180,194 @@ public final class Constants {
   }
 
   public static final class NeoMotorConstants {
-    public static final double kFreeSpeedRpm = 5676;
+    public static final double kFreeSpeedRpm = 6784;
+  }
+
+  public static final class LeftClimberConstants {
+    public static final int kMotorID = 36;
+    public static final int kSensorID = 3;
+    public static final boolean kMotorInverted = false;
+  }
+
+  public static final class RightClimberConstants {
+    public static final int kMotorID = 35;
+    public static final int kSensorID = 0;
+    public static final boolean kMotorInverted = true;
+  }
+
+  public static final class WristConstants {
+    public static final int kWristMotorID = 50;
+
+    public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
+    public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+    public static final int kSmartCurrentLimit = 85; // A
+
+    public static final double kPositionConversionFactor = 2.0 * Math.PI;
+    public static final double kVelocityConversionFactor = (2.0 * Math.PI) / 60.0;
+
+    public static final double kMinRads = Units.degreesToRadians(90);
+    public static final double kMaxRads = Units.degreesToRadians(315);
+    public static final double kStowedRads = Units.degreesToRadians(300);
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 20;
+    
+  }
+
+  public static final class LevetatorConstants {
+    public static final int kLevetatorMotorID = 23;
+    public static final int kLevetatorLaserCanID = 10;
+
+    public static final int kCurrentLimit = 115;
+
+    public static final boolean kMotorInverted = true;
+
+    public static final double kLevetatorOffset = Units.inchesToMeters(.875);
+
+    public static final double kGearRatio = 5;
+    public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
+
+    public static final double kPositionConversionFactor =
+        kSprocketDiameterMeters * Math.PI * (1.0 / kGearRatio);
+    public static final double kVelocityConversionFactor = kPositionConversionFactor / 60;
+
+    public static final double kForwardSoftLimit = Units.inchesToMeters(8);
+    public static final double kReverseSoftLimit = Units.inchesToMeters(0);
+
+    public static final double kMaxVelocityMeterPerSecond = .5; // m/s
+    public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
+    public static final double kP = .1;
+    public static final double kI = 0.0;
+    public static final double kD = 0;
+    public static final double kS = 0;
+    public static final double kG = .7;
+    public static final double kV = 0;
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 20;
+  }
+
+  public static final class VisionConstants {
+    public static final String kFrontLimelightName = "limelight-front";
+    public static final String kRearLimelightName = "limelight-rear";
+  }
+
+  public static final class ClimberConstants {
+    public static final double kMaxVelocity = 0.25; // mm/s
+    public static final double kMaxAcceleration = 0.25; // mm/s^2
+    public static final double kP = 1.3;
+    public static final double kI = 0.0;
+    public static final double kD = 0.7;
+    public static final double kS = 1.1;
+    public static final double kG = 1.2;
+    public static final double kV = 1.3;
+
+    public static final double extensionSpeed = .1;
+    public static final double retractionSpeed = -.5;
+
+    public static final double kGearRatio = 15.60;
+
+    public static final double kPositionConversionFactor =
+        Units.inchesToMeters(1) * Math.PI * (1.0 / kGearRatio);
+
+    public static final double kSensorOffset = Units.inchesToMeters(2.56);
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
+  }
+
+  public static final class ShooterConstants {
+    public static final int kLeftShooterCanID = 21;
+    public static final int kRightShooterCanID = 20;
+    public static final boolean kLeftMotorInverted = true;
+    public static final boolean kRightMotorInverted = !kLeftMotorInverted;
+    public static final int kCurrentLimit = 80; // Amps
+
+    public static final double kP_right = 6e-5;
+    public static final double kI_right = 0;
+    public static final double kD_right = 0;
+    public static final double kFF_right = 0.000015;
+    public static final double kIz_right = 0;
+
+    public static final double kP_left = 6e-5;
+    public static final double kI_left = 0;
+    public static final double kD_left = 0;
+    public static final double kFF_left = 0.000015;
+    public static final double kIz_left = 0;
+
+    public static final double kMaxOutput = 1;
+    public static final double kMinOutput = -1;
+    public static final double kMaxRPM = 6500;
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
+  }
+
+  public static final class IntakeConstants {
+    public static final int kMotorID = 22;
+    public static final int kCurrentLimit = 80;
+
+    public static final int kIntakeForwardLaserCanID = 1;
+    public static final int kIntakeRearLaserCanID = 4;
+
+    public static final int kDetectionDistanceMM = 25;
+    public static final boolean kMotorInverted = false;
+
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kStatus5PeriodMs = 500;
+    public static final int kStatus6PeriodMs = 500;
+    
+  }
+
+  public static final class PivotConstants {
+    public static final int kLeadMotorPort = 30;
+    public static final int kFollowerMotorPort = 31;
+
+    public static final int kMotorCurrentLimit = 85;
+
+    public static final boolean kLeadMotorInverted = false;
+    public static final boolean kEncoderInverted = true;
+
+    public static final double kP = 1;
+
+    // These are fake gains; in actuality these must be determined individually for each robot
+    public static final double kSVolts = 1;
+    public static final double kGVolts = 1;
+    public static final double kVVoltSecondPerRad = 0.5;
+    public static final double kAVoltSecondSquaredPerRad = 0.1;
+
+    public static final double kMaxVelocityRadPerSecond = .25;
+    public static final double kMaxAccelerationRadPerSecSquared = .1;
+
+    public static final double kPivotEncoderPositionFactor = Units.degreesToRadians(360); // rads
+    public static final double kPivotEncoderVelocityFactor =
+        Units.degreesToRadians(360.0) / 60.0; // rads per second
+
+    public static final float kForwardSoftLimit = (float) Units.degreesToRadians(200);
+    public static final float kReverseSoftLimit = (float) Units.degreesToRadians(85);
+
+    // The offset of the arm from the horizontal in its neutral position,
+    // measured from the horizontal
+    public static final double kPivotOffsetRads = Units.degreesToRadians(90);
+
+    public static final int kLeaderStatus0PeriodMs = 5;
+    public static final int kFollowerStatus0PeriodMs = 100;
+    public static final int kStatus3PeriodMs = 500;
+    public static final int kStatus4PeriodMs = 500;
+    public static final int kLeaderStatus5PeriodMs = 20;
+    public static final int kFollowerStatus5PeriodMs = 500;
+    
   }
 }
