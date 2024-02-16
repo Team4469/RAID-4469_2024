@@ -61,7 +61,7 @@ public class WristSubsystem extends SubsystemBase {
     m_wristMotor.setInverted(true);
     m_wristMotor.setSmartCurrentLimit(115);
 
-    m_wristMotor.setClosedLoopRampRate(1);
+    m_wristMotor.setClosedLoopRampRate(2);
 
     // m_wristMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     // m_wristMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
@@ -80,9 +80,9 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setPositionPIDWrappingMaxInput(WristConstants.kMaxRads);
     m_wristPIDController.setPositionPIDWrappingMinInput(WristConstants.kMinRads);
     m_wristPIDController.setOutputRange(-1, 1);
-    m_wristPIDController.setP(.6);
+    m_wristPIDController.setP(.65);
     m_wristPIDController.setI(0);
-    m_wristPIDController.setD(8);
+    m_wristPIDController.setD(10);
 
     m_wristMotor.burnFlash();
 
@@ -93,8 +93,8 @@ public class WristSubsystem extends SubsystemBase {
     // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, WristConstants.kStatus3PeriodMs);
     // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, WristConstants.kStatus4PeriodMs);
     // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, WristConstants.kStatus5PeriodMs);
-    // SETPOINT_INIT = false;
-    setSetpoint(2.5);
+    SETPOINT_INIT = false;
+    // setSetpoint(2.5);
   }
 
   // public Command wristForward() {
@@ -118,6 +118,10 @@ public class WristSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSetpoint(setpoint)); // .until(() -> inRange(setpoint))
   }
 
+  public Command wristInRange() {
+    return Commands.waitUntil(() -> inRange(getSetpoint()));
+  }
+
   // public Command wristTest1() {
   //   return Commands.run(() -> setAngle(2.6))
   //       .until(() -> inRange(2.6)); // .until(() -> inRange(setpoint))
@@ -130,8 +134,8 @@ public class WristSubsystem extends SubsystemBase {
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
-    if (setpoint > measurement - Units.degreesToRadians(1.5)
-        && setpoint < measurement + Units.degreesToRadians(1.5)) {
+    if (setpoint > measurement - Units.degreesToRadians(2)
+        && setpoint < measurement + Units.degreesToRadians(2)) {
       return true;
     } else {
       return false;
@@ -172,17 +176,20 @@ public class WristSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    // if (!SETPOINT_INIT) {
-    //   setSetpoint(Setpoint_init_filter.calculate(getMeasurement()));
-    //   if (init_loop_count <= init_loop_number) {
-    //     init_loop_count++;
-    //   } else {
-    //     SETPOINT_INIT = true;
-    //   }
-    // }
+    if (!SETPOINT_INIT) {
+      setSetpoint(Setpoint_init_filter.calculate(getMeasurement()));
+      if (init_loop_count <= init_loop_number) {
+        init_loop_count++;
+      } else {
+        SETPOINT_INIT = true;
+      }
+    }
+
     bolWristTempEntry.setBoolean(m_tempTrigger.getAsBoolean());
     SmartDashboard.putNumber("Wrist Setpoint", getSetpoint());
     SmartDashboard.putNumber("Wrist Encoder", m_encoder.getPosition());
     SmartDashboard.putNumber("Wrist Current", m_wristMotor.getOutputCurrent());
+    SmartDashboard.putBoolean("Wrist In Range", inRange(getSetpoint()));
+
   }
 }

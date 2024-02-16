@@ -11,7 +11,11 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.SparkPIDController;
+
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -29,6 +33,11 @@ public class PivotSubsystem extends SubsystemBase {
   private final SparkPIDController m_pidController;
 
   private double SETPOINT;
+  private boolean SETPOINT_INIT;
+  private int init_loop_number = 15;
+  private int init_loop_count = 0;
+  MedianFilter Setpoint_init_filter = new MedianFilter(init_loop_number);
+
 
   /** Creates a new PivotSubsystem2. */
   public PivotSubsystem() {
@@ -41,9 +50,9 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pidController = m_leadMotor.getPIDController();
 
-    m_pidController.setP(.35);
+    m_pidController.setP(.4);
     m_pidController.setI(0);
-    m_pidController.setD(20);
+    m_pidController.setD(14);
 
     m_pidController.setPositionPIDWrappingEnabled(false);
 
@@ -97,23 +106,27 @@ public class PivotSubsystem extends SubsystemBase {
     // m_followMotor.setPeriodicFramePeriod(
     //     PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
 
-    SETPOINT = 2.5;
+    SETPOINT_INIT = false;
   }
 
-  public Command pivotForward() {
-    return run(this::speedFwd);
-  }
+  // public Command pivotForward() {
+  //   return run(this::speedFwd);
+  // }
 
-  public Command pivotReverse() {
-    return run(this::speedRev);
-  }
+  // public Command pivotReverse() {
+  //   return run(this::speedRev);
+  // }
 
-  public Command pivotStop() {
-    return runOnce(this::speedStop);
-  }
+  // public Command pivotStop() {
+  //   return runOnce(this::speedStop);
+  // }
 
   public double getRadiansFromHorizontal() {
     return m_encoder.getPosition() - Math.PI / 2;
+  }
+
+  public Command pivotInRange() {
+    return Commands.waitUntil(() -> inRange(getSetpoint()));
   }
 
   public Command pivotAmpSmartCommand(AmpDirection ampDirection) {
@@ -138,15 +151,15 @@ public class PivotSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSetpoint(setpoint));
   }
 
-  public Command pivotSetpointVerticalCommand() {
-    System.out.println("Pivot set to 3.14");
-    return Commands.runOnce(() -> setSetpoint(3.14));
-  }
+  // public Command pivotSetpointVerticalCommand() {
+  //   System.out.println("Pivot set to 3.14");
+  //   return Commands.runOnce(() -> setSetpoint(3.14));
+  // }
 
-  public Command pivotSetpoint45Command() {
-    System.out.println("Pivot set to 2.18");
-    return Commands.runOnce(() -> setSetpoint(2.18));
-  }
+  // public Command pivotSetpoint45Command() {
+  //   System.out.println("Pivot set to 2.18");
+  //   return Commands.runOnce(() -> setSetpoint(2.18));
+  // }
 
   private void setAngle(double radians) {
     m_pidController.setReference(radians, ControlType.kPosition);
@@ -154,7 +167,8 @@ public class PivotSubsystem extends SubsystemBase {
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
-    if (setpoint > measurement - .05 && setpoint < measurement + .05) {
+    if (setpoint > measurement - Units.degreesToRadians(2)
+        && setpoint < measurement + Units.degreesToRadians(2)) {
       return true;
     } else {
       return false;
@@ -179,6 +193,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private void setSetpoint(double radians) {
     SETPOINT = radians;
+    m_pidController.setReference(SETPOINT, ControlType.kPosition,0,.2,ArbFFUnits.kVoltage);
   }
 
   private double getSetpoint() {
@@ -188,8 +203,18 @@ public class PivotSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+
+    if (!SETPOINT_INIT) {
+      setSetpoint(Setpoint_init_filter.calculate(getMeasurement()));
+      if (init_loop_count <= init_loop_number) {
+        init_loop_count++;
+      } else {
+        SETPOINT_INIT = true;
+      }
+    }
+
     SmartDashboard.putNumber("Pivot Setpoint", getSetpoint());
-    SmartDashboard.putNumber("Pivot Encoder", m_encoder.getPosition());
+    SmartDashboard.putNumber("Pivot Encoder", getMeasurement());
+    SmartDashboard.putBoolean("Pivot In Range", inRange(getSetpoint()));
   }
 }

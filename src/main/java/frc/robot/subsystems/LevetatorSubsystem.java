@@ -140,6 +140,10 @@ public class LevetatorSubsystem extends SubsystemBase {
     // .finallyDo(this::levHold); // .until(() -> inRange(setpoint))
   }
 
+  public Command levInRange() {
+    return Commands.waitUntil(() -> inRange(getSetpoint()));
+  }
+
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
     if (setpoint > measurement - Units.inchesToMeters(.25)
@@ -148,10 +152,6 @@ public class LevetatorSubsystem extends SubsystemBase {
     } else {
       return false;
     }
-  }
-
-  private void levHold() {
-    m_motor.setVoltage(kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()));
   }
 
   private void setDistance(double meters) {
@@ -229,5 +229,7 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
+    SmartDashboard.putBoolean("Levetator In Range", inRange(getSetpoint()));
+
   }
 }

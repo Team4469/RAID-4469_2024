@@ -300,8 +300,8 @@ public class RobotContainer {
     /* PIVOT */
     m_operatorController.rightBumper().onTrue(m_wrist.wristAngleSetpoint(3.14));
 
-    m_operatorController.a().onTrue(m_pivot.pivotSetpoint45Command());
-    m_operatorController.b().onTrue(m_pivot.pivotSetpointVerticalCommand());
+    m_operatorController.a().onTrue(m_pivot.pivotSetpointCommand(2.5));
+    m_operatorController.b().onTrue(m_pivot.pivotSetpointCommand(3.14));
 
     // m_operatorController.y().onTrue(m_piv2.pivotTest1().andThen(m_piv2.pivotTest2()));
 
@@ -332,20 +332,20 @@ public class RobotContainer {
     m_operatorController
         .rightTrigger()
         .onTrue(
-            (m_levetator
-                    .levetatorSetpointPosition(LevetatorSetpoints.kIntake)
-                    .until(() -> m_levetator.inRange(LevetatorSetpoints.kIntake)))
+            (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+                .andThen(m_levetator.levInRange())
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
                 .andThen(m_intake.intakeAutoIntake())
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(2.5).until(() -> m_pivot.inRange(2.5))
-                        .andThen(
-                            m_wrist.wristAngleSetpoint(3.14).until(() -> m_wrist.inRange(3.14))))
+                .andThen(m_pivot.pivotSetpointCommand(2.5))
+                .andThen(m_pivot.pivotInRange().withTimeout(1))
+                .andThen(m_wrist.wristAngleSetpoint(3.14))
+                .andThen(m_wrist.wristInRange())
                 .andThen(m_levetator.levetatorSetpointPosition(0)));
+
+    m_operatorController.leftBumper().onTrue(m_intake.intakeAutoIntake());
   }
 
   /**
