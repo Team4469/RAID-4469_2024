@@ -15,7 +15,7 @@ public final class SetPoints {
     public static final double kAmpFront = Units.degreesToRadians(45);
     public static final double kTrap = Units.degreesToRadians(100);
     public static final double kSubwoofer = Units.degreesToRadians(25);
-    public static final double kIntake = Units.degreesToRadians(5);
+    public static final double kIntake = 1.63;
   }
 
   public final class WristSetpoints {
@@ -25,16 +25,16 @@ public final class SetPoints {
     public static final double kAmpFront = Units.degreesToRadians(75);
     public static final double kTrap = Units.degreesToRadians(155);
     public static final double kSubwoofer = Units.degreesToRadians(90);
-    public static final double kIntake = Units.degreesToRadians(135);
+    public static final double kIntake = 3.9;
   }
 
   public final class LevetatorSetpoints {
     public static final double kStowed = Units.inchesToMeters(1);
-    public static final double kAmpRear = Units.inchesToMeters(10);
-    public static final double kAmpFront = Units.inchesToMeters(10);
-    public static final double kTrap = Units.inchesToMeters(20);
+    public static final double kAmpRear = Units.inchesToMeters(5);
+    public static final double kAmpFront = Units.inchesToMeters(5);
+    public static final double kTrap = Units.inchesToMeters(8);
     public static final double kSubwoofer = Units.inchesToMeters(1);
-    public static final double kIntake = Units.inchesToMeters(12);
+    public static final double kIntake = Units.inchesToMeters(5.5);
     public static final double kMovement = Units.inchesToMeters(3);
     public static final double kPodium = Units.inchesToMeters(2);
   }

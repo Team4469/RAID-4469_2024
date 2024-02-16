@@ -20,6 +20,7 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +29,7 @@ import frc.robot.Constants.LevetatorConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 
 public class LevetatorSubsystem extends SubsystemBase {
+  private double SETPOINT;
   private final CANSparkMax m_motor;
 
   private final RelativeEncoder m_encoder;
@@ -55,7 +57,7 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     m_pivot = pivot;
 
-    m_motor.setClosedLoopRampRate(3);
+    m_motor.setClosedLoopRampRate(1);
 
     m_encoder = m_motor.getEncoder();
 
@@ -77,9 +79,9 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_pidController.setPositionPIDWrappingMaxInput(Units.inchesToMeters(9));
     m_pidController.setPositionPIDWrappingMinInput(Units.inchesToMeters(0));
 
-    m_pidController.setP(3);
+    m_pidController.setP(4);
     m_pidController.setI(0);
-    m_pidController.setD(2);
+    m_pidController.setD(8);
 
     m_pidController.setOutputRange(-.1, 1);
 
@@ -91,7 +93,7 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, LevetatorConstants.kStatus4PeriodMs);
     m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, LevetatorConstants.kStatus5PeriodMs);
 
-    kGravity = 1.6;
+    kGravity = 1;
 
     m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
     ID = LevetatorConstants.kLevetatorLaserCanID;
@@ -103,6 +105,10 @@ public class LevetatorSubsystem extends SubsystemBase {
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
+
+    m_encoder.setPosition(0);
+
+    SETPOINT = 0;
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
@@ -130,12 +136,11 @@ public class LevetatorSubsystem extends SubsystemBase {
 
   public Command levetatorSetpointPosition(double meters) {
     double setpoint = meters;
-    return Commands.run(() -> setDistance(setpoint))
-        .until(() -> inRange(setpoint))
-        .finallyDo(this::levHold); // .until(() -> inRange(setpoint))
+    return Commands.runOnce(() -> setSetpoint(setpoint));
+    // .finallyDo(this::levHold); // .until(() -> inRange(setpoint))
   }
 
-  private boolean inRange(double setpoint) {
+  public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
     if (setpoint > measurement - Units.inchesToMeters(.25)
         && setpoint < measurement + Units.inchesToMeters(.25)) {
@@ -186,23 +191,43 @@ public class LevetatorSubsystem extends SubsystemBase {
     return m_encoder.getPosition();
   }
 
+  private void setSetpoint(double radians) {
+    SETPOINT = radians;
+  }
+
+  private double getSetpoint() {
+    return SETPOINT;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
+    // LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
 
-    if (!EncoderSet) {
-      try {
-        m_encoder.setPosition(
-            ((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
-        System.out.println(ID + "encoder set at " + m_encoder.getPosition());
-      } catch (Exception e) {
-        // System.out.println("Encoder " + ID + " not yet set");
-      }
-    }
+    // if (!EncoderSet) {
+    //   try {
+    //     m_encoder.setPosition(
+    //         ((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
+    //     System.out.println(ID + "encoder set at " + m_encoder.getPosition());
+    //   } catch (Exception e) {
+    //     // System.out.println("Encoder " + ID + " not yet set");
+    //   }
+    // }
 
-    if (m_encoder.getPosition() != 0) {
-      EncoderSet = true;
-    }
+    // if (m_encoder.getPosition() != 0) {
+    //   EncoderSet = true;
+    // }
+
+    // System.out.println(m_encoder.getPosition());
+
+    m_pidController.setReference(
+        SETPOINT,
+        ControlType.kPosition,
+        0,
+        kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()),
+        ArbFFUnits.kVoltage);
+
+    SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
+    SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
   }
 }

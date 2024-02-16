@@ -8,16 +8,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -231,21 +230,21 @@ public class RobotContainer {
     // m_wrist.setDefaultCommand(m_wrist.positionStowed());
 
     // Configure default commands
-    m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
-        new RunCommand(
-            () ->
-                m_robotDrive.drive(
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                    -MathUtil.applyDeadband(
-                        m_driverController.getRightX(), OIConstants.kDriveDeadband),
-                    true,
-                    true),
-            m_robotDrive));
+    // m_robotDrive.setDefaultCommand(
+    //     // The left stick controls translation of the robot.
+    //     // Turning is controlled by the X axis of the right stick.
+    //     new RunCommand(
+    //         () ->
+    //             m_robotDrive.drive(
+    //                 -MathUtil.applyDeadband(
+    //                     m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+    //                 -MathUtil.applyDeadband(
+    //                     m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+    //                 -MathUtil.applyDeadband(
+    //                     m_driverController.getRightX(), OIConstants.kDriveDeadband),
+    //                 true,
+    //                 true),
+    //         m_robotDrive));
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     // StageChooser = new SendableChooser<>();
@@ -263,56 +262,90 @@ public class RobotContainer {
     /* TEST CASES */
 
     /* INTAKE */
-    m_operatorController
-        .a()
-        .onTrue(
-            m_intake
-                .intakeAutoIntake2()
-                .andThen(
-                    new RunCommand(
-                            () ->
-                                m_operatorController.getHID().setRumble(RumbleType.kBothRumble, 1))
-                        .withTimeout(.5)));
+    // m_operatorController
+    //     .a()
+    //     .onTrue(
+    //         m_intake
+    //             .intakeAutoIntake2()
+    //             .andThen(
+    //                 new RunCommand(
+    //                         () ->
+    //                             m_operatorController.getHID().setRumble(RumbleType.kBothRumble,
+    // 1))
+    //                     .withTimeout(.5)));
 
     /* CLIMBERS */
-    m_operatorController
-        .povUp()
-        .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+    // m_operatorController
+    //     .povUp()
+    //     .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
 
-    m_operatorController
-        .povUp()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+    // m_operatorController
+    //     .povUp()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
-    m_operatorController
-        .povDown()
-        .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+    // m_operatorController
+    //     .povDown()
+    //     .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
 
-    m_operatorController
-        .povDown()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+    // m_operatorController
+    //     .povDown()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
     /* PIVOT */
+    m_operatorController.rightBumper().onTrue(m_wrist.wristAngleSetpoint(3.14));
 
-    // m_operatorController.a().onTrue(m_piv2.pivotTest1());
-    // m_operatorController.b().onTrue(m_piv2.pivotTest2());
+    m_operatorController.a().onTrue(m_pivot.pivotSetpoint45Command());
+    m_operatorController.b().onTrue(m_pivot.pivotSetpointVerticalCommand());
 
     // m_operatorController.y().onTrue(m_piv2.pivotTest1().andThen(m_piv2.pivotTest2()));
 
     /* LEVETATOR */
-    // m_operatorController.a().onTrue(m_lev.levTest1());
-    // m_operatorController.b().onTrue(m_lev.levTest2());
+    m_operatorController.x().onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(2)));
+    m_operatorController
+        .y()
+        .onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(5.5)));
 
     // m_operatorController.a().onTrue(m_lev.levForward());
     //     m_operatorController.a().onFalse(m_lev.levStop());
     // m_operatorController.b().onTrue(m_lev.levReverse());
     //         m_operatorController.b().onFalse(m_lev.levStop());
 
+    /* WRIST */
+
+    // m_operatorController.y().onTrue(m_wrist.wristForward());
+    //     m_operatorController.y().onFalse(m_wrist.wristStop());
+    // m_operatorController.x().onTrue(m_wrist.wristReverse());
+    //         m_operatorController.x().onFalse(m_wrist.wristStop());
+
+    // m_operatorController.a().onTrue(m_wrist.wristTest1());
+    //     // m_operatorController.a().onFalse(m_wrist.wristStop());
+    // m_operatorController.b().onTrue(m_wrist.wristTest2());
+    // m_operatorController.b().onFalse(m_wrist.wristStop());
+    // m_operatorController.x().onTrue(m_wrist.wristStop());
+
+    m_operatorController
+        .rightTrigger()
+        .onTrue(
+            (m_levetator
+                    .levetatorSetpointPosition(LevetatorSetpoints.kIntake)
+                    .until(() -> m_levetator.inRange(LevetatorSetpoints.kIntake)))
+                .andThen(
+                    m_pivot
+                        .pivotSetpointCommand(PivotSetpoints.kIntake)
+                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
+                .andThen(m_intake.intakeAutoIntake())
+                .andThen(
+                    m_pivot
+                        .pivotSetpointCommand(2.5).until(() -> m_pivot.inRange(2.5))
+                        .andThen(
+                            m_wrist.wristAngleSetpoint(3.14).until(() -> m_wrist.inRange(3.14))))
+                .andThen(m_levetator.levetatorSetpointPosition(0)));
   }
 
   /**
