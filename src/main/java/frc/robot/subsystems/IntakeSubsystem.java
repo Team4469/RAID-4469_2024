@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.math.filter.Debouncer;
-import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,9 +23,6 @@ import frc.utils.TunableNumber;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkFlex m_intakeMotor;
-
-  LinearFilter currentFilter = LinearFilter.movingAverage(10);
-  private double filteredCurrent;
 
   TunableNumber INTAKE_SPEED = new TunableNumber("Intake/Intake speed", .5);
   TunableNumber OUTTAKE_SPEED =
@@ -81,7 +77,8 @@ public class IntakeSubsystem extends SubsystemBase {
 
   /* Commands */
   public Command intakeAutoIntake() {
-    Debouncer debounce = new Debouncer(.06, Debouncer.DebounceType.kRising);
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
     return runOnce(
             () -> {
               debounce.calculate(false);
@@ -98,7 +95,34 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(TRANSFER_BACKWARD_SPEED.get());
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.2))
+                .withTimeout(IntakeConstants.kAutoIntakeBackMoveTime))
+        // stop motor power
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
+  }
+
+  public Command intakeShootCommand() {
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to backward transfer speed
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_BACKWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+        .andThen(
+            run(() -> {
+                  setSpeed(1);
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .withTimeout(IntakeConstants.kShootFeedTime))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -124,7 +148,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeOuttake() {
-    return Commands.run(() -> setSpeed(OUTTAKE_SPEED.get()));
+    return Commands.run(() -> setSpeed(OUTTAKE_SPEED.get())).withTimeout(1);
   }
 
   public Command intakeTransferFwd() {

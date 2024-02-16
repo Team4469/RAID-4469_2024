@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -45,6 +44,9 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightPIDController = m_rightShooterMotor.getPIDController();
     m_leftPIDController = m_leftShooterMotor.getPIDController();
 
+    m_rightPIDController.setFeedbackDevice(m_rightShooterEncoder);
+    m_leftPIDController.setFeedbackDevice(m_leftShooterEncoder);
+
     m_rightShooterMotor.restoreFactoryDefaults();
     m_leftShooterMotor.restoreFactoryDefaults();
 
@@ -54,34 +56,40 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
     m_leftShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
 
+    // m_rightShooterEncoder.setAverageDepth(2);
+    // m_rightShooterEncoder.setMeasurementPeriod(16);
+
+    // m_leftShooterEncoder.setAverageDepth(2);
+    // m_leftShooterEncoder.setMeasurementPeriod(16);
+
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
 
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
+    // m_rightShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
+    // m_rightShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
+    // m_rightShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
+    // m_rightShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
+    // m_leftShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
+    // m_leftShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
+    // m_leftShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
+    // m_leftShooterMotor.setPeriodicFramePeriod(
+    //     PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
 
-    m_rightPIDController.setP(ShooterConstants.kP_right);
+    m_rightPIDController.setP(.0025);
     m_rightPIDController.setI(ShooterConstants.kI_right);
     m_rightPIDController.setD(ShooterConstants.kD_right);
     m_rightPIDController.setIZone(ShooterConstants.kIz_right);
     m_rightPIDController.setFF(ShooterConstants.kFF_right);
     m_rightPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
-    m_leftPIDController.setP(ShooterConstants.kP_left);
+    m_leftPIDController.setP(3);
     m_leftPIDController.setI(ShooterConstants.kI_left);
     m_leftPIDController.setD(ShooterConstants.kD_left);
     m_leftPIDController.setIZone(ShooterConstants.kIz_left);
@@ -91,7 +99,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   /* Command Factory */
   public Command shooterSpeakerShot() {
-    return Commands.runOnce(() -> shootPIDControl(SHOOTER_SPEED_CLOSED_LOOP.get()));
+    return Commands.runOnce(() -> setSpeed(1));
   }
 
   public Command shooterStop() {
@@ -99,7 +107,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shooterFeed() {
-    return Commands.runOnce(() -> setSpeed(SHOOTER_SPEED_OPEN_LOOP.get()));
+    return Commands.runOnce(() -> setSpeed(.5));
   }
 
   public Command shooterAmpSmartCommand(AmpDirection ampDirection) {
@@ -115,7 +123,21 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.run(() -> setSpeed(speed));
   }
 
+  public Command shooterAboveSpeedCommand() {
+    return Commands.waitUntil(this::aboveSpeed);
+  }
+
   /* Methods */
+
+  private boolean aboveSpeed() {
+    var currentSpeed =
+        Math.min(m_rightShooterEncoder.getVelocity(), m_leftShooterEncoder.getVelocity());
+    if (currentSpeed > 5500) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
   private void setSpeed(double speed) {
     m_rightShooterMotor.set(speed);

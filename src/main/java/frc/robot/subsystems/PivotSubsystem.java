@@ -11,9 +11,8 @@ import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.SparkPIDController;
-
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -38,7 +37,6 @@ public class PivotSubsystem extends SubsystemBase {
   private int init_loop_count = 0;
   MedianFilter Setpoint_init_filter = new MedianFilter(init_loop_number);
 
-
   /** Creates a new PivotSubsystem2. */
   public PivotSubsystem() {
 
@@ -50,18 +48,18 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pidController = m_leadMotor.getPIDController();
 
-    m_pidController.setP(.4);
-    m_pidController.setI(0);
-    m_pidController.setD(14);
+    m_pidController.setP(PivotConstants.kP); // .4
+    m_pidController.setI(PivotConstants.kI); // 0
+    m_pidController.setD(PivotConstants.kD); // 14
 
     m_pidController.setPositionPIDWrappingEnabled(false);
 
     m_pidController.setPositionPIDWrappingMaxInput(4);
     m_pidController.setPositionPIDWrappingMinInput(Math.PI / 2);
 
-    m_pidController.setOutputRange(-1, 1);
+    m_pidController.setOutputRange(PivotConstants.kMinOutput, PivotConstants.kMaxOutput);
 
-    m_leadMotor.setClosedLoopRampRate(1);
+    m_leadMotor.setClosedLoopRampRate(PivotConstants.kClosedLoopRampRate);
 
     m_encoder = m_leadMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
@@ -72,14 +70,14 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
     m_followMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
 
-    m_leadMotor.setSoftLimit(SoftLimitDirection.kForward, 4);
+    m_leadMotor.setSoftLimit(SoftLimitDirection.kForward, PivotConstants.kForwardSoftLimit);
     m_leadMotor.setSoftLimit(SoftLimitDirection.kReverse, PivotConstants.kReverseSoftLimit);
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    m_encoder.setZeroOffset(5.07);
+    m_encoder.setZeroOffset(PivotConstants.kPivotZeroOffset);
 
-    m_followMotor.follow(m_leadMotor, false);
+    m_followMotor.follow(m_leadMotor, PivotConstants.kFollowMotorInverted);
 
     m_leadMotor.setIdleMode(IdleMode.kBrake);
     m_followMotor.setIdleMode(IdleMode.kBrake);
@@ -109,17 +107,17 @@ public class PivotSubsystem extends SubsystemBase {
     SETPOINT_INIT = false;
   }
 
-  // public Command pivotForward() {
-  //   return run(this::speedFwd);
-  // }
+  public Command pivotForward() {
+    return run(this::speedFwd);
+  }
 
-  // public Command pivotReverse() {
-  //   return run(this::speedRev);
-  // }
+  public Command pivotReverse() {
+    return run(this::speedRev);
+  }
 
-  // public Command pivotStop() {
-  //   return runOnce(this::speedStop);
-  // }
+  public Command pivotStop() {
+    return runOnce(this::speedStop);
+  }
 
   public double getRadiansFromHorizontal() {
     return m_encoder.getPosition() - Math.PI / 2;
@@ -193,7 +191,7 @@ public class PivotSubsystem extends SubsystemBase {
 
   private void setSetpoint(double radians) {
     SETPOINT = radians;
-    m_pidController.setReference(SETPOINT, ControlType.kPosition,0,.2,ArbFFUnits.kVoltage);
+    m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
   }
 
   private double getSetpoint() {
