@@ -233,7 +233,7 @@ public final class Constants {
 
     public static final double kLevetatorOffset = Units.inchesToMeters(0);
 
-    public static final double kGearRatio = 5;
+    public static final double kGearRatio = 25;
     public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
 
     public static final double kPositionConversionFactor =
