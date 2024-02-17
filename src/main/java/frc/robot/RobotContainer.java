@@ -343,7 +343,8 @@ public class RobotContainer {
         .rightTrigger()
         .onTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-                .andThen(m_levetator.levInRange())
+                // .andThen(m_levetator.levInRange())
+                .andThen(new WaitCommand(.5))
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
