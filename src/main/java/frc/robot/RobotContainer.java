@@ -447,9 +447,9 @@ public class RobotContainer {
                 .andThen(m_levetator.levInRange().withTimeout(1))
                 .andThen(
                     m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
-                .andThen(m_shooter.shooterAboveSpeedCommand())
+                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer).withTimeout(1)
+                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
+                .andThen(m_shooter.shooterAboveSpeedCommand().withTimeout(1))
                 .andThen(m_intake.intakeShootCommand())
                 .andThen(m_shooter.shooterStop())
                 .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
