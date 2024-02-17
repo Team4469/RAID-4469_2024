@@ -328,6 +328,13 @@ public class RobotContainer {
 
     /* DRIVER CONTROLS */
 
+    m_driverController
+        .x()
+        .onTrue(
+            m_intake.intakeOuttake()
+            .andThen(m_intake.intakeStop())
+        );
+
         m_driverController
         .y()
         .onTrue(
