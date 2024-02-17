@@ -248,9 +248,9 @@ public final class Constants {
 
     public static final double kMaxVelocityMeterPerSecond = .5; // m/s
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
-    public static final double kP = 2;
+    public static final double kP = 1;
     public static final double kI = 0.0;
-    public static final double kD = 4;
+    public static final double kD = 2;
     public static final double kS = 0;
     public static final double kGravity = 1;
     public static final double kV = 0;
