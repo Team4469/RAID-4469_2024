@@ -462,7 +462,7 @@ public class RobotContainer {
         .leftTrigger()
         .onFalse(
             m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                .pivotSetpointCommand(PivotSetpoints.kStowed).alongWith(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange().withTimeout(1))
