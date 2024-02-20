@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.utils.TunableNumber;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -40,15 +39,6 @@ public class DRIVE_WITH_HEADING_SUPPLIER extends Command {
   private double ROTATION_PID_KP_DEFAULT = .4;
   private double ROTATION_PID_KI_DEFAULT = 0;
   private double ROTATION_PID_KD_DEFAULT = 0;
-  private double ROTATION_PID_TOLERANCE_DEFAULT = 5; // DEGREES
-
-  // Create Tuneable Numbers
-  private final TunableNumber ROTATION_PID_KP =
-      new TunableNumber("Swerve/DriveConstHead/kP", ROTATION_PID_KP_DEFAULT);
-  private final TunableNumber ROTATION_PID_KD =
-      new TunableNumber("Swerve/DriveConstHead/kD", ROTATION_PID_KD_DEFAULT);
-  private final TunableNumber ROTATION_PID_TOLERANCE_DEGREES =
-      new TunableNumber("Swerve/DriveConstHead/toleranceDeg", ROTATION_PID_TOLERANCE_DEFAULT);
 
   // Create Profiled PID Controller
   private ProfiledPIDController rotationController =
@@ -133,16 +123,6 @@ public class DRIVE_WITH_HEADING_SUPPLIER extends Command {
     }
 
     drive.drive(xVelo, yVelo, rotationOutput, true, true);
-
-    if (ROTATION_PID_KP.hasChanged()) {
-      rotationController.setP(ROTATION_PID_KP.get());
-    }
-    if (ROTATION_PID_KD.hasChanged()) {
-      rotationController.setD(ROTATION_PID_KD.get());
-    }
-    if (ROTATION_PID_TOLERANCE_DEGREES.hasChanged()) {
-      rotationController.setTolerance(Units.degreesToRadians(ROTATION_PID_TOLERANCE_DEGREES.get()));
-    }
 
     PREVIOUS_HEADING_RADS = CURRENT_HEADING_RADS;
   }

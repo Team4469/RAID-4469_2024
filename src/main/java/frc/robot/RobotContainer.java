@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LeftClimberConstants;
 import frc.robot.Constants.OIConstants;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
+import frc.robot.subsystems.utils.LimelightPipeline;
 import frc.utils.ShootingCalculators;
 import java.util.Map;
 import java.util.Optional;
@@ -351,6 +353,26 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
 
+    m_driverController
+        .x()
+        .onTrue(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .andThen(
+                    new RunCommand(
+                        () ->
+                            m_robotDrive.drive(
+                                limelight_range_proportional(),
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                                limelight_aim_proportional(),
+                                false,
+                                true),
+                        m_robotDrive)));
+
+                        
+    m_driverController.x().onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+
     /* DRIVER CONTROLS */
     // Set X
     m_driverController.rightBumper().whileTrue(m_robotDrive.setXCommand());
@@ -421,23 +443,25 @@ public class RobotContainer {
     m_driverController
         .y()
         .whileTrue(
+            m_frontLimelight.setPipelineCommand(LimelightPipeline.SHOOT_BLUE).andThen(
             m_shooter
                 .shooterVariableSpeakerShot(
-                    () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose))
+                    () -> ShootingCalculators.SimpleDistanceToSpeakerMeters(m_frontLimelight::y))
                 .alongWith(
                     m_wrist.wristAngleVariableSetpoint(
-                        () -> ShootingCalculators.DistanceToSpeakerMeters(m_robotDrive::getPose)))
-                .alongWith(
-                    new DRIVE_WITH_HEADING_SUPPLIER(
-                        m_robotDrive,
-                        () ->
-                            -MathUtil.applyDeadband(
-                                m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                        () ->
-                            -MathUtil.applyDeadband(
-                                m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                        () -> ShootingCalculators.RotationToSpeaker(m_robotDrive::getPose)))
-                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3));
+                        () -> ShootingCalculators.SimpleDistanceToSpeakerMeters(m_frontLimelight::y)))
+                .alongWith(new RunCommand(
+                            () ->
+                                m_robotDrive.drive(
+                                    -MathUtil.applyDeadband(
+                                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                                    -MathUtil.applyDeadband(
+                                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                                    limelight_aim_proportional(),
+                                    true,
+                                    true),
+                            m_robotDrive))
+                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
     // Use right stick as pure heading direction
     // m_driverController
@@ -515,5 +539,35 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
+  }
+
+  double limelight_range_proportional() {
+    double kP = .1;
+    double targetingForwardSpeed = m_frontLimelight.y() * kP;
+    targetingForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+    targetingForwardSpeed *= -1.0;
+    return targetingForwardSpeed;
+  }
+
+  double limelight_aim_proportional() {
+    // kP (constant of proportionality)
+    // this is a hand-tuned number that determines the aggressiveness of our proportional control
+    // loop
+    // if it is too high, the robot will oscillate around.
+    // if it is too low, the robot will never reach its target
+    // if the robot never turns in the correct direction, kP should be inverted.
+    double kP = .035;
+
+    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
+    // your limelight 3 feed, tx should return roughly 31 degrees.
+    double targetingAngularVelocity = m_frontLimelight.x() * kP;
+
+    // convert to radians per second for our drive method
+    targetingAngularVelocity *= DriveConstants.kMaxAngularSpeed;
+
+    // invert since tx is positive when the target is to the right of the crosshair
+    targetingAngularVelocity *= -1.0;
+
+    return targetingAngularVelocity;
   }
 }

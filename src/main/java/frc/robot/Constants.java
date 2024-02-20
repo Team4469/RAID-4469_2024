@@ -256,6 +256,11 @@ public final class Constants {
     public static final String kRearLimelightName = "limelight-rear";
   }
 
+  public static final class FrontLimelightConstants {
+    public static final double kAngleFromVerticalDegrees = 30;
+    public static final double kDistanceFromFloorMeters = Units.inchesToMeters(7.15);
+  }
+
   public static final class ClimberConstants {
     public static final double kMaxVelocity = 0.25; // mm/s
     public static final double kMaxAcceleration = 0.25; // mm/s^2

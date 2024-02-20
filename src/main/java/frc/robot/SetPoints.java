@@ -11,8 +11,8 @@ public final class SetPoints {
     // Currently using pid control on the spark so this should be in rads to be consistent with
     // other subs
     public static final double kStowed = Units.degreesToRadians(15); // Degrees
-    public static final double kAmpRear = Units.degreesToRadians(90);
-    public static final double kAmpFront = Units.degreesToRadians(45);
+    public static final double kAmpFront = Units.degreesToRadians(90);
+    public static final double kAmpRear = Units.degreesToRadians(45);
     public static final double kTrap = Units.degreesToRadians(100);
     public static final double kSubwoofer = Units.degreesToRadians(25);
     public static final double kIntake = Units.degreesToRadians(5);
@@ -21,8 +21,8 @@ public final class SetPoints {
   public final class WristSetpoints {
     // Currently using trap profile subsystem so this needs to be in rads
     public static final double kStowed = Units.degreesToRadians(90);
-    public static final double kAmpRear = Units.degreesToRadians(135);
-    public static final double kAmpFront = Units.degreesToRadians(75);
+    public static final double kAmpFront = Units.degreesToRadians(135);
+    public static final double kAmpRear = Units.degreesToRadians(75);
     public static final double kTrap = Units.degreesToRadians(155);
     public static final double kSubwoofer = Units.degreesToRadians(90);
     public static final double kIntake = Units.degreesToRadians(135);
@@ -30,8 +30,8 @@ public final class SetPoints {
 
   public final class LevetatorSetpoints {
     public static final double kStowed = Units.inchesToMeters(1);
-    public static final double kAmpRear = Units.inchesToMeters(10);
     public static final double kAmpFront = Units.inchesToMeters(10);
+    public static final double kAmpRear = Units.inchesToMeters(10);
     public static final double kTrap = Units.inchesToMeters(20);
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(12);

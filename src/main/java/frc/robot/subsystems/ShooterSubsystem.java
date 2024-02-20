@@ -96,6 +96,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> shootPIDControl(SHOOTER_SPEED_CLOSED_LOOP.get()));
   }
 
+  /**
+   * 
+   * @param distanceToTarget distance to target in Meters
+   */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
     double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
     return Commands.run(() -> shootPIDControl(target));
