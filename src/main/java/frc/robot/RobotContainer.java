@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController;
@@ -216,8 +217,8 @@ public class RobotContainer {
     //     "ExtendRightClimber_Trap", m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight));
 
     // Configure the button bindings
-    configureButtonBindings();
-    // configureTestButtonBindings();
+    // configureButtonBindings();
+    configureTestButtonBindings();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -247,6 +248,11 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindings() {
+    m_driverController.a().onTrue(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed).alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront)));
+
+    m_driverController.y().onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(1)));
+    m_driverController.x().onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(7)));
+
     /* TEST CASES */
 
     /* INTAKE */

@@ -240,7 +240,7 @@ public final class Constants {
         kSprocketDiameterMeters * Math.PI * (1.0 / kGearRatio);
     public static final double kVelocityConversionFactor = kPositionConversionFactor / 60;
 
-    public static final double kMinOutput = -.1;
+    public static final double kMinOutput = -1;
     public static final double kMaxOutput = 1;
 
     public static final double kForwardSoftLimit = Units.inchesToMeters(8);
@@ -248,11 +248,11 @@ public final class Constants {
 
     public static final double kMaxVelocityMeterPerSecond = .5; // m/s
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
-    public static final double kP = 1.5;
+    public static final double kP = 8;
     public static final double kI = 0.0;
-    public static final double kD = 3;
+    public static final double kD = 1;
     public static final double kS = 0;
-    public static final double kGravity = 1;
+    public static final double kGravity = 0.17;
     public static final double kV = 0;
 
     public static final double kClosedLoopRampRate = 1;
