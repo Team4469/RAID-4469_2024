@@ -343,6 +343,13 @@ public class RobotContainer {
         );
 
         m_driverController
+            .x()
+            .onTrue(
+              m_intake.intakeOuttake()
+             .andThen(m_intake.intakeStop())
+            );
+
+        m_driverController
         .y()
         .onTrue(
             m_pivot
