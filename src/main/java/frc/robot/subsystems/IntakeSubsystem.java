@@ -113,16 +113,17 @@ public class IntakeSubsystem extends SubsystemBase {
         // set the intake to backward transfer speed
         .andThen(
             run(() -> {
-                  setSpeed(TRANSFER_BACKWARD_SPEED.get());
+                  setSpeed(-.075);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                // .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                 .withTimeout(.2))
         .andThen(
             run(() -> {
                   setSpeed(1);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(IntakeConstants.kShootFeedTime))
+                .withTimeout(2))
         // stop motor power
         .finallyDo(
             (interrupted) -> {

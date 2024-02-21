@@ -328,12 +328,30 @@ public class RobotContainer {
 
     /* DRIVER CONTROLS */
 
+        m_driverController
+        .x()
+        .onTrue(
+            m_intake.intakeOuttake()
+            .andThen(m_intake.intakeStop())
+        );
+
+        m_driverController
+        .y()
+        .onTrue(
+            m_pivot
+                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                .andThen(m_pivot.pivotInRange().withTimeout(1))
+                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                .andThen(m_wrist.wristInRange().withTimeout(1))
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
     // Intake
     m_driverController
         .rightTrigger()
         .onTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-                .andThen(m_levetator.levInRange())
+                // .andThen(m_levetator.levInRange())
+                .andThen(new WaitCommand(.5))
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -378,7 +396,7 @@ public class RobotContainer {
 
     m_driverController
         .rightBumper()
-        .and(m_driverController.leftTrigger())
+        .and(m_driverController.a())
         .onTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
@@ -415,10 +433,10 @@ public class RobotContainer {
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange())
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
+//Amp Front
     m_driverController
         .leftBumper()
-        .and(m_driverController.leftTrigger())
+        .and(m_driverController.a())
         .onTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
@@ -440,6 +458,7 @@ public class RobotContainer {
     // Subwoofer shot
     m_driverController
         .leftTrigger()
+        .and(m_driverController.a())
         .onTrue(
             m_shooter
                 .shooterSpeakerShot()
@@ -449,7 +468,7 @@ public class RobotContainer {
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kSubwoofer).withTimeout(1)
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
-                .andThen(m_shooter.shooterAboveSpeedCommand().withTimeout(1))
+                .andThen(new WaitCommand(.5))
                 .andThen(m_intake.intakeShootCommand())
                 .andThen(m_shooter.shooterStop())
                 .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
@@ -457,6 +476,28 @@ public class RobotContainer {
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange())
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+     m_driverController
+        .leftTrigger()
+        .onTrue(
+            m_shooter
+                .shooterSpeakerShot()
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
+                .andThen(m_levetator.levInRange().withTimeout(1))
+                .andThen(
+                    m_pivot
+                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer).withTimeout(1)
+                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
+                .andThen(new WaitCommand(2)));
+                // .andThen(m_intake.intakeShootCommand())
+                // .andThen(m_shooter.shooterStop())
+                // .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
+                // .andThen(m_pivot.pivotInRange().withTimeout(1))
+                // .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                // .andThen(m_wrist.wristInRange())
+                // .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    
 
     m_driverController
         .leftTrigger()

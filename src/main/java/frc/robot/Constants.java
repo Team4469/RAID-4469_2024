@@ -200,9 +200,9 @@ public final class Constants {
 
     public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
     public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
-    public static final double kP = .65;
+    public static final double kP = .325;
     public static final double kI = 0;
-    public static final double kD = 10;
+    public static final double kD = 5;
     public static final int kSmartCurrentLimit = 115; // A
 
     public static final double kEncoderZeroOffset = 2.688;
@@ -233,7 +233,7 @@ public final class Constants {
 
     public static final double kLevetatorOffset = Units.inchesToMeters(0);
 
-    public static final double kGearRatio = 5;
+    public static final double kGearRatio = 25;
     public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
 
     public static final double kPositionConversionFactor =
@@ -248,9 +248,9 @@ public final class Constants {
 
     public static final double kMaxVelocityMeterPerSecond = .5; // m/s
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
-    public static final double kP = 4;
+    public static final double kP = 1.5;
     public static final double kI = 0.0;
-    public static final double kD = 8;
+    public static final double kD = 3;
     public static final double kS = 0;
     public static final double kGravity = 1;
     public static final double kV = 0;
