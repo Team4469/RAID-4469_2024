@@ -544,6 +544,9 @@ public class RobotContainer {
                             m_robotDrive))
                 .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
+
+    m_driverController.y().onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+
     // Use right stick as pure heading direction
     // m_driverController
     //     .rightTrigger(.9)
