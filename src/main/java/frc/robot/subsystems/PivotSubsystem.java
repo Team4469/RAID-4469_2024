@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -88,21 +89,21 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
 
-    // m_leadMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus0, PivotConstants.kLeaderStatus0PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PivotConstants.kStatus3PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PivotConstants.kStatus4PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus5, PivotConstants.kLeaderStatus5PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, PivotConstants.kLeaderStatus0PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PivotConstants.kStatus3PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PivotConstants.kStatus4PeriodMs);
+    m_leadMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, PivotConstants.kLeaderStatus5PeriodMs);
 
-    // m_followMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus0, PivotConstants.kFollowerStatus0PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3,
-    // PivotConstants.kStatus3PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4,
-    // PivotConstants.kStatus4PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
+    m_followMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, PivotConstants.kFollowerStatus0PeriodMs);
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3,
+    PivotConstants.kStatus3PeriodMs);
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4,
+    PivotConstants.kStatus4PeriodMs);
+    m_followMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
 
     SETPOINT_INIT = false;
   }
