@@ -113,7 +113,7 @@ public class LevetatorSubsystem extends SubsystemBase {
         point = LevetatorSetpoints.kAmpRear;
         break;
     }
-    return Commands.run(() -> setDistance(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   public Command levetatorSetpointPosition(double meters) {

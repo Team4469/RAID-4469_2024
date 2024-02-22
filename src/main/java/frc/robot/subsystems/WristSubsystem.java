@@ -143,7 +143,7 @@ public class WristSubsystem extends SubsystemBase {
         point = WristSetpoints.kAmpRear;
         break;
     }
-    return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   private void setSetpoint(double radians) {

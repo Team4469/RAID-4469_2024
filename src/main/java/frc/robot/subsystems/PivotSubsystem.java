@@ -137,11 +137,7 @@ public class PivotSubsystem extends SubsystemBase {
         point = PivotSetpoints.kAmpRear;
         break;
     }
-    return Commands.run(
-            () -> {
-              setAngle(point);
-            })
-        .until(() -> inRange(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   public Command pivotSetpointCommand(double radians) {
