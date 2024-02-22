@@ -105,7 +105,6 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /**
-   * 
    * @param distanceToTarget distance to target in Meters
    */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {

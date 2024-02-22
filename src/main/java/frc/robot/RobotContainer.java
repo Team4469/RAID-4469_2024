@@ -32,7 +32,6 @@ import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
 // import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
-import frc.robot.commands.drive.DRIVE_WITH_HEADING_SUPPLIER;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -388,8 +387,28 @@ public class RobotContainer {
                                 true),
                         m_robotDrive)));
 
-                        
-    m_driverController.x().onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+    m_driverController
+        .b()
+        .whileTrue(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .andThen(
+                    new RunCommand(
+                        () ->
+                            m_robotDrive.drive(
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                                limelight_aim_proportional(),
+                                true,
+                                true),
+                        m_robotDrive)));
+
+    m_driverController
+        .x()
+        .or(m_driverController.b())
+        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
 
     /* DRIVER CONTROLS */
 
@@ -580,28 +599,38 @@ public class RobotContainer {
     m_driverController
         .y()
         .whileTrue(
-            m_frontLimelight.setPipelineCommand(LimelightPipeline.SHOOT_BLUE).andThen(
-            m_shooter
-                .shooterVariableSpeakerShot(
-                    () -> ShootingCalculators.SimpleDistanceToSpeakerMeters(m_frontLimelight::y))
-                .alongWith(
-                    m_wrist.wristAngleVariableSetpoint(
-                        () -> ShootingCalculators.SimpleDistanceToSpeakerMeters(m_frontLimelight::y)))
-                .alongWith(new RunCommand(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .andThen(
+                    m_shooter
+                        .shooterVariableSpeakerShot(
                             () ->
-                                m_robotDrive.drive(
-                                    -MathUtil.applyDeadband(
-                                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                                    -MathUtil.applyDeadband(
-                                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                                    limelight_aim_proportional(),
-                                    true,
-                                    true),
-                            m_robotDrive))
-                .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
+                                ShootingCalculators.SimpleDistanceToSpeakerMeters(
+                                    m_frontLimelight::y))
+                        .alongWith(
+                            m_wrist.wristAngleVariableSetpoint(
+                                () ->
+                                    ShootingCalculators.SimpleDistanceToSpeakerMeters(
+                                        m_frontLimelight::y)))
+                        .alongWith(
+                            new RunCommand(
+                                () ->
+                                    m_robotDrive.drive(
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftY(),
+                                            OIConstants.kDriveDeadband),
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftX(),
+                                            OIConstants.kDriveDeadband),
+                                        limelight_aim_proportional(),
+                                        true,
+                                        true),
+                                m_robotDrive))
+                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
-
-    m_driverController.y().onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+    m_driverController
+        .y()
+        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
 
     // Use right stick as pure heading direction
     // m_driverController
@@ -641,16 +670,28 @@ public class RobotContainer {
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
                 .andThen(m_intake.intakeOuttake())
                 .withTimeout(1));
-                
+
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
+    m_driverController
+        .povUp()
+        .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+    m_driverController
+        .povUp()
+        .onFalse(
+            m_rightClimber
+                .emergencyStopClimberCommand()
+                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
-    m_driverController.povUp().onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
-    m_driverController.povUp().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
-
-        m_driverController.povDown().onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
-        m_driverController.povDown().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
-    
+    m_driverController
+        .povDown()
+        .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+    m_driverController
+        .povDown()
+        .onFalse(
+            m_rightClimber
+                .emergencyStopClimberCommand()
+                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
     // Automated Trap Sequence
     // m_operatorController.y().onTrue(m_stageLeftConditional);

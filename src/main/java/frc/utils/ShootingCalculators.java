@@ -13,8 +13,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.robot.Constants.FrontLimelightConstants;
 import frc.robot.FieldPositions.SpeakerLocations;
-
-import java.lang.annotation.Target;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 import java.util.function.Supplier;
@@ -58,27 +56,27 @@ public class ShootingCalculators {
   }
 
   /**
-   * 
    * @param Offset limelight ty value from shooter targeting pipeline
    * @return distance in Meters from the target
    */
-  public static double SimpleDistanceToSpeakerMeters(DoubleSupplier Offset){
+  public static double SimpleDistanceToSpeakerMeters(DoubleSupplier Offset) {
     double targetOffsetAngle_Vertical = Offset.getAsDouble();
 
     // how many degrees back is your limelight rotated from perfectly vertical?
-    double limelightMountAngleDegrees = FrontLimelightConstants.kAngleFromVerticalDegrees; 
+    double limelightMountAngleDegrees = FrontLimelightConstants.kAngleFromVerticalDegrees;
 
     // distance from the center of the Limelight lens to the floor
-    double limelightLensHeightMeters = FrontLimelightConstants.kDistanceFromFloorMeters; 
+    double limelightLensHeightMeters = FrontLimelightConstants.kDistanceFromFloorMeters;
 
     // distance from the target to the floor
-    double goalHeightMeters = Units.inchesToMeters(58.125); 
+    double goalHeightMeters = Units.inchesToMeters(58.125);
 
     double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
     double angleToGoalRadians = Units.degreesToRadians(angleToGoalDegrees);
 
-    //calculate distance
-    double distanceFromLimelightToGoalMeters = (goalHeightMeters - limelightLensHeightMeters) / Math.tan(angleToGoalRadians);
+    // calculate distance
+    double distanceFromLimelightToGoalMeters =
+        (goalHeightMeters - limelightLensHeightMeters) / Math.tan(angleToGoalRadians);
 
     return distanceFromLimelightToGoalMeters;
   }
