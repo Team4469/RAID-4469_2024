@@ -33,8 +33,10 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.utils.Limelight;
 import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements Logged {
 
   private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs =
@@ -302,6 +304,7 @@ public class DriveSubsystem extends SubsystemBase {
    *
    * @param desiredStates The desired SwerveModule states.
    */
+  @Log
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -354,6 +357,7 @@ public class DriveSubsystem extends SubsystemBase {
     return DriveConstants.kDriveKinematics.toChassisSpeeds(getModuleStates());
   }
 
+  @Log
   private SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
       m_frontLeft.getState(), m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState()
