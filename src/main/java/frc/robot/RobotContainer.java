@@ -8,7 +8,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController;
@@ -70,7 +69,7 @@ public class RobotContainer {
           LeftClimberConstants.kMotorInverted);
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final WristSubsystem m_wrist = new WristSubsystem();
+  private final WristSubsystem m_wrist = new WristSubsystem(m_pivot);
   //   private final LedSubsystem m_LedSubsystem = new LedSubsystem();
 
   // The driver's controller
@@ -217,8 +216,8 @@ public class RobotContainer {
     //     "ExtendRightClimber_Trap", m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight));
 
     // Configure the button bindings
-    // configureButtonBindings();
-    configureTestButtonBindings();
+    configureButtonBindings();
+    // configureTestButtonBindings();
 
     // Configure default commands
     m_robotDrive.setDefaultCommand(
@@ -237,6 +236,8 @@ public class RobotContainer {
                     true),
             m_robotDrive));
 
+    // m_intake.setDefaultCommand(m_intake.intakeStop());
+
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
     // StageChooser = new SendableChooser<>();
     // StageChooser.setDefaultOption("Stage Right", StageLoc.STAGE_RIGHT);
@@ -248,10 +249,18 @@ public class RobotContainer {
   }
 
   private void configureTestButtonBindings() {
-    m_driverController.a().onTrue(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed).alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront)));
+    // m_driverController.a().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront).alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+    m_driverController
+        .a()
+        .onTrue(
+            m_wrist
+                .wristAngleSetpoint(WristSetpoints.kStowed)
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+    // m_driverController.y().onTrue(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake));
+    // m_driverController.x().onTrue(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed));
 
-    m_driverController.y().onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(1)));
-    m_driverController.x().onTrue(m_levetator.levetatorSetpointPosition(Units.inchesToMeters(7)));
+    m_driverController.x().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake));
+    m_driverController.y().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed));
 
     /* TEST CASES */
 
@@ -334,44 +343,31 @@ public class RobotContainer {
 
     /* DRIVER CONTROLS */
 
-    m_driverController
-        .x()
-        .onTrue(
-            m_intake.intakeOuttake()
-            .andThen(m_intake.intakeStop())
-        );
+    // m_driverController
+    //     .x()
+    //     .onTrue(
+    //       m_intake.intakeOuttake()
+    //      .andThen(m_intake.intakeStop())
+    //     );
 
-        m_driverController
-        .x()
-        .onTrue(
-            m_intake.intakeOuttake()
-            .andThen(m_intake.intakeStop())
-        );
-
-        m_driverController
-            .x()
-            .onTrue(
-              m_intake.intakeOuttake()
-             .andThen(m_intake.intakeStop())
-            );
-
-        m_driverController
-        .y()
-        .onTrue(
-            m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed)
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange().withTimeout(1))
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+    // m_driverController
+    // .y()
+    // .onTrue(
+    //     m_pivot
+    //         .pivotSetpointCommand(PivotSetpoints.kStowed)
+    //         .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //         .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //         .andThen(m_wrist.wristInRange().withTimeout(1))
+    //         .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     // Intake
     m_driverController
         .rightTrigger()
-        .onTrue(
+        .whileTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+                .andThen(m_levetator.levInRange().withTimeout(1))
                 // .andThen(m_levetator.levInRange())
-                .andThen(new WaitCommand(.5))
+                // .andThen(new WaitCommand(.5))
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -388,6 +384,8 @@ public class RobotContainer {
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
+                .withTimeout(1)
+                .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange().withTimeout(1))
@@ -396,7 +394,7 @@ public class RobotContainer {
     // AMP REAR (INTAKE SIDE)
     m_driverController
         .rightBumper()
-        .onTrue(
+        .whileTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
                 .andThen(m_levetator.levInRange().withTimeout(1))
@@ -426,6 +424,7 @@ public class RobotContainer {
                         .pivotSetpointCommand(PivotSetpoints.kAmpRear)
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
                 .andThen(m_intake.intakeOuttake())
+                .andThen(new WaitCommand(1))
                 .andThen(m_intake.intakeStop())
                 .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
@@ -436,7 +435,7 @@ public class RobotContainer {
     // AMP FRONT (SHOOTER)
     m_driverController
         .leftBumper()
-        .onTrue(
+        .whileTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
                 .andThen(m_levetator.levInRange().withTimeout(1))
@@ -453,7 +452,7 @@ public class RobotContainer {
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange())
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-//Amp Front
+    // Amp Front
     m_driverController
         .leftBumper()
         .and(m_driverController.a())
@@ -466,8 +465,9 @@ public class RobotContainer {
                         .pivotSetpointCommand(PivotSetpoints.kAmpFront)
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
                 .andThen(m_shooter.shooterFeed())
-                .andThen(new WaitCommand(1))
-                .andThen(m_intake.intakeTransferFwd().withTimeout(1))
+                .andThen(new WaitCommand(.5))
+                .andThen(m_intake.intakeTransferFwd())
+                .andThen(new WaitCommand(.5))
                 .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
                 .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
@@ -479,15 +479,17 @@ public class RobotContainer {
     m_driverController
         .leftTrigger()
         .and(m_driverController.a())
-        .onTrue(
+        .whileTrue(
             m_shooter
                 .shooterSpeakerShot()
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
                 .andThen(m_levetator.levInRange().withTimeout(1))
                 .andThen(
                     m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer).withTimeout(1)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
+                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+                        .withTimeout(1)
+                        .alongWith(
+                            m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
                 .andThen(new WaitCommand(.5))
                 .andThen(m_intake.intakeShootCommand())
                 .andThen(m_shooter.shooterStop())
@@ -497,33 +499,26 @@ public class RobotContainer {
                 .andThen(m_wrist.wristInRange())
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
-     m_driverController
+    m_driverController
         .leftTrigger()
-        .onTrue(
+        .whileTrue(
             m_shooter
                 .shooterSpeakerShot()
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
                 .andThen(m_levetator.levInRange().withTimeout(1))
                 .andThen(
                     m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer).withTimeout(1)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
-                .andThen(new WaitCommand(2)));
-                // .andThen(m_intake.intakeShootCommand())
-                // .andThen(m_shooter.shooterStop())
-                // .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
-                // .andThen(m_pivot.pivotInRange().withTimeout(1))
-                // .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                // .andThen(m_wrist.wristInRange())
-                // .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
-    
+                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+                        .withTimeout(1)
+                        .alongWith(
+                            m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1))));
 
     m_driverController
         .leftTrigger()
         .onFalse(
             m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed).alongWith(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                .alongWith(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange().withTimeout(1))
@@ -531,6 +526,14 @@ public class RobotContainer {
 
     // Zero IMU heading
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
+
+
+    m_driverController.povUp().onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+    m_driverController.povUp().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
+
+        m_driverController.povDown().onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+        m_driverController.povDown().onFalse(m_rightClimber.emergencyStopClimberCommand().alongWith(m_leftClimber.emergencyStopClimberCommand()));
+    
 
     // Automated Trap Sequence
     // m_operatorController.y().onTrue(m_stageLeftConditional);
@@ -566,6 +569,10 @@ public class RobotContainer {
     //         m_leftClimber
     //             .retractClimber(ClimberSetpoints.kRetractedHeight)
     //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
+  }
+
+  public void disabledInit() {
+    m_wrist.resetSetpointInit();
   }
 
   public Command getAutonomousCommand() {
