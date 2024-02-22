@@ -113,16 +113,17 @@ public class IntakeSubsystem extends SubsystemBase {
         // set the intake to backward transfer speed
         .andThen(
             run(() -> {
-                  setSpeed(TRANSFER_BACKWARD_SPEED.get());
+                  this.setSpeed(-.075);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                // .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                .withTimeout(.2))
         .andThen(
             run(() -> {
                   setSpeed(1);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(IntakeConstants.kShootFeedTime))
+                .withTimeout(2))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -148,15 +149,15 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeOuttake() {
-    return Commands.run(() -> setSpeed(OUTTAKE_SPEED.get())).withTimeout(1);
+    return Commands.runOnce(() -> setSpeed(-1));
   }
 
   public Command intakeTransferFwd() {
-    return Commands.run(() -> setSpeed(TRANSFER_FORWARD_SPEED.get()));
+    return Commands.runOnce(() -> setSpeed(TRANSFER_FORWARD_SPEED.get()));
   }
 
   public Command intakeTransferBck() {
-    return Commands.run(() -> setSpeed(TRANSFER_BACKWARD_SPEED.get()));
+    return Commands.runOnce(() -> setSpeed(TRANSFER_BACKWARD_SPEED.get()));
   }
 
   public Command intakeStop() {
@@ -166,6 +167,10 @@ public class IntakeSubsystem extends SubsystemBase {
   /* Methods */
   public void setSpeed(double speed) {
     m_intakeMotor.set(speed);
+  }
+
+  public void stop() {
+    m_intakeMotor.set(0);
   }
 
   @Override
