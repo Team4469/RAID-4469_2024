@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
@@ -34,6 +35,12 @@ public class WristSubsystem extends SubsystemBase {
 
   private final AbsoluteEncoder m_encoder = m_wristMotor.getAbsoluteEncoder(Type.kDutyCycle);
 
+  private PivotSubsystem m_pivot;
+
+  private final double perpendicularToArmRads = Math.PI;
+
+  private double kGravity = .15;
+
   private double SETPOINT;
   private boolean SETPOINT_INIT;
   private int init_loop_number = 15;
@@ -50,7 +57,8 @@ public class WristSubsystem extends SubsystemBase {
           .getEntry();
 
   /** Creates a new WristIntake. */
-  public WristSubsystem() {
+  public WristSubsystem(PivotSubsystem pivot) {
+    this.m_pivot = pivot;
     m_wristMotor.restoreFactoryDefaults();
 
     m_wristMotor.setIdleMode(IdleMode.kBrake);
@@ -99,8 +107,8 @@ public class WristSubsystem extends SubsystemBase {
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
-    if (setpoint > measurement - Units.degreesToRadians(2)
-        && setpoint < measurement + Units.degreesToRadians(2)) {
+    if (setpoint > measurement - Units.degreesToRadians(5)
+        && setpoint < measurement + Units.degreesToRadians(5)) {
       return true;
     } else {
       return false;
@@ -133,8 +141,22 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setReference(SETPOINT, ControlType.kPosition);
   }
 
+  private double wristRadsFromHorizontal() {
+    var pivAngle = m_pivot.getRadiansFromHorizontal();
+    var wristAngle = wristRadsFromArmHorizontal();
+    return (pivAngle - Math.PI / 2 - wristAngle);
+  }
+
+  private double wristRadsFromArmHorizontal() {
+    return getMeasurement() - perpendicularToArmRads;
+  }
+
   private double getSetpoint() {
     return SETPOINT;
+  }
+
+  public void resetSetpointInit() {
+    SETPOINT_INIT = false;
   }
 
   @Override
@@ -150,10 +172,18 @@ public class WristSubsystem extends SubsystemBase {
       }
     }
 
+    m_wristPIDController.setReference(
+        getSetpoint(),
+        ControlType.kPosition,
+        0,
+        kGravity * Math.cos(wristRadsFromHorizontal()),
+        ArbFFUnits.kVoltage);
+
     bolWristTempEntry.setBoolean(m_tempTrigger.getAsBoolean());
     SmartDashboard.putNumber("Wrist Setpoint", getSetpoint());
     SmartDashboard.putNumber("Wrist Encoder", m_encoder.getPosition());
     SmartDashboard.putNumber("Wrist Current", m_wristMotor.getOutputCurrent());
     SmartDashboard.putBoolean("Wrist In Range", inRange(getSetpoint()));
+    SmartDashboard.putNumber("Wrist Deg From Horz", wristRadsFromHorizontal());
   }
 }
