@@ -424,7 +424,7 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
           m_rearRight.getPosition()
         });
 
-    addVisionMeasurement(limelightFront);
-    addVisionMeasurement(limelightRear);
+    // addVisionMeasurement(limelightFront);
+    // addVisionMeasurement(limelightRear);
   }
 }
