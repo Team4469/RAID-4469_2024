@@ -7,8 +7,7 @@ package frc.robot.subsystems.utils;
 /** Add your docs here. */
 public enum LimelightPipeline {
   LOCALIZATION,
-  SHOOT_BLUE,
-  SHOOT_RED,
+  SHOOT,
   STAGE_LEFT_BLUE,
   STAGE_RIGHT_BLUE,
   STAGE_CENTER_BLUE,

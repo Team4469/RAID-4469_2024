@@ -18,7 +18,19 @@ public class ShootingInterpolationTables {
       SHOOTER_RPM_INTERP_TABLE.put(2.0, 5000.0);
       SHOOTER_RPM_INTERP_TABLE.put(3.0, 6000.0);
     }
-  }
+
+public class ShooterSpeedTable {
+    public static final InterpolatingDoubleTreeMap SHOOTER_SPEED_INTERP_TABLE =
+            new InterpolatingDoubleTreeMap();
+    
+        static {
+          SHOOTER_SPEED_INTERP_TABLE.put(1.0, 0.5);
+          SHOOTER_SPEED_INTERP_TABLE.put(2.0, 0.75);
+          SHOOTER_SPEED_INTERP_TABLE.put(3.0, 1.0);
+        }
+  }}
+
+
 
   public class ShooterLaunchAngleTable {
     public static final InterpolatingDoubleTreeMap SHOOTER_LAUNCH_ANGLE_INTERP_TABLE =

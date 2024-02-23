@@ -31,6 +31,7 @@ import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
+import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 // import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.subsystems.ClimberModule;
@@ -381,23 +382,9 @@ public class RobotContainer implements Logged {
         .y()
         .whileTrue(
             m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
-                .andThen(
-                    new PrintCommand(
-                        "Distance to Target (m): "
-                            + ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                m_frontLimelight::y)))
-                .andThen(
-                    m_shooter
-                        .shooterVariableSpeakerShot(
-                            () ->
-                                ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                    m_frontLimelight::y))
-                        .alongWith(
-                            m_wrist.wristAngleVariableSetpoint(
-                                () ->
-                                    ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                        m_frontLimelight::y)))
+                .setPipelineCommand(LimelightPipeline.SHOOT)
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer).alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kSubwoofer)))
+                .andThen(new shooterVariableDistanceSpeedCommand(m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
                         .alongWith(
                             new RunCommand(
                                 () ->
@@ -416,46 +403,6 @@ public class RobotContainer implements Logged {
 
     m_driverController
         .y()
-        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
-
-    m_driverController
-        .x()
-        .onTrue(
-            m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
-                .andThen(
-                    new RunCommand(
-                        () ->
-                            m_robotDrive.drive(
-                                limelight_range_proportional(),
-                                -MathUtil.applyDeadband(
-                                    m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                                limelight_aim_proportional(),
-                                false,
-                                true),
-                        m_robotDrive)));
-
-    m_driverController
-        .b()
-        .whileTrue(
-            m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
-                .andThen(
-                    new RunCommand(
-                        () ->
-                            m_robotDrive.drive(
-                                -MathUtil.applyDeadband(
-                                    m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                                -MathUtil.applyDeadband(
-                                    m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                                limelight_aim_proportional(),
-                                true,
-                                true),
-                        m_robotDrive)));
-
-    m_driverController
-        .x()
-        .or(m_driverController.b())
         .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
 
     /* DRIVER CONTROLS */
@@ -662,26 +609,26 @@ public class RobotContainer implements Logged {
 
     /* OPERATOR CONTROLS */
     // Amp Rear
-    m_operatorController
-        .leftBumper()
-        .onTrue(
-            (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpRear))
-                .andThen(
-                    (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpRear))
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
-                .andThen(m_intake.intakeTransferFwd().alongWith(m_shooter.shooterFeed()))
-                .withTimeout(1));
+    // m_driverController
+    //     .leftBumper()
+    //     .onTrue(
+    //         (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpRear))
+    //             .andThen(
+    //                 (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpRear))
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
+    //             .andThen(m_intake.intakeTransferFwd().alongWith(m_shooter.shooterFeed()))
+    //             .withTimeout(1));
 
-    // Amp Front
-    m_operatorController
-        .rightBumper()
-        .onTrue(
-            (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
-                .andThen(
-                    (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront))
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
-                .andThen(m_intake.intakeOuttake())
-                .withTimeout(1));
+    // // Amp Front
+    // m_driverController
+    //     .rightBumper()
+    //     .onTrue(
+    //         (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
+    //             .andThen(
+    //                 (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront))
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
+    //             .andThen(m_intake.intakeOuttake())
+    //             .withTimeout(1));
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
@@ -764,7 +711,7 @@ public class RobotContainer implements Logged {
     // if it is too high, the robot will oscillate around.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
+    double kP = .0025;
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.

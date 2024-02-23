@@ -147,7 +147,7 @@ public class WristSubsystem extends SubsystemBase {
     return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
   }
 
-  private void setSetpoint(double radians) {
+  public void setSetpoint(double radians) {
     SETPOINT = radians;
     m_wristPIDController.setReference(SETPOINT, ControlType.kPosition);
   }
