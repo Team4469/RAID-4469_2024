@@ -69,7 +69,7 @@ public class ShootingCalculators {
     double limelightLensHeightMeters = FrontLimelightConstants.kDistanceFromFloorMeters;
 
     // distance from the target to the floor
-    double goalHeightMeters = Units.inchesToMeters(58.125);
+    double goalHeightMeters = Units.inchesToMeters(57.125);
 
     double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
     double angleToGoalRadians = Units.degreesToRadians(angleToGoalDegrees);

@@ -10,6 +10,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
@@ -102,8 +103,8 @@ public class WristSubsystem extends SubsystemBase {
     double setpoint =
         ShooterLaunchAngleTable.SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.get(
             distanceToTarget.getAsDouble());
-    return Commands.run(() -> setAngle(setpoint))
-        .until(() -> inRange(setpoint)); // .until(() -> inRange(setpoint))
+    SmartDashboard.putNumber("Wrist Angle", setpoint);
+    return Commands.runOnce(() -> setAngle(setpoint));
   }
 
   public Command wristAngleSetpoint(double radians) {
@@ -146,7 +147,7 @@ public class WristSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSetpoint(point));
   }
 
-  private void setSetpoint(double radians) {
+  public void setSetpoint(double radians) {
     SETPOINT = radians;
     m_wristPIDController.setReference(SETPOINT, ControlType.kPosition);
   }

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -37,6 +38,8 @@ import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
+import frc.robot.commands.shooterVariableDistanceSpeedCommand;
+// import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 // import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.subsystems.ClimberModule;
@@ -52,6 +55,9 @@ import frc.robot.subsystems.utils.LimelightPipeline;
 import frc.utils.ShootingCalculators;
 
 import java.util.List;
+import monologue.Logged;
+import monologue.Monologue;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -61,7 +67,7 @@ import java.util.Optional;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Logged {
 
   // The robot's subsystems
   private final Limelight m_frontLimelight = new Limelight("limelight-front");
@@ -280,6 +286,9 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Stage Selector", StageChooser);
     SmartDashboard.putData("Auto Mode", autoChooser);
+    boolean fileOnly = false;
+    boolean lazyLogging = false;
+    Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
   }
 
   private void configureTestButtonBindings() {
@@ -409,7 +418,7 @@ public class RobotContainer {
         .x()
         .onTrue(
             m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .setPipelineCommand(LimelightPipeline.SHOOT)
                 .andThen(
                     new RunCommand(
                         () ->
@@ -426,18 +435,9 @@ public class RobotContainer {
         .y()
         .whileTrue(
             m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
-                .andThen(
-                    m_shooter
-                        .shooterVariableSpeakerShot(
-                            () ->
-                                ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                    m_frontLimelight::y))
-                        .alongWith(
-                            m_wrist.wristAngleVariableSetpoint(
-                                () ->
-                                    ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                        m_frontLimelight::y)))
+                .setPipelineCommand(LimelightPipeline.SHOOT)
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer).alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kSubwoofer)))
+                .andThen(new shooterVariableDistanceSpeedCommand(m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
                         .alongWith(
                             new RunCommand(
                                 () ->
@@ -454,6 +454,12 @@ public class RobotContainer {
                                 m_robotDrive))
                         .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
+        m_driverController
+            .y().and(m_driverController.a())
+            .onTrue(m_intake.intakeShootCommand());
+                       
+    
+
     m_driverController
         .y()
         .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
@@ -462,7 +468,7 @@ public class RobotContainer {
         .b()
         .whileTrue(
             m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .setPipelineCommand(LimelightPipeline.SHOOT)
                 .andThen(
                     new RunCommand(
                         () ->
@@ -503,7 +509,7 @@ public class RobotContainer {
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     m_driverController
-        .rightTrigger()
+        .rightTrigger().or(m_driverController.y())
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
@@ -854,6 +860,14 @@ public class RobotContainer {
     targetingForwardSpeed *= -1.0;
     }
 
+    return targetingForwardSpeed;
+  }
+
+  double limelight_range_proportional() {
+    double kP = .1;
+    double targetingForwardSpeed = m_frontLimelight.y() * kP;
+    targetingForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
+    targetingForwardSpeed *= -1.0;
     return targetingForwardSpeed;
   }
 
