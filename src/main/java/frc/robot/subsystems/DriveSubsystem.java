@@ -336,7 +336,6 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
    *
    * @param desiredStates The desired SwerveModule states.
    */
-  @Log
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -393,6 +392,13 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
   private SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
       m_frontLeft.getState(), m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState()
+    };
+  }
+
+  @Log
+  private SwerveModuleState[] getDesiredStates() {
+    return new SwerveModuleState[] {
+      m_frontLeft.getDesiredState(), m_frontRight.getDesiredState(), m_rearLeft.getDesiredState(), m_rearRight.getDesiredState()
     };
   }
 

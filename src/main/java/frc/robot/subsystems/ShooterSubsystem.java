@@ -20,7 +20,6 @@ import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -135,8 +134,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(.5));
   }
 
-  public Command shooterAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
-    var ampDirection = ampSelect.get();
+  public Command shooterAmpSmartCommand(AmpDirection ampSelect) {
+    var ampDirection = ampSelect;
     double speed;
     switch (ampDirection) {
       case FRONT:

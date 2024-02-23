@@ -205,7 +205,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double limelight_strafe_x_proportional() {
-    double kP = .001;
+    double kP = .003;
     double targetXSpeed = this.x() * kP;
 
     // targetXSpeed *= -1.0;
@@ -214,7 +214,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public double limelight_strafe_y_proportional() {
-    double kP = .003;
+    double kP = .004;
     double targetYSpeed = this.y() * kP;
 
     targetYSpeed *= -1.0;
@@ -243,7 +243,7 @@ public class Limelight extends SubsystemBase {
     var ty = this.y();
     var tx = this.x();
 
-    if (tv && Math.abs(ty) < 1.0 && Math.abs(tx) < 1.0) {
+    if (tv && Math.abs(ty) < 2.0 && Math.abs(tx) < 2.0) {
       return true;
     } else {
       return false;

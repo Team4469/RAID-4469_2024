@@ -9,13 +9,11 @@ import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
-
-import java.util.function.Supplier;
-
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -126,7 +124,7 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(1);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.25))
+                .withTimeout(.5))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -134,10 +132,12 @@ public class IntakeSubsystem extends SubsystemBase {
             });
   }
 
-  public Command intakeAmpSmartCommand(Supplier<AmpDirection> ampDirection) {
-    var ampDir = ampDirection.get();
+  public Command intakeAmpSmartCommand(AmpDirection ampSelect) {
+    var amp = ampSelect;
+    SmartDashboard.putString("Int Amp Dir", "" + amp);
+
     double speed;
-    switch (ampDir) {
+    switch (amp) {
       case FRONT:
         speed = OUTTAKE_SPEED.get();
         break;

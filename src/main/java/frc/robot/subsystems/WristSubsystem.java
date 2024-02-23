@@ -28,7 +28,6 @@ import frc.robot.SetPoints.WristSetpoints;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class WristSubsystem extends SubsystemBase {
   private final CANSparkFlex m_wristMotor =
@@ -134,16 +133,14 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setReference(radians, ControlType.kPosition);
   }
 
-  public Command wristAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
-    var ampDirection = ampSelect.get();
+  public Command wristAmpSmartCommand(AmpDirection ampSelect) {
+    var amp = ampSelect;
+    SmartDashboard.putString("Wrist Amp Dir", "" + amp);
     double point;
-    switch (ampDirection) {
-      case FRONT:
-        point = WristSetpoints.kAmpFront;
-        break;
-      default:
-        point = WristSetpoints.kAmpRear;
-        break;
+    if (amp == AmpDirection.FRONT) {
+      point = WristSetpoints.kAmpFront;
+    } else {
+      point = WristSetpoints.kAmpRear;
     }
     return Commands.runOnce(() -> setSetpoint(point));
   }

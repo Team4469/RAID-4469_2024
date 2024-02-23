@@ -89,6 +89,8 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     Monologue.updateAll();
+    m_robotContainer.AMP_DIRECTION = m_robotContainer.selectAmpDirection();
+    SmartDashboard.putString("Amp Direction", "" + m_robotContainer.AMP_DIRECTION);
   }
 
   @Override

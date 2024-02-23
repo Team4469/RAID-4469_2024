@@ -26,6 +26,9 @@ public class MAXSwerveModule {
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
 
+  private double DESIRED_DRIVING_SPEED;
+  private double DESIRED_TURNING_HEADING;
+
   private double m_chassisAngularOffset = 0;
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());
 
@@ -160,6 +163,10 @@ public class MAXSwerveModule {
         optimizedDesiredState.angle.getRadians(), CANSparkMax.ControlType.kPosition);
 
     m_desiredState = desiredState;
+  }
+
+  public SwerveModuleState getDesiredState() {
+    return m_desiredState;
   }
 
   /** Zeroes all the SwerveModule encoders. */
