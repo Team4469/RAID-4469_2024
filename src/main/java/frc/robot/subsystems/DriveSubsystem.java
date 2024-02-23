@@ -6,6 +6,9 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -16,6 +19,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -27,14 +31,16 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.utils.Limelight;
 import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
-import monologue.Logged;
+import java.util.List;
 import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class DriveSubsystem extends SubsystemBase implements Logged {
 
@@ -120,8 +126,8 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
         this::getRobotRelativeSpeeds,
         this::driveRobotRelative,
         new HolonomicPathFollowerConfig(
-            new PIDConstants(5.0, 0, 0),
-            new PIDConstants(5.0, 0, 0),
+            new PIDConstants(1.0, 0, 0),
+            new PIDConstants(1.0, 0, 0),
             DriveConstants.kMaxSpeedMetersPerSecond,
             DriveConstants.kRobotDriveRadiusMeters,
             new ReplanningConfig()),
@@ -143,7 +149,33 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
   public Command setXCommand() {
     return this.runOnce(this::setX);
   }
-  ;
+
+  public Command move1mYCommand() {
+    return runOnce(
+        () -> {
+          Pose2d currentPose = this.getPose();
+
+          // The rotation component in these poses represents the direction of travel
+          Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
+          Pose2d endPos =
+              new Pose2d(
+                  currentPose.getTranslation().plus(new Translation2d(0.0, 1.0)), new Rotation2d());
+
+          List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
+          PathPlannerPath path =
+              new PathPlannerPath(
+                  bezierPoints,
+                  new PathConstraints(
+                      4.0, 4.0, Units.degreesToRadians(360), Units.degreesToRadians(540)),
+                  new GoalEndState(0.0, currentPose.getRotation()));
+
+          // Prevent this path from being flipped on the red alliance, since the given positions are
+          // already correct
+          path.preventFlipping = true;
+
+          AutoBuilder.followPath(path).schedule();
+        });
+  }
 
   public Command zeroGyro() {
     return this.runOnce(this::zeroHeading);
@@ -304,7 +336,6 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
    *
    * @param desiredStates The desired SwerveModule states.
    */
-  @Log
   public void setModuleStates(SwerveModuleState[] desiredStates) {
     SwerveDriveKinematics.desaturateWheelSpeeds(
         desiredStates, DriveConstants.kMaxSpeedMetersPerSecond);
@@ -361,6 +392,13 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
   private SwerveModuleState[] getModuleStates() {
     return new SwerveModuleState[] {
       m_frontLeft.getState(), m_frontRight.getState(), m_rearLeft.getState(), m_rearRight.getState()
+    };
+  }
+
+  @Log
+  private SwerveModuleState[] getDesiredStates() {
+    return new SwerveModuleState[] {
+      m_frontLeft.getDesiredState(), m_frontRight.getDesiredState(), m_rearLeft.getDesiredState(), m_rearRight.getDesiredState()
     };
   }
 
@@ -424,7 +462,8 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
           m_rearRight.getPosition()
         });
 
-    // addVisionMeasurement(limelightFront);
-    // addVisionMeasurement(limelightRear);
+    SmartDashboard.putNumber("Gyro", getHeading());
+    addVisionMeasurement(limelightFront);
+    addVisionMeasurement(limelightRear);
   }
 }

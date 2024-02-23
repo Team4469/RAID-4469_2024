@@ -13,6 +13,7 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -123,7 +124,7 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(1);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.25))
+                .withTimeout(.5))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -131,9 +132,12 @@ public class IntakeSubsystem extends SubsystemBase {
             });
   }
 
-  public Command intakeAmpSmartCommand(AmpDirection ampDirection) {
+  public Command intakeAmpSmartCommand(AmpDirection ampSelect) {
+    var amp = ampSelect;
+    SmartDashboard.putString("Int Amp Dir", "" + amp);
+
     double speed;
-    switch (ampDirection) {
+    switch (amp) {
       case FRONT:
         speed = OUTTAKE_SPEED.get();
         break;
@@ -142,6 +146,27 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
     }
     return Commands.run(() -> setSpeed(speed));
+  }
+
+  public Command moveNoteCommand() {
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to intaking speed
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_FORWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+        // stop motor power
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
   }
 
   public Command intakeIntake() {

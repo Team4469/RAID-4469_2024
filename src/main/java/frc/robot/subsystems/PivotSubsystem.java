@@ -9,7 +9,6 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -128,21 +127,16 @@ public class PivotSubsystem extends SubsystemBase {
     return Commands.waitUntil(() -> inRange(getSetpoint()));
   }
 
-  public Command pivotAmpSmartCommand(AmpDirection ampDirection) {
+  public Command pivotAmpSmartCommand(AmpDirection ampSelect) {
+    var amp = ampSelect;
+    SmartDashboard.putString("Piv Amp Dir", "" + amp);
     double point;
-    switch (ampDirection) {
-      case FRONT:
-        point = PivotSetpoints.kAmpFront;
-        break;
-      default:
-        point = PivotSetpoints.kAmpRear;
-        break;
+    if (amp == AmpDirection.FRONT) {
+      point = PivotSetpoints.kAmpFront;
+    } else {
+      point = PivotSetpoints.kAmpRear;
     }
-    return Commands.run(
-            () -> {
-              setAngle(point);
-            })
-        .until(() -> inRange(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   public Command pivotSetpointCommand(double radians) {
@@ -159,10 +153,6 @@ public class PivotSubsystem extends SubsystemBase {
   //   System.out.println("Pivot set to 2.18");
   //   return Commands.runOnce(() -> setSetpoint(2.18));
   // }
-
-  private void setAngle(double radians) {
-    m_pidController.setReference(radians, ControlType.kPosition);
-  }
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
@@ -190,7 +180,7 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.set(0);
   }
 
-  private void setSetpoint(double radians) {
+  public void setSetpoint(double radians) {
     SETPOINT = radians;
     m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
   }
@@ -211,6 +201,9 @@ public class PivotSubsystem extends SubsystemBase {
         SETPOINT_INIT = true;
       }
     }
+
+    
+    m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
 
     SmartDashboard.putNumber("Pivot Setpoint", getSetpoint());
     SmartDashboard.putNumber("Pivot Encoder", getMeasurement());

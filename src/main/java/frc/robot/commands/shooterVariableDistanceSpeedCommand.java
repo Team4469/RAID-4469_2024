@@ -4,14 +4,12 @@
 
 package frc.robot.commands;
 
-import java.util.function.DoubleSupplier;
-
-import edu.wpi.first.networktables.DoubleSubscriber;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
-import frc.utils.ShootingInterpolationTables.ShooterRPMTable.ShooterSpeedTable;
+import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
+import java.util.function.DoubleSupplier;
 
 public class shooterVariableDistanceSpeedCommand extends Command {
   private ShooterSubsystem m_shoot;
@@ -22,11 +20,11 @@ public class shooterVariableDistanceSpeedCommand extends Command {
   private double wristTarget;
 
   /** Creates a new shooterVariableDistanceSpeedCommand. */
-  public shooterVariableDistanceSpeedCommand(ShooterSubsystem shoot, WristSubsystem wrist, DoubleSupplier distance) {
+  public shooterVariableDistanceSpeedCommand(
+      ShooterSubsystem shoot, WristSubsystem wrist, DoubleSupplier distance) {
     this.m_shoot = shoot;
     this.m_wrist = wrist;
     this.m_distSup = distance;
-
 
     this.distanceMeters = m_distSup.getAsDouble();
     // Use addRequirements() here to declare subsystem dependencies.

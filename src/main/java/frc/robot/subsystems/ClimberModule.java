@@ -91,12 +91,12 @@ public class ClimberModule extends SubsystemBase {
 
   public Command climberForward() {
     System.out.println(m_encoder.getPosition());
-    return runOnce(() -> runClimber(.1));
+    return runOnce(() -> runClimber(.3));
   }
 
   public Command climberReverse() {
     System.out.println(m_encoder.getPosition());
-    return runOnce(() -> runClimber(-.1));
+    return runOnce(() -> runClimber(-.4));
   }
 
   /**

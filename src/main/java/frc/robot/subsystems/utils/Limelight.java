@@ -4,14 +4,11 @@
 
 package frc.robot.subsystems.utils;
 
-import java.util.function.DoubleSupplier;
-
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.FrontLimelightConstants;
@@ -119,8 +116,8 @@ public class Limelight extends SubsystemBase {
       targetPose = targetpose.getDoubleArray(new double[3]);
     }
     try {
-          Translation3d dist = new Translation3d(targetPose[0], targetPose[1], targetPose[2]);
-          return dist.getDistance(new Translation3d());  
+      Translation3d dist = new Translation3d(targetPose[0], targetPose[1], targetPose[2]);
+      return dist.getDistance(new Translation3d());
     } catch (Exception e) {
       // TODO: handle exception
       return 0;
@@ -205,5 +202,51 @@ public class Limelight extends SubsystemBase {
         (goalHeightMeters - limelightLensHeightMeters) / Math.tan(angleToGoalRadians);
 
     return distanceFromLimelightToGoalMeters;
+  }
+
+  public double limelight_strafe_x_proportional() {
+    double kP = .003;
+    double targetXSpeed = this.x() * kP;
+
+    // targetXSpeed *= -1.0;
+
+    return targetXSpeed;
+  }
+
+  public double limelight_strafe_y_proportional() {
+    double kP = .004;
+    double targetYSpeed = this.y() * kP;
+
+    targetYSpeed *= -1.0;
+
+    return targetYSpeed;
+  }
+
+  public double limelight_range_proportional() {
+    double kP = .1;
+    double targetingForwardSpeed = this.y() * kP;
+    var tv = this.tv();
+
+    if (tv == 0) {
+      // if no target, we want to spin in place so no forward speed
+      targetingForwardSpeed = 0;
+    } else {
+      // invert due to limelight results
+      targetingForwardSpeed *= -1.0;
+    }
+
+    return targetingForwardSpeed;
+  }
+
+  public boolean limelight_in_range() {
+    var tv = this.hasTargets();
+    var ty = this.y();
+    var tx = this.x();
+
+    if (tv && Math.abs(ty) < 2.0 && Math.abs(tx) < 2.0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

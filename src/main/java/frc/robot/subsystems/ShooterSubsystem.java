@@ -17,7 +17,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
-import frc.utils.ShootingInterpolationTables.ShooterRPMTable.ShooterSpeedTable;
+import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
 
@@ -111,20 +111,20 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
     double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
-    SmartDashboard.putNumber("Target RPM", target);
     return Commands.run(() -> shootPIDControl(target));
   }
 
-    /**
-     * @param distanceToTarget distance to target in Meters
-     */
-    public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
-      double target = ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
-      SmartDashboard.putNumber("Target Speed", target);
-      return Commands.run(() -> setSpeed(target));
-    }
+  /**
+   * @param distanceToTarget distance to target in Meters
+   */
+  public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
+    double target =
+        ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    SmartDashboard.putNumber("Target Speed", target);
+    return Commands.run(() -> setSpeed(target));
+  }
 
-  //SHOOTER_SPEED_INTERP_TABLE
+  // SHOOTER_SPEED_INTERP_TABLE
 
   public Command shooterStop() {
     return Commands.runOnce(this::shootStop);
@@ -134,7 +134,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(.5));
   }
 
-  public Command shooterAmpSmartCommand(AmpDirection ampDirection) {
+  public Command shooterAmpSmartCommand(AmpDirection ampSelect) {
+    var ampDirection = ampSelect;
     double speed;
     switch (ampDirection) {
       case FRONT:

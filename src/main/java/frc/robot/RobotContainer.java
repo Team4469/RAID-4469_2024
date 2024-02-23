@@ -15,41 +15,38 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LeftClimberConstants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.PathFollowingConstraints;
 import frc.robot.Constants.RightClimberConstants;
-// import frc.robot.SetPoints.ClimberSetpoints;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
-import frc.robot.commands.shooterVariableDistanceSpeedCommand;
-// import frc.robot.Constants.GlobalConstants.StageLoc;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
+import frc.robot.commands.shooterVariableDistanceSpeedCommand;
+import frc.robot.commands.amp.INTAKE_SHOOTER_SMART_AMP;
+import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
+import frc.robot.commands.amp.PIVOT_SMART_AMP;
+import frc.robot.commands.amp.WRIST_SMART_AMP;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LevetatorSubsystem;
-// import frc.robot.subsystems.LedSubsystem;
 import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
-import frc.utils.ShootingCalculators;
-import monologue.Logged;
-import monologue.Monologue;
-
 import java.util.Map;
 import java.util.Optional;
+import monologue.Logged;
+import monologue.Monologue;
 
 /*
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -86,21 +83,23 @@ public class RobotContainer implements Logged {
   CommandXboxController m_operatorController =
       new CommandXboxController(OIConstants.kOperatorControllerPort);
 
-  private AmpDirection ampDirection = AmpDirection.REAR;
+  public AmpDirection AMP_DIRECTION = AmpDirection.REAR;
 
   private final SendableChooser<Command> autoChooser;
 
   //   private final SendableChooser<StageLoc> StageChooser;
 
-  private AmpDirection selectAmpDirection() {
+  public AmpDirection selectAmpDirection() {
+    var ampDir = AmpDirection.REAR;
     double robotHeading = m_robotDrive.getHeading();
-    if (robotHeading > 0) {
-      ampDirection = AmpDirection.FRONT;
-      return AmpDirection.FRONT;
+    robotHeading = MathUtil.inputModulus(robotHeading, -180, 180);
+    SmartDashboard.putNumber("Mod Header", robotHeading);
+    if (robotHeading > 0.0) {
+      ampDir = AmpDirection.FRONT;
     } else {
-      ampDirection = AmpDirection.REAR;
-      return AmpDirection.REAR;
+      ampDir = AmpDirection.REAR;
     }
+    return ampDir;
   }
 
   private boolean allianceIsRed() {
@@ -186,32 +185,44 @@ public class RobotContainer implements Logged {
   private final ConditionalCommand m_stageCenterConditional =
       new ConditionalCommand(m_alignCsRedCommand(), m_alignCsBlueCommand(), this::allianceIsRed);
 
-  private final Command m_ampScoringSelectCommand =
+  private final Command m_ampScoringSelectV2Command =
       new SelectCommand<>(
           // Maps selector values to commands
           Map.ofEntries(
               Map.entry(
                   AmpDirection.FRONT,
-                  (new DRIVE_WITH_HEADING(
-                      m_robotDrive,
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                      90))),
+                  new SequentialCommandGroup(
+                      m_frontLimelight.setPipelineCommand(LimelightPipeline.AMP),
+                      (new DRIVE_WITH_HEADING(
+                              m_robotDrive,
+                              () -> m_frontLimelight.limelight_strafe_x_proportional(),
+                              () -> m_frontLimelight.limelight_strafe_y_proportional(),
+                              90)
+                          .until(m_frontLimelight::limelight_in_range)),
+                      new DRIVE_WITH_HEADING(
+                          m_robotDrive,
+                          this::zero,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                          90))),
               Map.entry(
                   AmpDirection.REAR,
-                  (new DRIVE_WITH_HEADING(
-                      m_robotDrive,
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                      270)))),
+                  new SequentialCommandGroup(
+                      m_rearLimelight.setPipelineCommand(LimelightPipeline.AMP),
+                      (new DRIVE_WITH_HEADING(
+                              m_robotDrive,
+                              () -> m_rearLimelight.limelight_strafe_x_proportional(),
+                              () -> m_rearLimelight.limelight_strafe_y_proportional(),
+                              270)
+                          .until(m_rearLimelight::limelight_in_range)),
+                      new DRIVE_WITH_HEADING(
+                          m_robotDrive,
+                          this::zero,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                          270)))),
           this::selectAmpDirection);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -260,6 +271,133 @@ public class RobotContainer implements Logged {
   }
 
   private void configureTestButtonBindings() {
+    // AMP REAR (INTAKE SIDE)
+    // m_driverController
+    //     .rightBumper()
+    //     .whileTrue(
+    //         m_levetator
+    //             .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kAmpRear)
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear))));
+
+    // m_driverController
+    //     .rightBumper()
+    //     .onFalse(
+    //         m_pivot
+    //             .pivotSetpointCommand(PivotSetpoints.kStowed)
+    //             .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //             .andThen(m_wrist.wristInRange())
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    // m_driverController
+    //     .rightBumper()
+    //     .and(m_driverController.a())
+    //     .onTrue(
+    //         m_levetator
+    //             .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kAmpRear)
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
+    //             .andThen(m_intake.intakeOuttake())
+    //             .andThen(new WaitCommand(1))
+    //             .andThen(m_intake.intakeStop())
+    //             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
+    //             .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //             .andThen(m_wrist.wristInRange())
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    // AMP FRONT (SHOOTER)
+    // m_driverController
+    //     .leftBumper()
+    //     .whileTrue(
+    //         m_levetator
+    //             .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kAmpFront)
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront))));
+    // m_driverController
+    //     .leftBumper()
+    //     .onFalse(
+    //         m_pivot
+    //             .pivotSetpointCommand(PivotSetpoints.kStowed)
+    //             .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //             .andThen(m_wrist.wristInRange())
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    // m_driverController
+    //     .leftBumper()
+    //     .and(m_driverController.a())
+    //     .onTrue(
+    //         m_levetator
+    //             .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kAmpFront)
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
+    //             .andThen(m_shooter.shooterFeed())
+    //             .andThen(new WaitCommand(.5))
+    //             .andThen(m_intake.intakeTransferFwd())
+    //             .andThen(new WaitCommand(.5))
+    //             .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+    //             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
+    //             .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //             .andThen(m_wrist.wristInRange())
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    // Shooting
+    // m_driverController
+    //     .leftTrigger()
+    //     .and(m_driverController.a())
+    //     .whileTrue(
+    //         m_shooter
+    //             .shooterSpeakerShot()
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+    //                     .withTimeout(1)
+    //                     .alongWith(
+    //
+    // m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
+    //             .andThen(new WaitCommand(.5))
+    //             .andThen(m_intake.intakeShootCommand())
+    //             .andThen(m_shooter.shooterStop())
+    //             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
+    //             .andThen(m_pivot.pivotInRange().withTimeout(1))
+    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+    //             .andThen(m_wrist.wristInRange())
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    // m_driverController
+    //     .leftTrigger()
+    //     .whileTrue(
+    //         m_shooter
+    //             .shooterSpeakerShot()
+    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
+    //             .andThen(m_levetator.levInRange().withTimeout(1))
+    //             .andThen(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+    //                     .withTimeout(1)
+    //                     .alongWith(
+    //
+    // m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1))));
+
+
+
     // m_driverController.a().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront).alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
     m_driverController
         .a()
@@ -378,57 +516,11 @@ public class RobotContainer implements Logged {
    */
   private void configureButtonBindings() {
 
-    m_driverController
-        .y()
-        .whileTrue(
-            m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT)
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer).alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kSubwoofer)))
-                .andThen(new shooterVariableDistanceSpeedCommand(m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
-                        .alongWith(
-                            new RunCommand(
-                                () ->
-                                    m_robotDrive.drive(
-                                        -MathUtil.applyDeadband(
-                                            m_driverController.getLeftY(),
-                                            OIConstants.kDriveDeadband),
-                                        -MathUtil.applyDeadband(
-                                            m_driverController.getLeftX(),
-                                            OIConstants.kDriveDeadband),
-                                        limelight_aim_proportional(),
-                                        true,
-                                        true),
-                                m_robotDrive))
-                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
-
-        m_driverController
-            .y().and(m_driverController.a())
-            .onTrue(m_intake.intakeShootCommand());
-                       
-    
-
-    m_driverController
-        .y()
-        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+    // Add a button to SmartDashboard that will create and follow an on-the-fly path
+    // This example will simply move the robot 2m in the +X field direction
+    SmartDashboard.putData("On-the-fly path", m_robotDrive.move1mYCommand());
 
     /* DRIVER CONTROLS */
-
-    // m_driverController
-    //     .x()
-    //     .onTrue(
-    //       m_intake.intakeOuttake()
-    //      .andThen(m_intake.intakeStop())
-    //     );
-
-    // m_driverController
-    // .y()
-    // .onTrue(
-    //     m_pivot
-    //         .pivotSetpointCommand(PivotSetpoints.kStowed)
-    //         .andThen(m_pivot.pivotInRange().withTimeout(1))
-    //         .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-    //         .andThen(m_wrist.wristInRange().withTimeout(1))
-    //         .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     // Intake
     m_driverController
@@ -450,7 +542,7 @@ public class RobotContainer implements Logged {
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     m_driverController
-        .rightTrigger().or(m_driverController.y())
+        .rightTrigger()
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
@@ -461,127 +553,6 @@ public class RobotContainer implements Logged {
                 .andThen(m_wrist.wristInRange().withTimeout(1))
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
-    // AMP REAR (INTAKE SIDE)
-    m_driverController
-        .rightBumper()
-        .whileTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kAmpRear)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear))));
-    m_driverController
-        .rightBumper()
-        .onFalse(
-            m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed)
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
-    m_driverController
-        .rightBumper()
-        .and(m_driverController.a())
-        .onTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kAmpRear)
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kAmpRear)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
-                .andThen(m_intake.intakeOuttake())
-                .andThen(new WaitCommand(1))
-                .andThen(m_intake.intakeStop())
-                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
-    // AMP FRONT (SHOOTER)
-    m_driverController
-        .leftBumper()
-        .whileTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kAmpFront)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront))));
-    m_driverController
-        .leftBumper()
-        .onFalse(
-            m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed)
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-    // Amp Front
-    m_driverController
-        .leftBumper()
-        .and(m_driverController.a())
-        .onTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kAmpFront)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
-                .andThen(m_shooter.shooterFeed())
-                .andThen(new WaitCommand(.5))
-                .andThen(m_intake.intakeTransferFwd())
-                .andThen(new WaitCommand(.5))
-                .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
-                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
-    // Subwoofer shot
-    m_driverController
-        .leftTrigger()
-        .and(m_driverController.a())
-        .whileTrue(
-            m_shooter
-                .shooterSpeakerShot()
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
-                        .withTimeout(1)
-                        .alongWith(
-                            m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1)))
-                .andThen(new WaitCommand(.5))
-                .andThen(m_intake.intakeShootCommand())
-                .andThen(m_shooter.shooterStop())
-                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
-    m_driverController
-        .leftTrigger()
-        .whileTrue(
-            m_shooter
-                .shooterSpeakerShot()
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
-                        .withTimeout(1)
-                        .alongWith(
-                            m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1))));
 
     m_driverController
         .leftTrigger()
@@ -592,49 +563,43 @@ public class RobotContainer implements Logged {
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange().withTimeout(1))
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed))
+                .andThen(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION)));
+
+    m_driverController
+        .leftTrigger()
+        .whileTrue(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT)
+                .andThen(
+                    m_levetator
+                        .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+                        .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
+                .andThen(
+                    new shooterVariableDistanceSpeedCommand(
+                            m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
+                        .alongWith(
+                            new RunCommand(
+                                () ->
+                                    m_robotDrive.drive(
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftY(),
+                                            OIConstants.kDriveDeadband),
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftX(),
+                                            OIConstants.kDriveDeadband),
+                                        limelight_aim_proportional(m_frontLimelight),
+                                        true,
+                                        true),
+                                m_robotDrive))
+                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
+
+    m_driverController
+        .leftTrigger()
+        .and(m_driverController.a())
+        .onTrue(m_intake.intakeShootCommand());
 
     // Zero IMU heading
-    m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
-
-    // Use right stick as pure heading direction
-    // m_driverController
-    //     .rightTrigger(.9)
-    //     .whileTrue(
-    //         new DRIVE_WITH_HEADING_SUPPLIER(
-    //             m_robotDrive,
-    //             () ->
-    //                 -MathUtil.applyDeadband(
-    //                     m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-    //             () ->
-    //                 -MathUtil.applyDeadband(
-    //                     m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-    //             () ->
-    //                 new Rotation2d(
-    //                     m_driverController.getRightX(), -m_driverController.getRightY())));
-
-    /* OPERATOR CONTROLS */
-    // Amp Rear
-    // m_driverController
-    //     .leftBumper()
-    //     .onTrue(
-    //         (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpRear))
-    //             .andThen(
-    //                 (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpRear))
-    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpRear)))
-    //             .andThen(m_intake.intakeTransferFwd().alongWith(m_shooter.shooterFeed()))
-    //             .withTimeout(1));
-
-    // // Amp Front
-    // m_driverController
-    //     .rightBumper()
-    //     .onTrue(
-    //         (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
-    //             .andThen(
-    //                 (m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront))
-    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront)))
-    //             .andThen(m_intake.intakeOuttake())
-    //             .withTimeout(1));
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
@@ -657,6 +622,36 @@ public class RobotContainer implements Logged {
             m_rightClimber
                 .emergencyStopClimberCommand()
                 .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+
+
+    /* SMART AMP */
+
+    m_driverController
+        .leftBumper()
+        .whileTrue(
+            (new LEVETATOR_SMART_AMP(m_levetator, this::selectAmpDirection)
+                    .alongWith(m_intake.moveNoteCommand().alongWith(m_shooter.shooterStop()))
+                    .andThen(
+                        new PIVOT_SMART_AMP(m_pivot, this::selectAmpDirection)
+                            .alongWith(new WRIST_SMART_AMP(m_wrist, this::selectAmpDirection))))
+                .alongWith(m_ampScoringSelectV2Command));
+
+    m_driverController
+        .leftBumper()
+        .and(m_driverController.a())
+        .onTrue(new INTAKE_SHOOTER_SMART_AMP(m_intake, m_shooter, this::selectAmpDirection));
+
+    m_driverController
+        .leftBumper()
+        .onFalse(
+            m_pivot
+                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                .andThen(m_pivot.pivotInRange().withTimeout(1))
+                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                .andThen(m_wrist.wristInRange())
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+    /* OPERATOR CONTROLS */
 
     // Automated Trap Sequence
     // m_operatorController.y().onTrue(m_stageLeftConditional);
@@ -702,15 +697,7 @@ public class RobotContainer implements Logged {
     return autoChooser.getSelected();
   }
 
-  double limelight_range_proportional() {
-    double kP = .1;
-    double targetingForwardSpeed = m_frontLimelight.y() * kP;
-    targetingForwardSpeed *= DriveConstants.kMaxSpeedMetersPerSecond;
-    targetingForwardSpeed *= -1.0;
-    return targetingForwardSpeed;
-  }
-
-  double limelight_aim_proportional() {
+  double limelight_aim_proportional(Limelight ll) {
     // kP (constant of proportionality)
     // this is a hand-tuned number that determines the aggressiveness of our proportional control
     // loop
@@ -721,14 +708,35 @@ public class RobotContainer implements Logged {
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.
-    double targetingAngularVelocity = m_frontLimelight.x() * kP;
-
-    // convert to radians per second for our drive method
-    targetingAngularVelocity *= DriveConstants.kMaxAngularSpeed;
+    double targetingAngularVelocity = ll.x() * kP;
 
     // invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
 
+    var tv = ll.tv();
+    var ampDir = selectAmpDirection();
+    var gyroDeg = m_robotDrive.getHeading();
+
+    if (tv == 0) {
+      // if no target seen, we want to rotate in place
+      if (ampDir == AmpDirection.FRONT) {
+        if (gyroDeg > 90) {
+          targetingAngularVelocity = -0.3;
+        } else {
+          targetingAngularVelocity = 0.3;
+        }
+      } else {
+        if (gyroDeg < -90) {
+          targetingAngularVelocity = -0.3;
+        } else {
+          targetingAngularVelocity = 0.3;
+        }
+      }
+    }
     return targetingAngularVelocity;
+  }
+
+  public double zero() {
+    return 0;
   }
 }

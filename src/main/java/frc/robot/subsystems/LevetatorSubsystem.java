@@ -14,11 +14,12 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
+
+import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,6 +42,12 @@ public class LevetatorSubsystem extends SubsystemBase {
   int ID;
 
   private boolean EncoderSet = false;
+
+  private boolean SETPOINT_INIT;
+  private int init_loop_number = 15;
+  private int init_loop_count = 0;
+  MedianFilter Setpoint_init_filter = new MedianFilter(init_loop_number);
+
 
   // private final ElevatorFeedforward m_elevatorFeedforward =
   //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
@@ -101,19 +108,20 @@ public class LevetatorSubsystem extends SubsystemBase {
     }
 
     m_encoder.setPosition(0);
+    SETPOINT_INIT = false;
   }
 
-  public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
+  public Command levetatorAmpSmartCommand(AmpDirection ampSelect) {
+
+    var amp = ampSelect;
+    SmartDashboard.putString("Lev Amp Dir", "" + amp);
     double point;
-    switch (ampDirection) {
-      case FRONT:
-        point = LevetatorSetpoints.kAmpFront;
-        break;
-      default:
-        point = LevetatorSetpoints.kAmpRear;
-        break;
+    if (amp == AmpDirection.FRONT) {
+      point = LevetatorSetpoints.kAmpFront;
+    } else {
+      point = LevetatorSetpoints.kAmpRear;
     }
-    return Commands.run(() -> setDistance(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   public Command levetatorSetpointPosition(double meters) {
@@ -153,13 +161,18 @@ public class LevetatorSubsystem extends SubsystemBase {
     return m_encoder.getPosition();
   }
 
-  private void setSetpoint(double radians) {
+  public void setSetpoint(double radians) {
     SETPOINT = radians;
   }
 
   private double getSetpoint() {
     return SETPOINT;
   }
+
+  public void resetSetpointInit() {
+    SETPOINT_INIT = false;
+  }
+
 
   @Override
   public void periodic() {
@@ -178,6 +191,16 @@ public class LevetatorSubsystem extends SubsystemBase {
       }
     }
 
+    if (!SETPOINT_INIT && EncoderSet) {
+      setSetpoint(Setpoint_init_filter.calculate(getMeasurement()));
+      if (init_loop_count <= init_loop_number) {
+        init_loop_count++;
+      } else {
+        SETPOINT_INIT = true;
+      }
+    }
+
+
     // if (m_encoder.getPosition() != 0) {
     //   EncoderSet = true;
     // }
@@ -185,7 +208,7 @@ public class LevetatorSubsystem extends SubsystemBase {
     // System.out.println(m_encoder.getPosition());
 
     m_pidController.setReference(
-        SETPOINT,
+        getSetpoint(),
         ControlType.kPosition,
         0,
         LevetatorConstants.kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()),

@@ -15,6 +15,7 @@ public final class SetPoints {
     public static final double kAmpRear = 2.75;
     public static final double kTrap = Units.degreesToRadians(190);
     public static final double kSubwoofer = Units.degreesToRadians(155);
+    public static final double kVariableShot = 2.6;
     public static final double kIntake = 1.58;
   }
 
@@ -31,7 +32,7 @@ public final class SetPoints {
   public final class LevetatorSetpoints {
     public static final double kStowed = Units.inchesToMeters(1);
     public static final double kAmpFront = .155;
-    public static final double kAmpRear = .22;
+    public static final double kAmpRear = .202;
     public static final double kTrap = Units.inchesToMeters(7);
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(4);
@@ -43,4 +44,16 @@ public final class SetPoints {
     public static final double kTrapHeight = Units.inchesToMeters(23);
     public static final double kRetractedHeight = Units.inchesToMeters(0);
   }
+
+  public final class IntakeSetpoints {
+    public static final double kTransferFwdFeedSpeed = .2;
+    public static final double kTransferBckFeedSpeed = -.2;
+    public static final double kAmpRearSpeed = -.85;
+    public static final double kIntakeSpeed = .5;
+  }
+
+  public final class ShooterSetpoints {
+    public static final double kAmpFrontSpeed = .5;
+  }
+  
 }

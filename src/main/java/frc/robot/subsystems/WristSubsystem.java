@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
@@ -134,17 +133,16 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setReference(radians, ControlType.kPosition);
   }
 
-  public Command wristAmpSmartCommand(AmpDirection ampDirection) {
+  public Command wristAmpSmartCommand(AmpDirection ampSelect) {
+    var amp = ampSelect;
+    SmartDashboard.putString("Wrist Amp Dir", "" + amp);
     double point;
-    switch (ampDirection) {
-      case FRONT:
-        point = WristSetpoints.kAmpFront;
-        break;
-      default:
-        point = WristSetpoints.kAmpRear;
-        break;
+    if (amp == AmpDirection.FRONT) {
+      point = WristSetpoints.kAmpFront;
+    } else {
+      point = WristSetpoints.kAmpRear;
     }
-    return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
+    return Commands.runOnce(() -> setSetpoint(point));
   }
 
   public void setSetpoint(double radians) {
