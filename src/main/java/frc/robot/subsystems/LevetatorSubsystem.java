@@ -85,9 +85,9 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     m_motor.burnFlash();
 
-    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, LevetatorConstants.kStatus3PeriodMs);
-    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, LevetatorConstants.kStatus4PeriodMs);
-    m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, LevetatorConstants.kStatus5PeriodMs);
+    // m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, LevetatorConstants.kStatus3PeriodMs);
+    // m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, LevetatorConstants.kStatus4PeriodMs);
+    // m_motor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, LevetatorConstants.kStatus5PeriodMs);
 
     m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
     ID = LevetatorConstants.kLevetatorLaserCanID;

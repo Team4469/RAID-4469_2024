@@ -40,6 +40,9 @@ import frc.robot.subsystems.PivotSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
+import monologue.Logged;
+import monologue.Monologue;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,7 +52,7 @@ import java.util.Optional;
  * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
  * (including subsystems, commands, and button mappings) should be declared here.
  */
-public class RobotContainer {
+public class RobotContainer implements Logged {
 
   // The robot's subsystems
   private final Limelight m_frontLimelight = new Limelight("limelight-front");
@@ -246,6 +249,9 @@ public class RobotContainer {
 
     // SmartDashboard.putData("Stage Selector", StageChooser);
     SmartDashboard.putData("Auto Mode", autoChooser);
+    boolean fileOnly = false;
+    boolean lazyLogging = false;
+    Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
   }
 
   private void configureTestButtonBindings() {
