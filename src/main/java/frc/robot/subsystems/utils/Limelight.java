@@ -109,8 +109,13 @@ public class Limelight extends SubsystemBase {
     if (isInitialized()) {
       targetPose = targetpose.getDoubleArray(new double[3]);
     }
-    Translation3d dist = new Translation3d(targetPose[0], targetPose[1], targetPose[2]);
-    return dist.getDistance(new Translation3d());
+    try {
+          Translation3d dist = new Translation3d(targetPose[0], targetPose[1], targetPose[2]);
+          return dist.getDistance(new Translation3d());  
+    } catch (Exception e) {
+      // TODO: handle exception
+      return 0;
+    }
   }
 
   public double x() {
