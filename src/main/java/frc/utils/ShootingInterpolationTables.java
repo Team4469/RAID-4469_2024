@@ -25,9 +25,10 @@ public class ShootingInterpolationTables {
         new InterpolatingDoubleTreeMap();
 
     static {
-      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(1.0, Units.degreesToRadians(45));
-      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(2.0, Units.degreesToRadians(30));
-      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(3.0, Units.degreesToRadians(25));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(0.5, 3.0);
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(1.0, 3.14);
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(2.0, 3.14 + Units.degreesToRadians(19.5));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(3.0, 3.14 + Units.degreesToRadians(28.7));
     }
   }
 }

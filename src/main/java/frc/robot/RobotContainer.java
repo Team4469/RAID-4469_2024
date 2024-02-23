@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -371,6 +372,47 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     m_driverController
+        .y()
+        .whileTrue(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
+                .andThen(
+                    new PrintCommand(
+                        "Distance to Target (m): "
+                            + ShootingCalculators.SimpleDistanceToSpeakerMeters(
+                                m_frontLimelight::y)))
+                .andThen(
+                    m_shooter
+                        .shooterVariableSpeakerShot(
+                            () ->
+                                ShootingCalculators.SimpleDistanceToSpeakerMeters(
+                                    m_frontLimelight::y))
+                        .alongWith(
+                            m_wrist.wristAngleVariableSetpoint(
+                                () ->
+                                    ShootingCalculators.SimpleDistanceToSpeakerMeters(
+                                        m_frontLimelight::y)))
+                        .alongWith(
+                            new RunCommand(
+                                () ->
+                                    m_robotDrive.drive(
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftY(),
+                                            OIConstants.kDriveDeadband),
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftX(),
+                                            OIConstants.kDriveDeadband),
+                                        limelight_aim_proportional(),
+                                        true,
+                                        true),
+                                m_robotDrive))
+                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
+
+    m_driverController
+        .y()
+        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
+
+    m_driverController
         .x()
         .onTrue(
             m_frontLimelight
@@ -595,42 +637,6 @@ public class RobotContainer {
 
     // Zero IMU heading
     m_driverController.leftBumper().onTrue(m_robotDrive.zeroGyro());
-
-    m_driverController
-        .y()
-        .whileTrue(
-            m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT_BLUE)
-                .andThen(
-                    m_shooter
-                        .shooterVariableSpeakerShot(
-                            () ->
-                                ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                    m_frontLimelight::y))
-                        .alongWith(
-                            m_wrist.wristAngleVariableSetpoint(
-                                () ->
-                                    ShootingCalculators.SimpleDistanceToSpeakerMeters(
-                                        m_frontLimelight::y)))
-                        .alongWith(
-                            new RunCommand(
-                                () ->
-                                    m_robotDrive.drive(
-                                        -MathUtil.applyDeadband(
-                                            m_driverController.getLeftY(),
-                                            OIConstants.kDriveDeadband),
-                                        -MathUtil.applyDeadband(
-                                            m_driverController.getLeftX(),
-                                            OIConstants.kDriveDeadband),
-                                        limelight_aim_proportional(),
-                                        true,
-                                        true),
-                                m_robotDrive))
-                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
-
-    m_driverController
-        .y()
-        .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
 
     // Use right stick as pure heading direction
     // m_driverController

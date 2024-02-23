@@ -109,6 +109,7 @@ public class ShooterSubsystem extends SubsystemBase {
    */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
     double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    SmartDashboard.putNumber("Target RPM", target);
     return Commands.run(() -> shootPIDControl(target));
   }
 
@@ -167,6 +168,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
   }

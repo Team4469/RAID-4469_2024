@@ -102,8 +102,8 @@ public class WristSubsystem extends SubsystemBase {
     double setpoint =
         ShooterLaunchAngleTable.SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.get(
             distanceToTarget.getAsDouble());
-    return Commands.run(() -> setAngle(setpoint))
-        .until(() -> inRange(setpoint)); // .until(() -> inRange(setpoint))
+    SmartDashboard.putNumber("Wrist Angle", setpoint);
+    return Commands.runOnce(() -> setAngle(setpoint));
   }
 
   public Command wristAngleSetpoint(double radians) {
