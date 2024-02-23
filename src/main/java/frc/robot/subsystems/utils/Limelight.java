@@ -4,11 +4,17 @@
 
 package frc.robot.subsystems.utils;
 
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FrontLimelightConstants;
 
 public class Limelight extends SubsystemBase {
   /** Creates a new Limelight. */
@@ -22,6 +28,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry targetpose = null;
   private NetworkTableEntry tl = null;
   private NetworkTableEntry cl = null;
+  private NetworkTableEntry pipeline = null;
   private String limeLightName = "limelight";
 
   public Limelight(String limeLightName) {
@@ -37,6 +44,7 @@ public class Limelight extends SubsystemBase {
       targetpose = table.getEntry("targetpose_robotspace");
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
+      pipeline = table.getEntry("pipeline");
     } catch (Exception e) {
       // SmartDashboard.putBoolean("couldn't get nt entries", true);
     }
@@ -56,6 +64,7 @@ public class Limelight extends SubsystemBase {
       targetpose = table.getEntry("targetpose_robotspace");
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
+      pipeline = table.getEntry("pipeline");
     } catch (Exception e) {
       return;
     }
@@ -63,7 +72,7 @@ public class Limelight extends SubsystemBase {
   }
 
   public NetworkTableEntry getEntry(String str) {
-    return NetworkTableInstance.getDefault().getTable("limelight").getEntry(str);
+    return NetworkTableInstance.getDefault().getTable(limeLightName).getEntry(str);
   }
 
   public boolean isInitialized() {
@@ -159,7 +168,42 @@ public class Limelight extends SubsystemBase {
   }
 
   private void lightLED(LimelightLED value) {
-    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTable table = NetworkTableInstance.getDefault().getTable(limeLightName);
     table.getEntry("ledMode").setNumber(value.ordinal());
+  }
+
+  private void setPipeline(LimelightPipeline pipeline) {
+    int pipe = pipeline.ordinal();
+    if (isInitialized()) {
+      this.pipeline.setNumber(pipe);
+    }
+    // NetworkTableInstance.getDefault().getTable(limeLightName).getEntry("pipeline").setNumber(pipe);
+  }
+
+  public Command setPipelineCommand(LimelightPipeline pipeline) {
+    return runOnce(() -> setPipeline(pipeline));
+  }
+
+  public double SimpleDistanceToSpeakerMeters() {
+
+    double targetOffsetAngle_Vertical = y();
+
+    // how many degrees back is your limelight rotated from perfectly vertical?
+    double limelightMountAngleDegrees = FrontLimelightConstants.kAngleFromVerticalDegrees;
+
+    // distance from the center of the Limelight lens to the floor
+    double limelightLensHeightMeters = FrontLimelightConstants.kDistanceFromFloorMeters;
+
+    // distance from the target to the floor
+    double goalHeightMeters = Units.inchesToMeters(57.125);
+
+    double angleToGoalDegrees = limelightMountAngleDegrees + targetOffsetAngle_Vertical;
+    double angleToGoalRadians = Units.degreesToRadians(angleToGoalDegrees);
+
+    // calculate distance
+    double distanceFromLimelightToGoalMeters =
+        (goalHeightMeters - limelightLensHeightMeters) / Math.tan(angleToGoalRadians);
+
+    return distanceFromLimelightToGoalMeters;
   }
 }

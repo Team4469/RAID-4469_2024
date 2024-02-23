@@ -63,9 +63,9 @@ public final class Constants {
     public static final double kMaxAngularAcceleration =
         kMaxAngularSpeed * 1.5; // FIND Actual number
 
-    public static final double kDirectionSlewRate = 2.2; // radians per second
+    public static final double kDirectionSlewRate = 2; // radians per second
     public static final double kMagnitudeSlewRate = 2.2; // percent per second (1 = 100%)
-    public static final double kRotationalSlewRate = 2.0; // percent per second (1 = 100%)
+    public static final double kRotationalSlewRate = 2.5; // percent per second (1 = 100%)
 
     // Chassis configuration
     public static final double kModuleInsetMeters = Units.inchesToMeters(1.75);
@@ -265,6 +265,11 @@ public final class Constants {
   public static final class VisionConstants {
     public static final String kFrontLimelightName = "limelight-front";
     public static final String kRearLimelightName = "limelight-rear";
+  }
+
+  public static final class FrontLimelightConstants {
+    public static final double kAngleFromVerticalDegrees = 30;
+    public static final double kDistanceFromFloorMeters = Units.inchesToMeters(7.15);
   }
 
   public static final class ClimberConstants {

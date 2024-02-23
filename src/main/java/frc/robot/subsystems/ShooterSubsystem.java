@@ -16,7 +16,10 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
+import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
+import frc.utils.ShootingInterpolationTables.ShooterRPMTable.ShooterSpeedTable;
 import frc.utils.TunableNumber;
+import java.util.function.DoubleSupplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -103,6 +106,26 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(1));
   }
 
+  /**
+   * @param distanceToTarget distance to target in Meters
+   */
+  public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
+    double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    SmartDashboard.putNumber("Target RPM", target);
+    return Commands.run(() -> shootPIDControl(target));
+  }
+
+    /**
+     * @param distanceToTarget distance to target in Meters
+     */
+    public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
+      double target = ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+      SmartDashboard.putNumber("Target Speed", target);
+      return Commands.run(() -> setSpeed(target));
+    }
+
+  //SHOOTER_SPEED_INTERP_TABLE
+
   public Command shooterStop() {
     return Commands.runOnce(this::shootStop);
   }
@@ -140,7 +163,7 @@ public class ShooterSubsystem extends SubsystemBase {
     }
   }
 
-  private void setSpeed(double speed) {
+  public void setSpeed(double speed) {
     m_rightShooterMotor.set(speed);
     m_leftShooterMotor.set(speed);
   }
@@ -158,6 +181,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
   }

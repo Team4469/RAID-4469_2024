@@ -26,7 +26,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.WristConstants;
 import frc.robot.SetPoints.WristSetpoints;
+import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
 import java.util.Map;
+import java.util.function.DoubleSupplier;
 
 public class WristSubsystem extends SubsystemBase {
   private final CANSparkFlex m_wristMotor =
@@ -97,6 +99,14 @@ public class WristSubsystem extends SubsystemBase {
     SETPOINT_INIT = false;
   }
 
+  public Command wristAngleVariableSetpoint(DoubleSupplier distanceToTarget) {
+    double setpoint =
+        ShooterLaunchAngleTable.SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.get(
+            distanceToTarget.getAsDouble());
+    SmartDashboard.putNumber("Wrist Angle", setpoint);
+    return Commands.runOnce(() -> setAngle(setpoint));
+  }
+
   public Command wristAngleSetpoint(double radians) {
     double setpoint = radians;
     return Commands.runOnce(() -> setSetpoint(setpoint)); // .until(() -> inRange(setpoint))
@@ -137,7 +147,7 @@ public class WristSubsystem extends SubsystemBase {
     return Commands.run(() -> setAngle(point)).until(() -> inRange(point));
   }
 
-  private void setSetpoint(double radians) {
+  public void setSetpoint(double radians) {
     SETPOINT = radians;
     m_wristPIDController.setReference(SETPOINT, ControlType.kPosition);
   }

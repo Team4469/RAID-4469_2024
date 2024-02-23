@@ -15,7 +15,7 @@ public final class SetPoints {
     public static final double kAmpRear = 2.75;
     public static final double kTrap = Units.degreesToRadians(190);
     public static final double kSubwoofer = Units.degreesToRadians(155);
-    public static final double kIntake = 1.63;
+    public static final double kIntake = 1.58;
   }
 
   public final class WristSetpoints {
