@@ -14,7 +14,9 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -103,7 +105,8 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_encoder.setPosition(0);
   }
 
-  public Command levetatorAmpSmartCommand(AmpDirection ampDirection) {
+  public Command levetatorAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
+    var ampDirection = ampSelect.get();
     double point;
     switch (ampDirection) {
       case FRONT:

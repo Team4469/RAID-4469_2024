@@ -4,12 +4,13 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.Supplier;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -128,7 +129,8 @@ public class PivotSubsystem extends SubsystemBase {
     return Commands.waitUntil(() -> inRange(getSetpoint()));
   }
 
-  public Command pivotAmpSmartCommand(AmpDirection ampDirection) {
+  public Command pivotAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
+    var ampDirection = ampSelect.get();
     double point;
     switch (ampDirection) {
       case FRONT:

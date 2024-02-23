@@ -20,6 +20,7 @@ import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -114,17 +115,17 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.run(() -> shootPIDControl(target));
   }
 
+  /**
+   * @param distanceToTarget distance to target in Meters
+   */
+  public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
+    double target =
+        ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    SmartDashboard.putNumber("Target Speed", target);
+    return Commands.run(() -> setSpeed(target));
+  }
 
-    /**
-     * @param distanceToTarget distance to target in Meters
-     */
-    public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
-      double target = ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
-      SmartDashboard.putNumber("Target Speed", target);
-      return Commands.run(() -> setSpeed(target));
-    }
-
-  //SHOOTER_SPEED_INTERP_TABLE
+  // SHOOTER_SPEED_INTERP_TABLE
 
   public Command shooterStop() {
     return Commands.runOnce(this::shootStop);
@@ -134,7 +135,8 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(.5));
   }
 
-  public Command shooterAmpSmartCommand(AmpDirection ampDirection) {
+  public Command shooterAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
+    var ampDirection = ampSelect.get();
     double speed;
     switch (ampDirection) {
       case FRONT:

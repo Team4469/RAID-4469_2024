@@ -9,6 +9,9 @@ import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
+
+import java.util.function.Supplier;
+
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -131,9 +134,10 @@ public class IntakeSubsystem extends SubsystemBase {
             });
   }
 
-  public Command intakeAmpSmartCommand(AmpDirection ampDirection) {
+  public Command intakeAmpSmartCommand(Supplier<AmpDirection> ampDirection) {
+    var ampDir = ampDirection.get();
     double speed;
-    switch (ampDirection) {
+    switch (ampDir) {
       case FRONT:
         speed = OUTTAKE_SPEED.get();
         break;
@@ -142,6 +146,27 @@ public class IntakeSubsystem extends SubsystemBase {
         break;
     }
     return Commands.run(() -> setSpeed(speed));
+  }
+
+  public Command moveNoteCommand() {
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to intaking speed
+        .andThen(
+            run(() -> {
+                  setSpeed(TRANSFER_FORWARD_SPEED.get());
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+        // stop motor power
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
   }
 
   public Command intakeIntake() {

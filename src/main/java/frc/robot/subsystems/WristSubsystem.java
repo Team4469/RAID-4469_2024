@@ -10,7 +10,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
@@ -29,6 +28,7 @@ import frc.robot.SetPoints.WristSetpoints;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class WristSubsystem extends SubsystemBase {
   private final CANSparkFlex m_wristMotor =
@@ -134,7 +134,8 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setReference(radians, ControlType.kPosition);
   }
 
-  public Command wristAmpSmartCommand(AmpDirection ampDirection) {
+  public Command wristAmpSmartCommand(Supplier<AmpDirection> ampSelect) {
+    var ampDirection = ampSelect.get();
     double point;
     switch (ampDirection) {
       case FRONT:
