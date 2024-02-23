@@ -6,14 +6,21 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
@@ -43,6 +50,8 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import frc.utils.ShootingCalculators;
+
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -219,26 +228,17 @@ public class RobotContainer {
                   AmpDirection.FRONT,
                   (new DRIVE_WITH_HEADING(
                       m_robotDrive,
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                      () -> limelight_strafe_x_proportional(m_frontLimelight),
+                      () -> limelight_strafe_y_proportional(m_frontLimelight),
                       90))),
               Map.entry(
                   AmpDirection.REAR,
                   (new DRIVE_WITH_HEADING(
                       m_robotDrive,
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                      () ->
-                          -MathUtil.applyDeadband(
-                              m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                      () -> limelight_strafe_x_proportional(m_rearLimelight),
+                      () -> limelight_strafe_y_proportional(m_rearLimelight),
                       270)))),
           this::selectAmpDirection);
-
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -400,6 +400,10 @@ public class RobotContainer {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
+
+        // Add a button to SmartDashboard that will create and follow an on-the-fly path
+    // This example will simply move the robot 2m in the +X field direction
+    SmartDashboard.putData("On-the-fly path", m_robotDrive.move1mYCommand());
 
     m_driverController
         .x()
@@ -819,6 +823,24 @@ public class RobotContainer {
     return autoChooser.getSelected();
   }
 
+  double limelight_strafe_x_proportional(Limelight ll){
+    double kP = .001;
+    double targetXSpeed = ll.x() * kP;
+
+    targetXSpeed *= -1.0;
+
+    return targetXSpeed;
+  }
+
+    double limelight_strafe_y_proportional(Limelight ll){
+    double kP = .001;
+    double targetYSpeed = ll.y() * kP;
+
+    targetYSpeed *= -1.0;
+
+    return targetYSpeed;
+    }
+
   double limelight_range_proportional(Limelight ll) {
     double kP = .1;
     double targetingForwardSpeed = ll.y() * kP;
@@ -842,7 +864,7 @@ public class RobotContainer {
     // if it is too high, the robot will oscillate around.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .035;
+    double kP = .0025;
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.
@@ -871,8 +893,18 @@ public class RobotContainer {
             }
         }
     }   
-    
-
     return targetingAngularVelocity;
   }
+
+    boolean limelight_in_range(Limelight ll) {
+        var tv = ll.hasTargets();
+        var ty = ll.y();
+        var tx = ll.x();
+
+        if (tv && Math.abs(ty) < 1.0 && Math.abs(tx) < 1.0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
