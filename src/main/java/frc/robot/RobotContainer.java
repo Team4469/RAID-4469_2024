@@ -401,6 +401,12 @@ public class RobotContainer implements Logged {
                                 m_robotDrive))
                         .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
+        m_driverController
+            .y().and(m_driverController.a())
+            .onTrue(m_intake.intakeShootCommand());
+                       
+    
+
     m_driverController
         .y()
         .onFalse(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION));
@@ -444,7 +450,7 @@ public class RobotContainer implements Logged {
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     m_driverController
-        .rightTrigger()
+        .rightTrigger().or(m_driverController.y())
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
