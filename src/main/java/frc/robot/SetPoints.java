@@ -55,5 +55,4 @@ public final class SetPoints {
   public final class ShooterSetpoints {
     public static final double kAmpFrontSpeed = .5;
   }
-  
 }

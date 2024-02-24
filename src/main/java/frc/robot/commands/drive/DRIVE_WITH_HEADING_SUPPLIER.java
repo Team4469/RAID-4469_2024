@@ -117,11 +117,6 @@ public class DRIVE_WITH_HEADING_SUPPLIER extends Command {
     double yVelo =
         m_translationYSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond * .25;
 
-    if (ally.isPresent() && ally.get() == Alliance.Red) {
-      xVelo *= -1;
-      yVelo *= -1;
-    }
-
     drive.drive(xVelo, yVelo, rotationOutput, true, true);
 
     PREVIOUS_HEADING_RADS = CURRENT_HEADING_RADS;

@@ -398,7 +398,10 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
   @Log
   private SwerveModuleState[] getDesiredStates() {
     return new SwerveModuleState[] {
-      m_frontLeft.getDesiredState(), m_frontRight.getDesiredState(), m_rearLeft.getDesiredState(), m_rearRight.getDesiredState()
+      m_frontLeft.getDesiredState(),
+      m_frontRight.getDesiredState(),
+      m_rearLeft.getDesiredState(),
+      m_rearRight.getDesiredState()
     };
   }
 

@@ -10,14 +10,17 @@ import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
@@ -28,12 +31,13 @@ import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
-import frc.robot.commands.drive.DRIVE_WITH_HEADING;
-import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.commands.amp.INTAKE_SHOOTER_SMART_AMP;
 import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
 import frc.robot.commands.amp.PIVOT_SMART_AMP;
 import frc.robot.commands.amp.WRIST_SMART_AMP;
+import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
+import frc.robot.commands.drive.DRIVE_WITH_HEADING;
+import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -204,7 +208,7 @@ public class RobotContainer implements Logged {
                           this::zero,
                           () ->
                               -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
                           90))),
               Map.entry(
                   AmpDirection.REAR,
@@ -221,9 +225,69 @@ public class RobotContainer implements Logged {
                           this::zero,
                           () ->
                               -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
                           270)))),
           this::selectAmpDirection);
+
+  private final Command m_ampScoringSelectV3Command =
+      new SelectCommand<>(
+          // Maps selector values to commands
+          Map.ofEntries(
+              Map.entry(
+                  AmpDirection.FRONT,
+                  new SequentialCommandGroup(
+                      m_frontLimelight.setPipelineCommand(LimelightPipeline.AMP),
+                      (new AMP_ALIGN_DRIVE(
+                          m_robotDrive,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                          AmpDirection.FRONT,
+                          m_frontLimelight)),
+                      new DRIVE_WITH_HEADING(
+                          m_robotDrive,
+                          this::zero,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
+                          90))),
+              Map.entry(
+                  AmpDirection.REAR,
+                  new SequentialCommandGroup(
+                      m_rearLimelight.setPipelineCommand(LimelightPipeline.AMP),
+                      (new AMP_ALIGN_DRIVE(
+                          m_robotDrive,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                          AmpDirection.REAR,
+                          m_rearLimelight)),
+                      new DRIVE_WITH_HEADING(
+                          m_robotDrive,
+                          this::zero,
+                          () ->
+                              -MathUtil.applyDeadband(
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
+                          270)))),
+          this::selectAmpDirection);
+
+  public Command rumbleController(double seconds) {
+    return Commands.runOnce(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1))
+        .andThen(new WaitCommand(seconds))
+        .andThen(
+            Commands.runOnce(
+                () -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)));
+  }
+
+  public Command rumbleControllerStop() {
+    return Commands.runOnce(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0));
+  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -396,8 +460,6 @@ public class RobotContainer implements Logged {
     //
     // m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1))));
 
-
-
     // m_driverController.a().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront).alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
     m_driverController
         .a()
@@ -528,31 +590,37 @@ public class RobotContainer implements Logged {
         .whileTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
                 .andThen(m_levetator.levInRange().withTimeout(1))
-                // .andThen(m_levetator.levInRange())
-                // .andThen(new WaitCommand(.5))
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
                         .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
                 .andThen(m_intake.intakeAutoIntake())
-                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kStowed))
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange().withTimeout(1))
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+                .andThen(
+                    rumbleController(.5)
+                        .alongWith(
+                            m_pivot
+                                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                                .andThen(m_pivot.pivotInRange().withTimeout(1))
+                                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                                .andThen(m_wrist.wristInRange().withTimeout(1))
+                                .andThen(
+                                    m_levetator.levetatorSetpointPosition(
+                                        LevetatorSetpoints.kStowed)))));
 
     m_driverController
         .rightTrigger()
         .onFalse(
-            m_pivot
-                .pivotSetpointCommand(PivotSetpoints.kStowed)
-                .withTimeout(1)
-                .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange().withTimeout(1))
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-
+            rumbleControllerStop()
+                .alongWith(
+                    m_pivot
+                        .pivotSetpointCommand(PivotSetpoints.kStowed)
+                        .withTimeout(1)
+                        .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+                        .andThen(m_pivot.pivotInRange().withTimeout(1))
+                        .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                        .andThen(m_wrist.wristInRange().withTimeout(1))
+                        .andThen(
+                            m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed))));
 
     m_driverController
         .leftTrigger()
@@ -623,8 +691,17 @@ public class RobotContainer implements Logged {
                 .emergencyStopClimberCommand()
                 .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
-
     /* SMART AMP */
+
+    // m_driverController
+    //     .leftBumper()
+    //     .whileTrue(
+    //         (new LEVETATOR_SMART_AMP(m_levetator, this::selectAmpDirection)
+    //                 .alongWith(m_intake.moveNoteCommand().alongWith(m_shooter.shooterStop()))
+    //                 .andThen(
+    //                     new PIVOT_SMART_AMP(m_pivot, this::selectAmpDirection)
+    //                         .alongWith(new WRIST_SMART_AMP(m_wrist, this::selectAmpDirection))))
+    //             .alongWith(m_ampScoringSelectV2Command));
 
     m_driverController
         .leftBumper()
@@ -634,7 +711,9 @@ public class RobotContainer implements Logged {
                     .andThen(
                         new PIVOT_SMART_AMP(m_pivot, this::selectAmpDirection)
                             .alongWith(new WRIST_SMART_AMP(m_wrist, this::selectAmpDirection))))
-                .alongWith(m_ampScoringSelectV2Command));
+                .alongWith(m_ampScoringSelectV3Command));
+    
+    
 
     m_driverController
         .leftBumper()
@@ -646,10 +725,8 @@ public class RobotContainer implements Logged {
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
-                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                .andThen(m_wrist.wristInRange())
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+                .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     /* OPERATOR CONTROLS */
 

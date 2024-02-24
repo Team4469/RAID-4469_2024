@@ -4,8 +4,6 @@
 
 package frc.robot.commands.amp;
 
-import java.util.function.Supplier;
-
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
@@ -13,6 +11,7 @@ import frc.robot.SetPoints.IntakeSetpoints;
 import frc.robot.SetPoints.ShooterSetpoints;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
+import java.util.function.Supplier;
 
 public class INTAKE_SHOOTER_SMART_AMP extends Command {
   private IntakeSubsystem m_intake;
@@ -23,9 +22,9 @@ public class INTAKE_SHOOTER_SMART_AMP extends Command {
   private double intakeSpeed;
   private double time;
 
-  
   /** Creates a new INTAKE_SMART_AMP. */
-  public INTAKE_SHOOTER_SMART_AMP(IntakeSubsystem intake, ShooterSubsystem shooter, Supplier<AmpDirection> amp) {
+  public INTAKE_SHOOTER_SMART_AMP(
+      IntakeSubsystem intake, ShooterSubsystem shooter, Supplier<AmpDirection> amp) {
     this.m_intake = intake;
     this.m_shooter = shooter;
     this.m_ampSup = amp;
@@ -37,7 +36,7 @@ public class INTAKE_SHOOTER_SMART_AMP extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-        AMP_DIRECTION = this.m_ampSup.get();
+    AMP_DIRECTION = this.m_ampSup.get();
     if (AMP_DIRECTION == AmpDirection.FRONT) {
       intakeSpeed = IntakeSetpoints.kTransferFwdFeedSpeed;
       shootSpeed = ShooterSetpoints.kAmpFrontSpeed;
