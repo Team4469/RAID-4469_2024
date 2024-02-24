@@ -28,12 +28,12 @@ import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
-import frc.robot.commands.drive.DRIVE_WITH_HEADING;
-import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.commands.amp.INTAKE_SHOOTER_SMART_AMP;
 import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
 import frc.robot.commands.amp.PIVOT_SMART_AMP;
 import frc.robot.commands.amp.WRIST_SMART_AMP;
+import frc.robot.commands.drive.DRIVE_WITH_HEADING;
+import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -204,7 +204,7 @@ public class RobotContainer implements Logged {
                           this::zero,
                           () ->
                               -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
                           90))),
               Map.entry(
                   AmpDirection.REAR,
@@ -221,7 +221,7 @@ public class RobotContainer implements Logged {
                           this::zero,
                           () ->
                               -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX()/4, OIConstants.kDriveDeadband),
+                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
                           270)))),
           this::selectAmpDirection);
 
@@ -396,8 +396,6 @@ public class RobotContainer implements Logged {
     //
     // m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer).withTimeout(1))));
 
-
-
     // m_driverController.a().onTrue(m_pivot.pivotSetpointCommand(PivotSetpoints.kAmpFront).alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
     m_driverController
         .a()
@@ -553,7 +551,6 @@ public class RobotContainer implements Logged {
                 .andThen(m_wrist.wristInRange().withTimeout(1))
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
-
     m_driverController
         .leftTrigger()
         .onFalse(
@@ -603,26 +600,25 @@ public class RobotContainer implements Logged {
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
-    m_driverController
-        .povUp()
-        .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
-    m_driverController
-        .povUp()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+    // m_driverController
+    //     .povUp()
+    //     .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+    // m_driverController
+    //     .povUp()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
-    m_driverController
-        .povDown()
-        .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
-    m_driverController
-        .povDown()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
-
+    // m_driverController
+    //     .povDown()
+    //     .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+    // m_driverController
+    //     .povDown()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
 
     /* SMART AMP */
 
@@ -687,6 +683,14 @@ public class RobotContainer implements Logged {
     //         m_leftClimber
     //             .retractClimber(ClimberSetpoints.kRetractedHeight)
     //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
+  }
+
+  public ClimberModule getLeftClimber() {
+    return m_leftClimber;
+  }
+
+  public ClimberModule getRightClimber() {
+    return m_rightClimber;
   }
 
   public void disabledInit() {
