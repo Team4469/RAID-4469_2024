@@ -353,6 +353,21 @@ public class RobotContainer implements Logged {
 
     /* SHOOTING */
 
+    m_driverController.rightBumper().whileTrue(m_frontLimelight
+                    .setPipelineCommand(LimelightPipeline.SHOOT).alongWith(new RunCommand(
+                                    () ->
+                                        m_robotDrive.drive(
+                                            -MathUtil.applyDeadband(
+                                                m_driverController.getLeftY()/4,
+                                                OIConstants.kDriveDeadband),
+                                            -MathUtil.applyDeadband(
+                                                m_driverController.getLeftX()/4,
+                                                OIConstants.kDriveDeadband),
+                                            limelight_aim_proportional(m_frontLimelight),
+                                            true,
+                                            true),
+                                    m_robotDrive)));
+
     m_driverController
         .leftTrigger()
         .whileTrue(
@@ -455,8 +470,8 @@ public class RobotContainer implements Logged {
 
     /* SHOOTER SPIN UP */
 
-    m_operatorController.button(9).onTrue(m_shooter.shooterSpeakerShot());
-    m_operatorController.button(9).onFalse(m_shooter.shooterStop());
+    m_operatorController.button(7).onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
+    m_operatorController.button(8).onTrue(m_shooter.shooterStop());
     
 
     // Automated Trap Sequence
@@ -510,7 +525,7 @@ public class RobotContainer implements Logged {
     // if it is too high, the robot will oscillate around.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .0025;
+    double kP = .012;
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.

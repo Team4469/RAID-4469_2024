@@ -7,11 +7,15 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.utils.Limelight;
+
+import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
 public class AMP_ALIGN_DRIVE extends Command {
@@ -22,6 +26,8 @@ public class AMP_ALIGN_DRIVE extends Command {
   private AmpDirection AMP_DIR;
   private double heading;
   private boolean validTarget;
+
+  private Optional<Alliance> ally;
 
   private double xSpeed;
   private double ySpeed;
@@ -72,6 +78,8 @@ public class AMP_ALIGN_DRIVE extends Command {
     rotationController.reset(m_drive.getPose().getRotation().getRadians());
 
     rotationController.setGoal(Units.degreesToRadians(heading));
+
+    ally = DriverStation.getAlliance();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -82,6 +90,13 @@ public class AMP_ALIGN_DRIVE extends Command {
     if (validTarget) {
       xSpeed = m_ll.limelight_strafe_x_proportional();
       ySpeed = m_ll.limelight_strafe_y_proportional();
+
+      if (ally.isPresent() && ally.get() == Alliance.Red) {
+
+        xSpeed *= -1.0;
+        ySpeed *= -1.0;
+      }
+
     } else {
       xSpeed = this.m_translationXSupplier.getAsDouble();
       ySpeed = this.m_translationYSupplier.getAsDouble();
