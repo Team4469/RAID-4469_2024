@@ -4,9 +4,9 @@
 
 package frc.robot.commands.drive;
 
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
@@ -26,7 +26,7 @@ public class AMP_ALIGN_DRIVE extends Command {
   private double xSpeed;
   private double ySpeed;
 
-    private ProfiledPIDController rotationController =
+  private ProfiledPIDController rotationController =
       new ProfiledPIDController(
           .4,
           0,
@@ -34,9 +34,7 @@ public class AMP_ALIGN_DRIVE extends Command {
           new TrapezoidProfile.Constraints(
               DriveConstants.kMaxAngularSpeed, DriveConstants.kMaxAngularAcceleration));
 
-
   /**
-   * 
    * @param Drive
    * @param xVelocity
    * @param yVelocity
@@ -60,7 +58,6 @@ public class AMP_ALIGN_DRIVE extends Command {
 
     rotationController.enableContinuousInput(-Math.PI, Math.PI);
     rotationController.setTolerance(Units.degreesToRadians(5));
-
   }
 
   // Called when the command is initially scheduled.
@@ -73,7 +70,6 @@ public class AMP_ALIGN_DRIVE extends Command {
     }
 
     rotationController.reset(m_drive.getPose().getRotation().getRadians());
-
 
     rotationController.setGoal(Units.degreesToRadians(heading));
   }
@@ -102,7 +98,6 @@ public class AMP_ALIGN_DRIVE extends Command {
     double yVelo = ySpeed * DriveConstants.kMaxSpeedMetersPerSecond;
 
     m_drive.drive(xVelo, yVelo, rotationOutput, true, true);
-
   }
 
   // Called once the command ends or is interrupted.
