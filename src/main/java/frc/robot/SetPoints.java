@@ -10,12 +10,12 @@ public final class SetPoints {
   public final class PivotSetpoints {
     // Currently using pid control on the spark so this should be in rads to be consistent with
     // other subs
-    public static final double kStowed = Units.degreesToRadians(150); // Degrees
+    public static final double kStowed = 2.5;
     public static final double kAmpFront = 3.3;
     public static final double kAmpRear = 2.85;
     public static final double kTrap = Units.degreesToRadians(190);
     public static final double kSubwoofer = Units.degreesToRadians(155);
-    public static final double kVariableShot = 2.6;
+    public static final double kVariableShot = 2.5;
     public static final double kIntake = 1.58;
   }
 

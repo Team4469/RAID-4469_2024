@@ -89,8 +89,6 @@ public class RobotContainer implements Logged {
   CommandGenericHID m_operatorController =
       new CommandGenericHID(OIConstants.kOperatorControllerPort);
 
-
-
   public AmpDirection AMP_DIRECTION = AmpDirection.REAR;
 
   private final SendableChooser<Command> autoChooser;
@@ -313,6 +311,9 @@ public class RobotContainer implements Logged {
 
     /* DRIVER CONTROLS */
 
+    m_frontLimelight.shooterTargetInRange.onTrue(
+        rumbleController(.5).andThen(rumbleControllerStop()));
+
     // Intake
     m_driverController
         .rightTrigger()
@@ -353,20 +354,23 @@ public class RobotContainer implements Logged {
 
     /* SHOOTING */
 
-    m_driverController.rightBumper().whileTrue(m_frontLimelight
-                    .setPipelineCommand(LimelightPipeline.SHOOT).alongWith(new RunCommand(
-                                    () ->
-                                        m_robotDrive.drive(
-                                            -MathUtil.applyDeadband(
-                                                m_driverController.getLeftY()/4,
-                                                OIConstants.kDriveDeadband),
-                                            -MathUtil.applyDeadband(
-                                                m_driverController.getLeftX()/4,
-                                                OIConstants.kDriveDeadband),
-                                            limelight_aim_proportional(m_frontLimelight),
-                                            true,
-                                            true),
-                                    m_robotDrive)));
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT)
+                .alongWith(
+                    new RunCommand(
+                        () ->
+                            m_robotDrive.drive(
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
+                                limelight_aim_proportional(m_frontLimelight),
+                                true,
+                                true),
+                        m_robotDrive)));
 
     m_driverController
         .leftTrigger()
@@ -410,9 +414,7 @@ public class RobotContainer implements Logged {
                 .andThen(m_pivot.pivotInRange().withTimeout(1))
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .andThen(m_wrist.wristInRange().withTimeout(1))
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed))
-                .andThen(m_frontLimelight.setPipelineCommand(LimelightPipeline.LOCALIZATION)));
-    
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
     // Zero IMU heading
 
@@ -446,8 +448,8 @@ public class RobotContainer implements Logged {
     /* OPERATOR CONTROLS */
 
     /* CLIMBER MOVE */
-    
-        // NEEDS TO MOVE TO OPERATOR AT SOME POINT
+
+    // NEEDS TO MOVE TO OPERATOR AT SOME POINT
     m_driverController
         .povUp()
         .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
@@ -470,9 +472,13 @@ public class RobotContainer implements Logged {
 
     /* SHOOTER SPIN UP */
 
-    m_operatorController.button(7).onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
+    m_operatorController
+        .button(7)
+        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
     m_operatorController.button(8).onTrue(m_shooter.shooterStop());
-    
+
+    m_operatorController.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
+    m_operatorController.button(5).onFalse(m_intake.intakeStop());
 
     // Automated Trap Sequence
     // m_operatorController.y().onTrue(m_stageLeftConditional);
@@ -525,7 +531,7 @@ public class RobotContainer implements Logged {
     // if it is too high, the robot will oscillate around.
     // if it is too low, the robot will never reach its target
     // if the robot never turns in the correct direction, kP should be inverted.
-    double kP = .012;
+    double kP = .01;
 
     // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
     // your limelight 3 feed, tx should return roughly 31 degrees.
@@ -560,4 +566,12 @@ public class RobotContainer implements Logged {
   public double zero() {
     return 0;
   }
+
+  public Limelight getFrontLimelight() {
+    return m_frontLimelight;
+  }
+
+public Limelight getRearLimelight() {
+    return m_rearLimelight;
+}
 }
