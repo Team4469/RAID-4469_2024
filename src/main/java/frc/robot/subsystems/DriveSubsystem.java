@@ -126,8 +126,8 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
         this::getRobotRelativeSpeeds,
         this::driveRobotRelative,
         new HolonomicPathFollowerConfig(
-            new PIDConstants(1.0, 0, 0),
-            new PIDConstants(1.0, 0, 0),
+            new PIDConstants(0.6, 0, 0),
+            new PIDConstants(1.2, 0, 0),
             DriveConstants.kMaxSpeedMetersPerSecond,
             DriveConstants.kRobotDriveRadiusMeters,
             new ReplanningConfig()),

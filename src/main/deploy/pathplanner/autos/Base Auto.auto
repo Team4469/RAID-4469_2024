@@ -16,6 +16,12 @@
           "data": {
             "pathName": "Straight 1M"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Base Path 2"
+          }
         }
       ]
     }
