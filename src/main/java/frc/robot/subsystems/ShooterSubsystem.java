@@ -189,12 +189,12 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
 
-    if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
-      m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
-    }
+    // if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
+    //   m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
+    // }
 
-    if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
-      m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
-    }
+    // if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
+    //   m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
+    // }
   }
 }

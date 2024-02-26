@@ -255,6 +255,35 @@ public class RobotContainer implements Logged {
   public RobotContainer() {
 
     NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
+    NamedCommands.registerCommand(
+        "Shoot",
+        m_frontLimelight
+            .setPipelineCommand(LimelightPipeline.SHOOT)
+            .andThen(
+                m_levetator
+                    .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+                    .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
+            .andThen(
+                new shooterVariableDistanceSpeedCommand(
+                    m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters).withTimeout(.5))
+            .andThen(new WaitCommand(.5).andThen(m_intake.intakeShootCommand().withTimeout(1))));
+
+    NamedCommands.registerCommand(
+        "Intake",
+        ((m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+            .andThen(m_levetator.levInRange().withTimeout(1))
+            .andThen(
+                m_pivot
+                    .pivotSetpointCommand(PivotSetpoints.kIntake)
+                    .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
+            .andThen(m_intake.intakeAutoIntake())
+            .andThen(
+                m_pivot
+                    .pivotSetpointCommand(PivotSetpoints.kStowed)
+                    .andThen(m_pivot.pivotInRange().withTimeout(1))
+                    .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                    .andThen(m_wrist.wristInRange().withTimeout(1))
+                    .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)))));
     // NamedCommands.registerCommand(
     //     "ExtendLeftClimber_Trap", m_leftClimber.extendClimber(ClimberSetpoints.kTrapHeight));
     // NamedCommands.registerCommand(
@@ -571,7 +600,7 @@ public class RobotContainer implements Logged {
     return m_frontLimelight;
   }
 
-public Limelight getRearLimelight() {
+  public Limelight getRearLimelight() {
     return m_rearLimelight;
-}
+  }
 }
