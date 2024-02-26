@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import javax.sound.sampled.spi.MixerProvider;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -15,6 +17,7 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,8 +25,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.SetPoints.PivotSetpoints;
+import monologue.Logged;
+import monologue.Annotations.Log;
 
-public class PivotSubsystem extends SubsystemBase {
+public class PivotSubsystem extends SubsystemBase implements Logged {
 
   private final CANSparkMax m_leadMotor;
   private final CANSparkMax m_followMotor;
@@ -48,9 +53,11 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_pidController = m_leadMotor.getPIDController();
 
-    m_pidController.setP(PivotConstants.kP); // .4
-    m_pidController.setI(PivotConstants.kI); // 0
-    m_pidController.setD(PivotConstants.kD); // 14
+    m_pidController.setP(PivotConstants.kP, 0); // .4
+    m_pidController.setI(PivotConstants.kI, 0); // 0
+    m_pidController.setD(PivotConstants.kD, 0); // 14
+    m_pidController.setIZone(PivotConstants.kIz);
+    m_pidController.setIAccum(PivotConstants.kIAcum);
 
     m_pidController.setPositionPIDWrappingEnabled(false);
 
@@ -84,6 +91,28 @@ public class PivotSubsystem extends SubsystemBase {
 
     m_encoder.setPositionConversionFactor(PivotConstants.kPivotEncoderPositionFactor);
     m_encoder.setVelocityConversionFactor(PivotConstants.kPivotEncoderVelocityFactor);
+
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getP() != PivotConstants.kP) {
+         m_pidController.setP(PivotConstants.kP);
+        } else { break;}
+      Timer.delay(.1);
+    }
+
+        for (int i = 0; i < 6; i++) {
+          if (m_pidController.getI() != PivotConstants.kI) {
+             m_pidController.setI(PivotConstants.kI);
+            } else { break;}
+          Timer.delay(.1);
+        }
+
+            for (int i = 0; i < 6; i++) {
+              if (m_pidController.getD() != PivotConstants.kD) {
+                 m_pidController.setD(PivotConstants.kD);
+                } else { break;}
+              Timer.delay(.1);
+            }
+
 
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
@@ -164,6 +193,7 @@ public class PivotSubsystem extends SubsystemBase {
     }
   }
 
+  @Log
   private double getMeasurement() {
     return m_encoder.getPosition();
   }
@@ -180,13 +210,30 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.set(0);
   }
 
+  @Log
+  private double getI() {
+    return m_pidController.getIAccum();
+  }
+
   public void setSetpoint(double radians) {
     SETPOINT = radians;
+    m_pidController.setIAccum(0);
     m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
   }
 
+  @Log
   private double getSetpoint() {
     return SETPOINT;
+  }
+
+  @Log
+  private double getOutput() {
+    return m_leadMotor.getAppliedOutput();
+  }
+
+  @Log
+  private boolean getSetpointInit() {
+    return SETPOINT_INIT;
   }
 
   @Override
@@ -202,7 +249,7 @@ public class PivotSubsystem extends SubsystemBase {
       }
     }
 
-    m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
+    m_pidController.setReference(getSetpoint(), ControlType.kPosition, 0, .3, ArbFFUnits.kVoltage);
 
     SmartDashboard.putNumber("Pivot Setpoint", getSetpoint());
     SmartDashboard.putNumber("Pivot Encoder", getMeasurement());

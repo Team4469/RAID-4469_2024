@@ -58,7 +58,7 @@ public final class Constants {
   public static final class DriveConstants {
     // Driving Parameters - Note that these are not the maximum capable speeds of
     // the robot, rather the allowed maximum speeds
-    public static final double kMaxSpeedMetersPerSecond = 5.4;
+    public static final double kMaxSpeedMetersPerSecond = 5.7;
     public static final double kMaxAngularSpeed = 2 * Math.PI; // radians per second
     public static final double kMaxAngularAcceleration =
         kMaxAngularSpeed * 1.5; // FIND Actual number
@@ -194,35 +194,6 @@ public final class Constants {
     public static final int kSensorID = 0;
     public static final boolean kMotorInverted = true;
   }
-
-  public static final class WristConstants {
-    public static final int kWristMotorID = 50;
-
-    public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
-    public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
-    public static final double kP = .325;
-    public static final double kI = 0;
-    public static final double kD = 5;
-    public static final int kSmartCurrentLimit = 115; // A
-
-    public static final double kEncoderZeroOffset = 2.688;
-
-    public static final boolean kEncoderInverted = false;
-
-    public static final double kMinOutput = -1;
-    public static final double kMaxOutput = 1;
-
-    public static final double kPositionConversionFactor = 2.0 * Math.PI;
-    public static final double kVelocityConversionFactor = (2.0 * Math.PI) / 60.0;
-
-    public static final double kMinRads = Units.degreesToRadians(90);
-    public static final double kMaxRads = Units.degreesToRadians(315);
-
-    public static final int kStatus3PeriodMs = 500;
-    public static final int kStatus4PeriodMs = 500;
-    public static final int kStatus5PeriodMs = 20;
-  }
-
   public static final class LevetatorConstants {
     public static final int kLevetatorMotorID = 23;
     public static final int kLevetatorLaserCanID = 50;
@@ -358,8 +329,11 @@ public final class Constants {
     public static final boolean kEncoderInverted = true;
 
     public static final double kP = .4;
-    public static final double kI = 0;
+    public static final double kI = .0004;
     public static final double kD = 14;
+    public static final double kIz = .05;
+    public static final double kIAcum = .01;
+
 
     public static final double kMinOutput = -1;
     public static final double kMaxOutput = 1;
@@ -394,4 +368,38 @@ public final class Constants {
     public static final int kLeaderStatus5PeriodMs = 20;
     public static final int kFollowerStatus5PeriodMs = 500;
   }
+
+
+    public static final class WristConstants {
+      public static final int kWristMotorID = 50;
+  
+      public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
+      public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
+      public static final double kP = .33;
+      public static final double kI = 0.0004;
+      public static final double kD = 5;
+      public static final double kIz = 0.05;
+      public static final double kIAcum = .01;
+      
+      public static final int kSmartCurrentLimit = 115; // A
+  
+      public static final double kEncoderZeroOffset = 2.688;
+  
+      public static final boolean kEncoderInverted = false;
+  
+      public static final double kMinOutput = -1;
+      public static final double kMaxOutput = 1;
+  
+      public static final double kPositionConversionFactor = 2.0 * Math.PI;
+      public static final double kVelocityConversionFactor = (2.0 * Math.PI) / 60.0;
+  
+      public static final double kMinRads = Units.degreesToRadians(90);
+      public static final double kMaxRads = Units.degreesToRadians(315);
+  
+      public static final int kStatus3PeriodMs = 500;
+      public static final int kStatus4PeriodMs = 500;
+      public static final int kStatus5PeriodMs = 20;
+    }
+  
+  
 }

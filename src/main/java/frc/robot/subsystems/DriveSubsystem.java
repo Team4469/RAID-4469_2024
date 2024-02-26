@@ -42,7 +42,7 @@ import java.util.List;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class DriveSubsystem extends SubsystemBase implements Logged {
+public class DriveSubsystem extends SubsystemBase {
 
   private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs =

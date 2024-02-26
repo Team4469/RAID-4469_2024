@@ -16,6 +16,7 @@ import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -26,10 +27,13 @@ import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.WristConstants;
 import frc.robot.SetPoints.WristSetpoints;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
+import monologue.Logged;
+import monologue.Annotations.Log;
+
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 
-public class WristSubsystem extends SubsystemBase {
+public class WristSubsystem extends SubsystemBase implements Logged {
   private final CANSparkFlex m_wristMotor =
       new CANSparkFlex(WristConstants.kWristMotorID, MotorType.kBrushless);
 
@@ -41,7 +45,7 @@ public class WristSubsystem extends SubsystemBase {
 
   private final double perpendicularToArmRads = Math.PI;
 
-  private double kGravity = .15;
+  private double kGravity = .45;
 
   private double SETPOINT;
   private boolean SETPOINT_INIT;
@@ -86,9 +90,33 @@ public class WristSubsystem extends SubsystemBase {
     m_wristPIDController.setPositionPIDWrappingMaxInput(WristConstants.kMaxRads);
     m_wristPIDController.setPositionPIDWrappingMinInput(WristConstants.kMinRads);
     m_wristPIDController.setOutputRange(WristConstants.kMinOutput, WristConstants.kMaxOutput);
-    m_wristPIDController.setP(WristConstants.kP); // .65
-    m_wristPIDController.setI(WristConstants.kI); // 0
-    m_wristPIDController.setD(WristConstants.kD); // 10
+    m_wristPIDController.setP(WristConstants.kP);
+    m_wristPIDController.setI(WristConstants.kI);
+    m_wristPIDController.setD(WristConstants.kD);
+    m_wristPIDController.setIMaxAccum(WristConstants.kIAcum, 0);
+    m_wristPIDController.setIZone(WristConstants.kIz);
+
+    for (int i = 0; i < 6; i++) {
+      if (m_wristPIDController.getI() != WristConstants.kI) {
+         m_wristPIDController.setI(WristConstants.kI);
+        } else { break;}
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_wristPIDController.getP() != WristConstants.kP) {
+          m_wristPIDController.setP(WristConstants.kP);
+        } else {System.out.println("Set Wrist P to : " + WristConstants.kP); break;}
+      Timer.delay(.1);
+    }
+
+            for (int i = 0; i < 6; i++) {
+              if (m_wristPIDController.getD() != WristConstants.kD) {
+                 m_wristPIDController.setD(WristConstants.kD);
+                } else { break;}
+              Timer.delay(.1);
+            }
+    
 
     m_wristMotor.burnFlash();
 
@@ -125,6 +153,7 @@ public class WristSubsystem extends SubsystemBase {
     }
   }
 
+  @Log
   private double getMeasurement() {
     return m_encoder.getPosition();
   }
@@ -145,8 +174,14 @@ public class WristSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSetpoint(point));
   }
 
+  @Log
+  private double getI() {
+    return m_wristPIDController.getIAccum();
+  }
+
   public void setSetpoint(double radians) {
     SETPOINT = radians;
+    m_wristPIDController.setIAccum(0);
     m_wristPIDController.setReference(SETPOINT, ControlType.kPosition);
   }
 
@@ -160,12 +195,19 @@ public class WristSubsystem extends SubsystemBase {
     return getMeasurement() - perpendicularToArmRads;
   }
 
+  @Log
   private double getSetpoint() {
     return SETPOINT;
   }
 
-  public void resetSetpointInit() {
-    SETPOINT_INIT = false;
+  @Log
+  private double getOutput() {
+    return m_wristMotor.getAppliedOutput();
+  }
+
+  @Log
+  private boolean getSetpointInit() {
+    return SETPOINT_INIT;
   }
 
   @Override
@@ -179,7 +221,7 @@ public class WristSubsystem extends SubsystemBase {
       } else {
         SETPOINT_INIT = true;
       }
-    }
+    }            
 
     m_wristPIDController.setReference(
         getSetpoint(),
