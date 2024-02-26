@@ -3,6 +3,7 @@
     "types": {
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Auto Mode": "String Chooser",
+      "/SmartDashboard/On-the-fly path": "Command",
       "/SmartDashboard/Scheduler": "Scheduler"
     }
   },

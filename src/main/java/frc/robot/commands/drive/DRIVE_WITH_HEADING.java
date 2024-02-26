@@ -7,7 +7,6 @@ package frc.robot.commands.drive;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
@@ -86,12 +85,6 @@ public class DRIVE_WITH_HEADING extends Command {
   public void initialize() {
     rotationController.reset(drive.getPose().getRotation().getRadians());
 
-    ally = DriverStation.getAlliance();
-
-    if (ally.isPresent() && ally.get() == Alliance.Red) {
-      DESIRED_HEADING_RADIANS = Units.degreesToRadians(180) + DESIRED_HEADING_RADIANS;
-    }
-
     rotationController.setGoal(DESIRED_HEADING_RADIANS);
   }
 
@@ -108,11 +101,6 @@ public class DRIVE_WITH_HEADING extends Command {
 
     double xVelo = m_translationXSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
     double yVelo = m_translationYSupplier.getAsDouble() * DriveConstants.kMaxSpeedMetersPerSecond;
-
-    if (ally.isPresent() && ally.get() == Alliance.Red) {
-      xVelo *= -1;
-      yVelo *= -1;
-    }
 
     drive.drive(xVelo, yVelo, rotationOutput, true, true);
 

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.climber.ZERO_CLIMBER;
+import frc.robot.subsystems.utils.LimelightPipeline;
 import monologue.Monologue;
 
 /**
@@ -82,6 +83,8 @@ public class Robot extends TimedRobot {
     if (!m_robotContainer.getRightClimber().isClimberZeroed()) {
       new ZERO_CLIMBER(m_robotContainer.getRightClimber()).schedule();
     }
+    m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT);
+    m_robotContainer.getRearLimelight().setPipelineCommand(LimelightPipeline.SHOOT);
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove

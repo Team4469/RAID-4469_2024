@@ -202,7 +202,6 @@ public class PivotSubsystem extends SubsystemBase {
       }
     }
 
-    
     m_pidController.setReference(SETPOINT, ControlType.kPosition, 0, .2, ArbFFUnits.kVoltage);
 
     SmartDashboard.putNumber("Pivot Setpoint", getSetpoint());

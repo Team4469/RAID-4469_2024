@@ -18,7 +18,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
-
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -47,7 +46,6 @@ public class LevetatorSubsystem extends SubsystemBase {
   private int init_loop_number = 15;
   private int init_loop_count = 0;
   MedianFilter Setpoint_init_filter = new MedianFilter(init_loop_number);
-
 
   // private final ElevatorFeedforward m_elevatorFeedforward =
   //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
@@ -173,7 +171,6 @@ public class LevetatorSubsystem extends SubsystemBase {
     SETPOINT_INIT = false;
   }
 
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -200,7 +197,6 @@ public class LevetatorSubsystem extends SubsystemBase {
       }
     }
 
-
     // if (m_encoder.getPosition() != 0) {
     //   EncoderSet = true;
     // }
@@ -214,7 +210,7 @@ public class LevetatorSubsystem extends SubsystemBase {
         LevetatorConstants.kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()),
         ArbFFUnits.kVoltage);
 
-    SmartDashboard.putNumber("Levetator LaserCAN", measurement.distance_mm);
+    // SmartDashboard.putNumber("Levetator LaserCAN", measurement.distance_mm);
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
     SmartDashboard.putBoolean("Levetator In Range", inRange(getSetpoint()));
