@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -184,6 +185,28 @@ public class RobotContainer implements Logged {
     return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
   }
 
+  public Command intakePositionCommand() {
+    return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+                    .andThen(m_levetator.levInRange().withTimeout(1))
+                    .andThen(
+                        m_pivot
+                            .pivotSetpointCommand(PivotSetpoints.kIntake)
+                            .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
+  }
+
+  public Command stowedCommand() {
+    return 
+    m_pivot
+                            .pivotSetpointCommand(PivotSetpoints.kStowed)
+                            .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+                            .andThen(
+                                m_wrist
+                                    .wristAngleSetpoint(WristSetpoints.kStowed)
+                                    .alongWith(
+                                        m_levetator.levetatorSetpointPosition(
+                                            LevetatorSetpoints.kStowed)));
+  }
+
   private final ConditionalCommand m_stageRightConditional =
       new ConditionalCommand(m_alignSrRedCommand(), m_alignSrBlueCommand(), this::allianceIsRed);
   private final ConditionalCommand m_stageLeftConditional =
@@ -266,28 +289,11 @@ public class RobotContainer implements Logged {
             .andThen(
                 new shooterVariableDistanceSpeedCommand(
                     m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters).withTimeout(.5))
-            .andThen(new WaitCommand(.5).andThen(m_intake.intakeShootCommand().withTimeout(1))));
-
-    NamedCommands.registerCommand(
-        "Intake",
-        ((m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-            .andThen(m_levetator.levInRange().withTimeout(1))
-            .andThen(
-                m_pivot
-                    .pivotSetpointCommand(PivotSetpoints.kIntake)
-                    .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
-            .andThen(m_intake.intakeAutoIntake())
-            .andThen(
-                m_pivot
-                    .pivotSetpointCommand(PivotSetpoints.kStowed)
-                    .andThen(m_pivot.pivotInRange().withTimeout(1))
-                    .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                    .andThen(m_wrist.wristInRange().withTimeout(1))
-                    .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)))));
-    // NamedCommands.registerCommand(
-    //     "ExtendLeftClimber_Trap", m_leftClimber.extendClimber(ClimberSetpoints.kTrapHeight));
-    // NamedCommands.registerCommand(
-    //     "ExtendRightClimber_Trap", m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight));
+            .andThen(new WaitCommand(.5).andThen(m_intake.intakeShootCommand().withTimeout(1)).andThen(m_shooter.shooterStop())));
+            
+    NamedCommands.registerCommand("Intake Position", intakePositionCommand());
+    NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
+    NamedCommands.registerCommand("Stowed", stowedCommand());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -786,10 +792,6 @@ public class RobotContainer implements Logged {
 
   public ClimberModule getRightClimber() {
     return m_rightClimber;
-  }
-
-  public void disabledInit() {
-    m_wrist.resetSetpointInit();
   }
 
   public Command getAutonomousCommand() {
