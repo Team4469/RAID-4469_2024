@@ -10,6 +10,8 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -42,8 +44,8 @@ public class ShooterSubsystem extends SubsystemBase {
         new CANSparkFlex(ShooterConstants.kRightShooterCanID, MotorType.kBrushless);
     m_leftShooterMotor = new CANSparkFlex(ShooterConstants.kLeftShooterCanID, MotorType.kBrushless);
 
-    m_rightShooterEncoder = m_rightShooterMotor.getEncoder();
-    m_leftShooterEncoder = m_leftShooterMotor.getEncoder();
+    m_rightShooterEncoder = m_rightShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    m_leftShooterEncoder = m_leftShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
 
     m_rightPIDController = m_rightShooterMotor.getPIDController();
     m_leftPIDController = m_leftShooterMotor.getPIDController();
