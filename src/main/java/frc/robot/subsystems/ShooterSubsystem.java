@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
@@ -60,6 +61,8 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
     m_leftShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
 
+    m_rightShooterMotor.setIdleMode(IdleMode.kBrake);
+    m_rightShooterMotor.setIdleMode(IdleMode.kBrake);
     // m_rightShooterEncoder.setAverageDepth(2);
     // m_rightShooterEncoder.setMeasurementPeriod(16);
 
@@ -185,5 +188,13 @@ public class ShooterSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
+
+    // if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
+    //   m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
+    // }
+
+    // if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
+    //   m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
+    // }
   }
 }

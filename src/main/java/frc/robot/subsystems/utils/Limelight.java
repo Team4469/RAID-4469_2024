@@ -11,6 +11,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.FrontLimelightConstants;
 
 public class Limelight extends SubsystemBase {
@@ -249,4 +250,17 @@ public class Limelight extends SubsystemBase {
       return false;
     }
   }
+
+  public boolean limelight_x_in_range() {
+    var tx = this.x();
+    var tv = this.hasTargets();
+
+    if (tv && Math.abs(tx) < 2.0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public final Trigger shooterTargetInRange = new Trigger(this::limelight_x_in_range);
 }

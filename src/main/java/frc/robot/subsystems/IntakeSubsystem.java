@@ -104,6 +104,33 @@ public class IntakeSubsystem extends SubsystemBase {
             });
   }
 
+  /* Commands */
+  public Command intakePrepShoot() {
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+    return runOnce(
+            () -> {
+              debounce.calculate(false);
+            })
+        // set the intake to intaking speed
+        .andThen(
+            run(() -> {
+                  setSpeed(-.08);
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+        .andThen(
+            run(() -> {
+                  setSpeed(.25);
+                })
+                // Wait until trigger is detected for more than 0.25s
+                .withTimeout(.04))
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
+  }
+
   public Command intakeShootCommand() {
     Debouncer debounce =
         new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
@@ -114,17 +141,10 @@ public class IntakeSubsystem extends SubsystemBase {
         // set the intake to backward transfer speed
         .andThen(
             run(() -> {
-                  this.setSpeed(-.075);
-                })
-                // Wait until trigger is detected for more than 0.25s
-                // .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
-                .withTimeout(.2))
-        .andThen(
-            run(() -> {
                   setSpeed(1);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.5))
+                .withTimeout(1))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
