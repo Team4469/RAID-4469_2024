@@ -20,14 +20,18 @@ import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
+import monologue.Logged;
+import monologue.Annotations.Log;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
 
-public class ShooterSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase implements Logged{
 
   TunableNumber SHOOTER_SPEED_CLOSED_LOOP = new TunableNumber("Shooter/RPMSetpoint", 0);
 
   TunableNumber SHOOTER_SPEED_OPEN_LOOP = new TunableNumber("Shooter/FeedSpeed", 0);
+
+  private double SETPOINT = 0;
 
   private final CANSparkFlex m_rightShooterMotor;
   private final CANSparkFlex m_leftShooterMotor;
@@ -71,6 +75,9 @@ public class ShooterSubsystem extends SubsystemBase {
     m_leftShooterEncoder.setAverageDepth(2);
     m_leftShooterEncoder.setMeasurementPeriod(8);
 
+    m_rightShooterMotor.enableVoltageCompensation(12);
+    m_leftShooterMotor.enableVoltageCompensation(12);
+
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
 
@@ -94,12 +101,16 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(1));
   }
 
+  public Command shooterSetRPMCommand(double RPM) {
+    return Commands.runOnce(() -> setSetpoint(RPM));
+  }
+
   /**
    * @param distanceToTarget distance to target in Meters
    */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
     double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
-    return Commands.run(() -> shootPIDControl(target));
+    return Commands.run(() -> setSetpoint(target));
   }
 
   /**
@@ -137,15 +148,15 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shooterAboveSpeedCommand() {
-    return Commands.waitUntil(this::aboveSpeed);
+    return Commands.waitUntil(this::inRange);
   }
 
   /* Methods */
 
-  private boolean aboveSpeed() {
+  public boolean inRange() {
     var currentSpeed =
-        Math.min(m_rightShooterEncoder.getVelocity(), m_leftShooterEncoder.getVelocity());
-    if (currentSpeed > 5500) {
+        getVelocity();
+    if (currentSpeed > (getSetpoint() - 100) && currentSpeed < (getSetpoint() + 100)) {
       return true;
     } else {
       return false;
@@ -162,6 +173,26 @@ public class ShooterSubsystem extends SubsystemBase {
     m_leftShooterMotor.set(0);
   }
 
+  public void setSetpoint(double setpoint) {
+    this.SETPOINT = setpoint;
+    shootPIDControl(SETPOINT);
+  }
+
+  @Log
+  private double getSetpoint() {
+    return this.getSetpoint();
+  }
+
+  @Log
+  private double getVelocity() {
+    return (((Math.abs(m_rightShooterEncoder.getVelocity()) + Math.abs(m_leftShooterEncoder.getVelocity()))) / 2);
+  }
+
+  @Log
+  private double getError() {
+    return (getVelocity() - getSetpoint());
+  }
+
   private void shootPIDControl(double setpoint) {
     m_leftPIDController.setReference(setpoint, ControlType.kVelocity);
     m_rightPIDController.setReference(setpoint, ControlType.kVelocity);
@@ -174,12 +205,5 @@ public class ShooterSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
 
-    // if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
-    //   m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
-    // }
-
-    // if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
-    //   m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
-    // }
   }
 }

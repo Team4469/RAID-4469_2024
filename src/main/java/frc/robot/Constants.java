@@ -119,7 +119,7 @@ public final class Constants {
     public static final boolean kTurningEncoderInverted = true;
 
     // Calculations required for driving motor conversion factors and feed forward
-    public static final double kDrivingMotorFreeSpeedRps = NeoMotorConstants.kFreeSpeedRpm / 60;
+    public static final double kDrivingMotorFreeSpeedRps = NeoVortexMotorConstants.kFreeSpeedRpm / 60;
     public static final double kWheelDiameterMeters = 0.0762;
     public static final double kWheelCircumferenceMeters = kWheelDiameterMeters * Math.PI;
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
@@ -179,7 +179,7 @@ public final class Constants {
             kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
   }
 
-  public static final class NeoMotorConstants {
+  public static final class NeoVortexMotorConstants {
     public static final double kFreeSpeedRpm = 6784;
   }
 
@@ -274,19 +274,19 @@ public final class Constants {
     public static final int kLeftShooterCanID = 48;
     public static final int kRightShooterCanID = 20;
     public static final boolean kLeftMotorInverted = false;
-    public static final boolean kRightMotorInverted = !kLeftMotorInverted;
+    public static final boolean kRightMotorInverted = true;
     public static final int kCurrentLimit = 80; // Amps
 
-    public static final double kP_right = 6e-5;
+    public static final double kP_right = .0001;
     public static final double kI_right = 0;
     public static final double kD_right = 0;
-    public static final double kFF_right = 0.000015;
+    public static final double kFF_right = 1 / NeoVortexMotorConstants.kFreeSpeedRpm;
     public static final double kIz_right = 0;
 
-    public static final double kP_left = 6e-5;
+    public static final double kP_left = .0001;
     public static final double kI_left = 0;
     public static final double kD_left = 0;
-    public static final double kFF_left = 0.000015;
+    public static final double kFF_left = 1 / NeoVortexMotorConstants.kFreeSpeedRpm;
     public static final double kIz_left = 0;
 
     public static final double kMaxOutput = 1;

@@ -14,9 +14,12 @@ public class ShootingInterpolationTables {
         new InterpolatingDoubleTreeMap();
 
     static {
-      SHOOTER_RPM_INTERP_TABLE.put(1.0, 4000.0);
-      SHOOTER_RPM_INTERP_TABLE.put(2.0, 5000.0);
-      SHOOTER_RPM_INTERP_TABLE.put(3.0, 6000.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(3), 6500.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(4), 6500.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(5), 6500.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(6), 6500.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(7), 6500.0);
+      SHOOTER_RPM_INTERP_TABLE.put(Units.feetToMeters(8), 6500.0);
     }
   }
 

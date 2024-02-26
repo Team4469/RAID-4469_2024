@@ -507,14 +507,11 @@ public class RobotContainer implements Logged {
 
     /* OPERATOR CONTROLS */
 
-    /* CLIMBER MOVE */
-
-    // NEEDS TO MOVE TO OPERATOR AT SOME POINT
     /* SHOOTER SPIN UP */
 
     m_operatorController
         .button(7)
-        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
+        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSetRPMCommand(6500)));
     m_operatorController.button(8).onTrue(m_shooter.shooterStop());
 
     m_operatorController.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
@@ -554,6 +551,10 @@ public class RobotContainer implements Logged {
     //         m_leftClimber
     //             .retractClimber(ClimberSetpoints.kRetractedHeight)
     //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
+
+    m_driverController.povUp().onTrue(m_shooter.shooterSetRPMCommand(6500));
+    m_driverController.povDown().onTrue(m_shooter.shooterSetRPMCommand(3000));
+    m_driverController.povCenter().onTrue(m_shooter.shooterSetRPMCommand(0));
   }
 
   public ClimberModule getLeftClimber() {
