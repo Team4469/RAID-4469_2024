@@ -61,42 +61,26 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
     m_leftShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
 
+    m_leftShooterMotor.setIdleMode(IdleMode.kBrake);
     m_rightShooterMotor.setIdleMode(IdleMode.kBrake);
-    m_rightShooterMotor.setIdleMode(IdleMode.kBrake);
-    // m_rightShooterEncoder.setAverageDepth(2);
-    // m_rightShooterEncoder.setMeasurementPeriod(16);
 
-    // m_leftShooterEncoder.setAverageDepth(2);
-    // m_leftShooterEncoder.setMeasurementPeriod(16);
+    m_rightShooterEncoder.setAverageDepth(2);
+    m_rightShooterEncoder.setMeasurementPeriod(8);
+
+    m_leftShooterEncoder.setAverageDepth(2);
+    m_leftShooterEncoder.setMeasurementPeriod(8);
 
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
 
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_rightShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus3, ShooterConstants.kStatus3PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus4, ShooterConstants.kStatus4PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus5, ShooterConstants.kStatus5PeriodMs);
-    m_leftShooterMotor.setPeriodicFramePeriod(
-        PeriodicFrame.kStatus6, ShooterConstants.kStatus6PeriodMs);
-
-    m_rightPIDController.setP(.0025);
+    m_rightPIDController.setP(ShooterConstants.kP_right);
     m_rightPIDController.setI(ShooterConstants.kI_right);
     m_rightPIDController.setD(ShooterConstants.kD_right);
     m_rightPIDController.setIZone(ShooterConstants.kIz_right);
     m_rightPIDController.setFF(ShooterConstants.kFF_right);
     m_rightPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
-    m_leftPIDController.setP(3);
+    m_leftPIDController.setP(ShooterConstants.kP_left);
     m_leftPIDController.setI(ShooterConstants.kI_left);
     m_leftPIDController.setD(ShooterConstants.kD_left);
     m_leftPIDController.setIZone(ShooterConstants.kIz_left);

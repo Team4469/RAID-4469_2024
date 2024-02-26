@@ -62,6 +62,7 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    m_robotContainer.stowedCommand().schedule();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
     // schedule the autonomous command (example)
@@ -76,8 +77,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT);
-    m_robotContainer.getRearLimelight().setPipelineCommand(LimelightPipeline.SHOOT);
+    m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();
+    m_robotContainer.getRearLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();
+    m_robotContainer.stowedCommand().schedule();
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
