@@ -4,8 +4,6 @@
 
 package frc.robot.subsystems;
 
-import javax.sound.sampled.spi.MixerProvider;
-
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
@@ -25,8 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.SetPoints.PivotSetpoints;
-import monologue.Logged;
 import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class PivotSubsystem extends SubsystemBase implements Logged {
 
@@ -94,25 +92,30 @@ public class PivotSubsystem extends SubsystemBase implements Logged {
 
     for (int i = 0; i < 6; i++) {
       if (m_pidController.getP() != PivotConstants.kP) {
-         m_pidController.setP(PivotConstants.kP);
-        } else { break;}
+        m_pidController.setP(PivotConstants.kP);
+      } else {
+        break;
+      }
       Timer.delay(.1);
     }
 
-        for (int i = 0; i < 6; i++) {
-          if (m_pidController.getI() != PivotConstants.kI) {
-             m_pidController.setI(PivotConstants.kI);
-            } else { break;}
-          Timer.delay(.1);
-        }
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getI() != PivotConstants.kI) {
+        m_pidController.setI(PivotConstants.kI);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-            for (int i = 0; i < 6; i++) {
-              if (m_pidController.getD() != PivotConstants.kD) {
-                 m_pidController.setD(PivotConstants.kD);
-                } else { break;}
-              Timer.delay(.1);
-            }
-
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getD() != PivotConstants.kD) {
+        m_pidController.setD(PivotConstants.kD);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();

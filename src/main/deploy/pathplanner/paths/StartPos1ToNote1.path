@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.046067578246268,
-        "y": 6.369805924797036
+        "x": 1.2596337924157333,
+        "y": 6.694400935098167
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.1333361555612,
-        "y": 6.511972125796103
+        "x": 1.8609600043274164,
+        "y": 6.616369862369355
       },
       "isLocked": false,
-      "linkedName": "WingShootPoint1"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.455087183322515,
-        "y": 5.810642621285243
+        "x": 2.344586378987573,
+        "y": 6.79903620918353
       },
       "prevControl": {
-        "x": 6.814567281912343,
-        "y": 6.080960310068768
+        "x": 1.9107241131148929,
+        "y": 6.737929684192703
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote2"
+      "linkedName": "Note1_Intake"
     }
   ],
   "rotationTargets": [],
@@ -39,11 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -150.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "4 Note Auto Near Amp",
-  "previewStartingState": null,
-  "useDefaultConstraints": true
+  "previewStartingState": {
+    "rotation": -140.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
 }

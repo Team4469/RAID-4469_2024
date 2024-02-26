@@ -31,6 +31,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -40,7 +43,6 @@ import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
 import java.util.List;
 import monologue.Annotations.Log;
-import monologue.Logged;
 
 public class DriveSubsystem extends SubsystemBase {
 
@@ -50,6 +52,8 @@ public class DriveSubsystem extends SubsystemBase {
 
   private Limelight limelightFront;
   private Limelight limelightRear;
+
+  private final Field2d m_field = new Field2d();
 
   private boolean sawTag = false;
 
@@ -143,6 +147,12 @@ public class DriveSubsystem extends SubsystemBase {
           return false;
         },
         this);
+
+    Shuffleboard.getTab("Field")
+        .add("Field", m_field)
+        .withWidget(BuiltInWidgets.kField)
+        .withPosition(4, 0)
+        .withSize(7, 5);
   }
 
   // COMMANDS
@@ -436,14 +446,7 @@ public class DriveSubsystem extends SubsystemBase {
       // distanceFormula(pose2d.getX(),pose2d.getY(),visionPose.getX(),visionPose.getY());
       // SmartDashboard.putBoolean("vision measurement valid", distanceFormula(pose2d.getX(),
       // pose2d.getY(), getCurrentPose().getX(), getCurrentPose().getY()) < 0.5);
-      if (distanceFormula(pose2d.getX(), pose2d.getY(), getPose().getX(), getPose().getY()) < 0.5
-          && DriverStation.isAutonomous()) {
-        m_poseEstimator.addVisionMeasurement(
-            pose2d, timeStampSeconds, VecBuilder.fill(distance / 2, distance / 2, 100));
-      } else if (DriverStation.isTeleop()) {
-        m_poseEstimator.addVisionMeasurement(
-            pose2d, timeStampSeconds, VecBuilder.fill(distance / 2, distance / 2, 100));
-      }
+      m_poseEstimator.addVisionMeasurement(pose2d, timeStampSeconds, VecBuilder.fill(.9, .9, .01));
       // setCurrentPose(pose2d);
     }
   }
@@ -465,8 +468,11 @@ public class DriveSubsystem extends SubsystemBase {
           m_rearRight.getPosition()
         });
 
+    m_field.setRobotPose(getPose());
+
     SmartDashboard.putNumber("Gyro", getHeading());
-    addVisionMeasurement(limelightFront);
-    addVisionMeasurement(limelightRear);
+    if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
+      addVisionMeasurement(limelightFront);
+    }
   }
 }

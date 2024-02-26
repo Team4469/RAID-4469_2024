@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.665334339927939,
-        "y": 6.22663018937149
+        "x": 6.586768807796875,
+        "y": 6.284470573570776
       },
       "isLocked": false,
       "linkedName": "CenterNote2"
     },
     {
       "anchor": {
-        "x": 4.046067578246268,
-        "y": 6.369805924797036
+        "x": 2.818711253163247,
+        "y": 6.3078680185138145
       },
       "prevControl": {
-        "x": 4.920977619733017,
-        "y": 6.3500903112917335
+        "x": 4.447090283069455,
+        "y": 6.571059581933979
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,11 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": -165.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "4 Note Auto Near Amp",
-  "previewStartingState": null,
-  "useDefaultConstraints": true
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
 }

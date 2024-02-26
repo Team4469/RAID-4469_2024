@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Note1ToCenterNote1"
+            "pathName": "Note1ToNote2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note2ToNote3"
           }
         }
       ]
