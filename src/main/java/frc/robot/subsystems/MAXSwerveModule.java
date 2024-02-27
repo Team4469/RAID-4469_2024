@@ -12,7 +12,6 @@ import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
-
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -27,9 +26,6 @@ public class MAXSwerveModule {
 
   private final SparkPIDController m_drivingPIDController;
   private final SparkPIDController m_turningPIDController;
-
-  private double DESIRED_DRIVING_SPEED;
-  private double DESIRED_TURNING_HEADING;
 
   private double m_chassisAngularOffset = 0;
   private SwerveModuleState m_desiredState = new SwerveModuleState(0.0, new Rotation2d());

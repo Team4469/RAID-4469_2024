@@ -14,7 +14,8 @@ public class CLIMBER_TO_HEIGHT extends Command {
   private boolean isClimbing;
 
   /** Creates a new CLIMBER_TO_HEIGHT. */
-  public CLIMBER_TO_HEIGHT(ClimberModule left, ClimberModule right, double heightMeters, Boolean isClimbingWithLoad) {
+  public CLIMBER_TO_HEIGHT(
+      ClimberModule left, ClimberModule right, double heightMeters, Boolean isClimbingWithLoad) {
     this.m_leftModule = left;
     this.m_rightModule = right;
     this.height = heightMeters;
@@ -43,5 +44,6 @@ public class CLIMBER_TO_HEIGHT extends Command {
   @Override
   public boolean isFinished() {
     return (m_leftModule.isAtTargetPosition() && m_rightModule.isAtTargetPosition());
+    // return true;
   }
 }

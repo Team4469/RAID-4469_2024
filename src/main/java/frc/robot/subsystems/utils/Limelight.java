@@ -5,9 +5,7 @@
 package frc.robot.subsystems.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -129,7 +127,7 @@ public class Limelight extends SubsystemBase {
       return 0;
     }
   }
-  
+
   private static Pose2d toPose2D(double[] inData) {
     if (inData.length < 6) {
       System.err.println("Bad LL 2D Pose Data!");
@@ -139,8 +137,6 @@ public class Limelight extends SubsystemBase {
     Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
     return new Pose2d(tran2d, r2d);
   }
-
-
 
   public double x() {
     double dx = 0.0;

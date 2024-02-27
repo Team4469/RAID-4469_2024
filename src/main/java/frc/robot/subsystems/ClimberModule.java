@@ -16,8 +16,13 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 
@@ -50,29 +55,29 @@ public class ClimberModule extends SubsystemBase {
     m_encoder.setPositionConversionFactor(
         ClimberConstants.kPositionConversionFactor); // Rotations to meters
     m_encoder.setVelocityConversionFactor(ClimberConstants.kPositionConversionFactor / 60);
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(18));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
     m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
     m_climbingMotor.setSmartCurrentLimit(105);
     m_climbingMotor.setInverted(MotorInverted);
     m_climbingMotor.enableVoltageCompensation(12);
-    m_climbingMotor.setClosedLoopRampRate(1);
-
-    m_climbingMotor.burnFlash();
 
     m_pidController = m_climbingMotor.getPIDController();
-    m_pidController.setP(0, PID_Slot.NO_LOAD.ordinal());
+
+    m_pidController.setP(0.002, PID_Slot.NO_LOAD.ordinal());
     m_pidController.setI(0, PID_Slot.NO_LOAD.ordinal());
     m_pidController.setD(0, PID_Slot.NO_LOAD.ordinal());
     m_pidController.setFF(0, PID_Slot.NO_LOAD.ordinal());
 
-    m_pidController.setP(0, PID_Slot.CLIMBING.ordinal());
+    m_pidController.setP(.003, PID_Slot.CLIMBING.ordinal());
     m_pidController.setI(0, PID_Slot.CLIMBING.ordinal());
     m_pidController.setD(0, PID_Slot.CLIMBING.ordinal());
     m_pidController.setFF(0, PID_Slot.CLIMBING.ordinal());
+
+    m_climbingMotor.burnFlash();
 
     m_distanceSensor = new LaserCan(LaserCanID);
     ID = LaserCanID;
@@ -89,6 +94,10 @@ public class ClimberModule extends SubsystemBase {
     // m_encoder.setPosition(measure.distance_mm / 1000);
   }
 
+  public Command setHeight(double meters) {
+    return Commands.runOnce(() -> setTargetHeight(meters, false));
+  }
+
   public double getTargetHeight() {
     if (mode == Mode.POSITION_NO_LOAD || mode == Mode.POSITION_CLIMBING) {
       return targetHeight;
@@ -97,17 +106,17 @@ public class ClimberModule extends SubsystemBase {
   }
 
   public void setTargetHeight(double target, boolean isClimbing) {
-    this.targetHeight = MathUtil.clamp(targetHeight, 0, 20);
+    this.targetHeight = MathUtil.clamp(target, 0, 24);
     if (isClimbing) {
-      mode = Mode.POSITION_CLIMBING;
+      this.mode = Mode.POSITION_CLIMBING;
     } else {
-      mode = Mode.POSITION_NO_LOAD;
+      this.mode = Mode.POSITION_NO_LOAD;
     }
   }
 
   public void setTargetVoltage(double voltage) {
     m_climbingMotor.setVoltage(voltage);
-    mode = Mode.VOLTAGE;
+    this.mode = Mode.VOLTAGE;
   }
 
   public void setZeroPosition() {
@@ -135,10 +144,42 @@ public class ClimberModule extends SubsystemBase {
   }
 
   public void setGains(PID_Slot slot, double p, double i, double d, double ff) {
-    m_pidController.setP(p, slot.ordinal());
-    m_pidController.setI(i, slot.ordinal());
-    m_pidController.setD(d, slot.ordinal());
-    m_pidController.setFF(ff, slot.ordinal());
+    for (int j = 0; j < 6; j++) {
+      if (m_pidController.getP(slot.ordinal()) != p) {
+        m_pidController.setP(p, slot.ordinal());
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+    for (int j = 0; j < 6; j++) {
+      if (m_pidController.getI(slot.ordinal()) != i) {
+        m_pidController.setI(i, slot.ordinal());
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+    for (int j = 0; j < 6; j++) {
+      if (m_pidController.getD(slot.ordinal()) != d) {
+        m_pidController.setD(d, slot.ordinal());
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+    for (int j = 0; j < 6; j++) {
+      if (m_pidController.getFF(slot.ordinal()) != ff) {
+        m_pidController.setFF(ff, slot.ordinal());
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+  }
+
+  public void turnSoftLimitOn() {
+    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
   }
 
   @Override
@@ -147,19 +188,33 @@ public class ClimberModule extends SubsystemBase {
       case POSITION_NO_LOAD:
         if (isClimberZeroed()) {
           m_pidController.setReference(
-              targetHeight, ControlType.kPosition, PID_Slot.NO_LOAD.ordinal());
+              targetHeight,
+              ControlType.kPosition,
+              PID_Slot.NO_LOAD.ordinal(),
+              0.1,
+              ArbFFUnits.kVoltage);
         }
         break;
       case POSITION_CLIMBING:
         if (isClimberZeroed()) {
           m_pidController.setReference(
-              targetHeight, ControlType.kPosition, PID_Slot.CLIMBING.ordinal());
+              targetHeight,
+              ControlType.kPosition,
+              PID_Slot.CLIMBING.ordinal(),
+              0.67,
+              ArbFFUnits.kVoltage);
         }
         break;
       case VOLTAGE:
         m_climbingMotor.setVoltage(targetVoltage);
         break;
     }
+
+    SmartDashboard.putNumber(
+        m_climbingMotor.getDeviceId() + " Output", m_climbingMotor.getAppliedOutput());
+    SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Position", getCurrentHeight());
+    SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Setpoint", getTargetHeight());
+    SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Velocity", getCurrentVelocity());
   }
 
   private enum Mode {

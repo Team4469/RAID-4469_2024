@@ -66,34 +66,114 @@ public class WristSubsystem extends SubsystemBase implements Logged {
     this.m_pivot = pivot;
     m_wristMotor.restoreFactoryDefaults();
 
-    m_wristMotor.setIdleMode(IdleMode.kBrake);
-    m_wristMotor.setInverted(true);
+    for (int i = 0; i < 6; i++) {
+      if (m_wristMotor.getInverted() != true) {
+        m_wristMotor.setInverted(true);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_wristMotor.getIdleMode() != IdleMode.kBrake) {
+        m_wristMotor.setIdleMode(IdleMode.kBrake);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
     m_wristMotor.setSmartCurrentLimit(115);
 
-    m_wristMotor.setClosedLoopRampRate(2);
+    for (int i = 0; i < 6; i++) {
+      if (m_wristMotor.getClosedLoopRampRate() != 2) {
+        m_wristMotor.setClosedLoopRampRate(2);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    // m_wristMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
-    // m_wristMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+    for (int i = 0; i < 6; i++) {
+      if (m_wristMotor.getSoftLimit(SoftLimitDirection.kForward)
+          != (float) WristConstants.kMaxRads) {
+        m_wristMotor.setSoftLimit(SoftLimitDirection.kForward, (float) WristConstants.kMaxRads);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    m_wristMotor.setSoftLimit(SoftLimitDirection.kForward, (float) WristConstants.kMaxRads);
-    m_wristMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) WristConstants.kMinRads);
+    for (int i = 0; i < 6; i++) {
+      if (m_wristMotor.getSoftLimit(SoftLimitDirection.kReverse)
+          != (float) WristConstants.kMinRads) {
+        m_wristMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) WristConstants.kMinRads);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    m_encoder.setPositionConversionFactor(WristConstants.kPositionConversionFactor);
-    m_encoder.setVelocityConversionFactor(WristConstants.kVelocityConversionFactor);
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getPositionConversionFactor() != WristConstants.kPositionConversionFactor) {
+        m_encoder.setPositionConversionFactor(WristConstants.kPositionConversionFactor);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    m_encoder.setZeroOffset(WristConstants.kEncoderZeroOffset);
-    m_encoder.setInverted(WristConstants.kEncoderInverted);
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getVelocityConversionFactor() != WristConstants.kVelocityConversionFactor) {
+        m_encoder.setVelocityConversionFactor(WristConstants.kVelocityConversionFactor);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getZeroOffset() != WristConstants.kEncoderZeroOffset) {
+        m_encoder.setZeroOffset(WristConstants.kEncoderZeroOffset);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getInverted() != WristConstants.kEncoderInverted) {
+        m_encoder.setInverted(WristConstants.kEncoderInverted);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_wristPIDController.setFeedbackDevice(m_encoder);
     m_wristPIDController.setPositionPIDWrappingEnabled(false);
     m_wristPIDController.setPositionPIDWrappingMaxInput(WristConstants.kMaxRads);
     m_wristPIDController.setPositionPIDWrappingMinInput(WristConstants.kMinRads);
     m_wristPIDController.setOutputRange(WristConstants.kMinOutput, WristConstants.kMaxOutput);
-    m_wristPIDController.setP(WristConstants.kP);
-    m_wristPIDController.setI(WristConstants.kI);
-    m_wristPIDController.setD(WristConstants.kD);
-    m_wristPIDController.setIMaxAccum(WristConstants.kIAcum, 0);
-    m_wristPIDController.setIZone(WristConstants.kIz);
+
+    for (int i = 0; i < 6; i++) {
+      if (m_wristPIDController.getIMaxAccum(0) != WristConstants.kIAcum) {
+        m_wristPIDController.setIMaxAccum(WristConstants.kIAcum, 0);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_wristPIDController.getIZone() != WristConstants.kIz) {
+        m_wristPIDController.setIZone(WristConstants.kIz);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     for (int i = 0; i < 6; i++) {
       if (m_wristPIDController.getI() != WristConstants.kI) {
@@ -125,9 +205,6 @@ public class WristSubsystem extends SubsystemBase implements Logged {
 
     m_wristMotor.burnFlash();
 
-    // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, WristConstants.kStatus3PeriodMs);
-    // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, WristConstants.kStatus4PeriodMs);
-    // m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, WristConstants.kStatus5PeriodMs);
     SETPOINT_INIT = false;
   }
 

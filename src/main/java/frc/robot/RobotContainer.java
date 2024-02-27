@@ -39,10 +39,12 @@ import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
 import frc.robot.commands.amp.PIVOT_SMART_AMP;
 import frc.robot.commands.amp.WRIST_SMART_AMP;
 import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
+import frc.robot.commands.climber.ZERO_CLIMBER;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
+import frc.robot.subsystems.ClimberModule.PID_Slot;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LevetatorSubsystem;
@@ -90,7 +92,8 @@ public class RobotContainer implements Logged {
       new CommandXboxController(OIConstants.kDriverControllerPort);
   CommandGenericHID m_operatorButtonsTop =
       new CommandGenericHID(OIConstants.kOperatorControllerPort);
-  CommandGenericHID m_operatorButtonsBottom = new CommandGenericHID(OIConstants.kOperatorController2Port);
+  CommandGenericHID m_operatorButtonsBottom =
+      new CommandGenericHID(OIConstants.kOperatorController2Port);
 
   public AmpDirection AMP_DIRECTION = AmpDirection.REAR;
 
@@ -313,6 +316,31 @@ public class RobotContainer implements Logged {
     configureButtonBindings();
     // configureTestButtonBindings();
 
+    m_leftClimber.setGains(
+        PID_Slot.CLIMBING,
+        LeftClimberConstants.kP_Climbing,
+        LeftClimberConstants.kI_Climbing,
+        LeftClimberConstants.kD_Climbing,
+        0);
+    m_leftClimber.setGains(
+        PID_Slot.NO_LOAD,
+        LeftClimberConstants.kP_No_Climbing,
+        LeftClimberConstants.kI_No_Climbing,
+        LeftClimberConstants.kD_No_Climbing,
+        0);
+    m_rightClimber.setGains(
+        PID_Slot.CLIMBING,
+        RightClimberConstants.kP_Climbing,
+        RightClimberConstants.kI_Climbing,
+        RightClimberConstants.kD_Climbing,
+        0);
+    m_rightClimber.setGains(
+        PID_Slot.NO_LOAD,
+        RightClimberConstants.kP_No_Climbing,
+        RightClimberConstants.kI_No_Climbing,
+        RightClimberConstants.kD_No_Climbing,
+        0);
+
     // Configure default commands
     m_robotDrive.setDefaultCommand(
         // The left stick controls translation of the robot.
@@ -520,6 +548,9 @@ public class RobotContainer implements Logged {
     m_operatorButtonsTop.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
     m_operatorButtonsTop.button(5).onFalse(m_intake.intakeStop());
 
+    m_operatorButtonsTop
+        .button(4)
+        .onTrue(new ZERO_CLIMBER(m_leftClimber).alongWith(new ZERO_CLIMBER(m_rightClimber)));
     /* CLIMBER */
 
     // m_operatorController.y().onTrue(m_stageLeftConditional);
@@ -527,8 +558,50 @@ public class RobotContainer implements Logged {
     // m_operatorController.a().onTrue(m_stageRightConditional);
 
     // m_operatorController.b().onTrue(m_stageCenterConditional);
-    m_operatorButtonsBottom.button(1).onTrue(new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(10), false));
-    
+    // m_driverController.povUp()
+    //     .onTrue(m_leftClimber.setHeight(Units.inchesToMeters(2)));
+
+    m_operatorButtonsBottom
+        .button(1)
+        .onTrue(
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false));
+
+    m_operatorButtonsBottom
+        .button(2)
+        .onTrue(
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(3), false));
+
+    m_operatorButtonsBottom
+        .button(9)
+        .onTrue(
+            m_levetator
+                .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
+                .andThen(
+                    m_wrist
+                        .wristAngleSetpoint(2.65)
+                        .alongWith(m_pivot.pivotSetpointCommand(3.65)))
+                .andThen(m_pivot.pivotInRange())
+                .andThen(m_wrist.wristAngleSetpoint(3.2)));
+
+    m_operatorButtonsBottom
+        .button(10)
+        .onTrue(
+            m_pivot
+                .pivotSetpointCommand(3.14)
+                .andThen(m_pivot.pivotInRange())
+                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront))
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)));
+
+    m_operatorButtonsBottom
+        .button(4)
+        .onTrue(
+            m_shooter
+                .shooterFeed()
+                .alongWith(m_intake.intakeOuttake())
+                .andThen(new WaitCommand(.5))
+                .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop())));
+
+    m_operatorButtonsBottom.button(6).onTrue(stowedCommand());
   }
 
   public ClimberModule getLeftClimber() {
