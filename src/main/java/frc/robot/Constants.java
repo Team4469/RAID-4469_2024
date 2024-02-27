@@ -271,7 +271,7 @@ public final class Constants {
   }
 
   public static final class ShooterConstants {
-    public static final int kLeftShooterCanID = 21;
+    public static final int kLeftShooterCanID = 48;
     public static final int kRightShooterCanID = 20;
     public static final boolean kLeftMotorInverted = false;
     public static final boolean kRightMotorInverted = !kLeftMotorInverted;

@@ -97,7 +97,7 @@ public class RobotContainer implements Logged {
 
   public AmpDirection selectAmpDirection() {
     var ampDir = AmpDirection.REAR;
-    double robotHeading = m_robotDrive.getHeading();
+    double robotHeading = m_robotDrive.getHeading().getDegrees();
     robotHeading = MathUtil.inputModulus(robotHeading, -180, 180);
     SmartDashboard.putNumber("Mod Header", robotHeading);
     if (robotHeading > 0.0) {
@@ -113,6 +113,10 @@ public class RobotContainer implements Logged {
     if (ally.isPresent() && ally.get() == Alliance.Red) {
       return true;
     } else return false;
+  }
+
+  public void autoInit() {
+    m_robotDrive.zeroGyro();
   }
 
   //   private StageLocationAlliance selectStageLocation() {
@@ -582,7 +586,7 @@ public class RobotContainer implements Logged {
 
     var tv = ll.tv();
     var ampDir = selectAmpDirection();
-    var gyroDeg = m_robotDrive.getHeading();
+    var gyroDeg = m_robotDrive.getHeading().getDegrees();
 
     if (tv == 0) {
       // if no target seen, we want to rotate in place

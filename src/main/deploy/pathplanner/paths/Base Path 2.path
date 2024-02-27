@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 1.8,
-        "y": 7.07
+        "y": 6.169663185305127
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.9180339887498947,
-        "y": 7.07
+        "y": 6.169663185305127
       },
       "isLocked": false,
-      "linkedName": "BasePoint1"
+      "linkedName": "Test2"
     },
     {
       "anchor": {
-        "x": 3.8,
-        "y": 7.07
+        "x": 3.8539592598252996,
+        "y": 6.169663185305127
       },
       "prevControl": {
-        "x": 2.279309367425445,
-        "y": 7.07
+        "x": 2.333268627250745,
+        "y": 6.169663185305127
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,8 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 0.5,
+    "maxAcceleration": 1.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
