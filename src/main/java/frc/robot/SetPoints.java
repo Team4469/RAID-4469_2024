@@ -41,7 +41,7 @@ public final class SetPoints {
   }
 
   public final class ClimberSetpoints {
-    public static final double kTrapHeight = Units.inchesToMeters(23);
+    public static final double kTrapHeight = Units.inchesToMeters(12);
     public static final double kRetractedHeight = Units.inchesToMeters(0);
   }
 
