@@ -32,6 +32,10 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_robotContainer
+        .getFrontLimelight()
+        .setPipelineCommand(LimelightPipeline.LOCALIZATION)
+        .schedule();
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
@@ -54,6 +58,10 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer
+            .getFrontLimelight()
+            .setPipelineCommand(LimelightPipeline.LOCALIZATION)
+            .schedule();
     // m_robotContainer.disabledInit();
   }
 

@@ -27,11 +27,10 @@ import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.WristConstants;
 import frc.robot.SetPoints.WristSetpoints;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
-import monologue.Logged;
-import monologue.Annotations.Log;
-
 import java.util.Map;
 import java.util.function.DoubleSupplier;
+import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class WristSubsystem extends SubsystemBase implements Logged {
   private final CANSparkFlex m_wristMotor =
@@ -98,25 +97,31 @@ public class WristSubsystem extends SubsystemBase implements Logged {
 
     for (int i = 0; i < 6; i++) {
       if (m_wristPIDController.getI() != WristConstants.kI) {
-         m_wristPIDController.setI(WristConstants.kI);
-        } else { break;}
+        m_wristPIDController.setI(WristConstants.kI);
+      } else {
+        break;
+      }
       Timer.delay(.1);
     }
 
     for (int i = 0; i < 6; i++) {
       if (m_wristPIDController.getP() != WristConstants.kP) {
-          m_wristPIDController.setP(WristConstants.kP);
-        } else {System.out.println("Set Wrist P to : " + WristConstants.kP); break;}
+        m_wristPIDController.setP(WristConstants.kP);
+      } else {
+        System.out.println("Set Wrist P to : " + WristConstants.kP);
+        break;
+      }
       Timer.delay(.1);
     }
 
-            for (int i = 0; i < 6; i++) {
-              if (m_wristPIDController.getD() != WristConstants.kD) {
-                 m_wristPIDController.setD(WristConstants.kD);
-                } else { break;}
-              Timer.delay(.1);
-            }
-    
+    for (int i = 0; i < 6; i++) {
+      if (m_wristPIDController.getD() != WristConstants.kD) {
+        m_wristPIDController.setD(WristConstants.kD);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_wristMotor.burnFlash();
 
@@ -221,7 +226,7 @@ public class WristSubsystem extends SubsystemBase implements Logged {
       } else {
         SETPOINT_INIT = true;
       }
-    }            
+    }
 
     m_wristPIDController.setReference(
         getSetpoint(),

@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.6889299287857833,
-        "y": 6.989600678275431
+        "x": 1.816778027074573,
+        "y": 6.480795327331396
       },
       "isLocked": false,
       "linkedName": "Note1_Intake"
     },
     {
       "anchor": {
-        "x": 7.61560315713224,
-        "y": 7.447276079737345
+        "x": 2.1961848182955626,
+        "y": 5.5675823620165765
       },
       "prevControl": {
-        "x": 6.474354180189841,
-        "y": 7.336286677202985
+        "x": 1.8932651059746566,
+        "y": 5.851974148392743
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote1"
+      "linkedName": "Note2"
     }
   ],
   "rotationTargets": [],
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "4 Note Auto Near Amp",
+  "folder": "Clear Preloads",
   "previewStartingState": {
-    "rotation": -160.0,
+    "rotation": -165.0,
     "velocity": 0
   },
   "useDefaultConstraints": false
