@@ -9,13 +9,15 @@ import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkPIDController;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 
@@ -23,12 +25,18 @@ public class ClimberModule extends SubsystemBase {
 
   private final CANSparkMax m_climbingMotor;
   private final RelativeEncoder m_encoder;
+  private final SparkPIDController m_pidController;
 
   private LaserCan m_distanceSensor;
 
   int ID;
 
-  private boolean EncoderSet = false;
+  private static final double ALLOWABLE_POSITION_ERROR = Units.inchesToMeters(0.5);
+
+  private Mode mode = Mode.VOLTAGE;
+  private boolean zeroed = false;
+  private double targetHeight = 0.0;
+  private double targetVoltage = 0.0;
 
   /** Creates a new ClimberModule. */
   public ClimberModule(int MotorCanID, int LaserCanID, boolean MotorInverted) {
@@ -42,15 +50,29 @@ public class ClimberModule extends SubsystemBase {
     m_encoder.setPositionConversionFactor(
         ClimberConstants.kPositionConversionFactor); // Rotations to meters
     m_encoder.setVelocityConversionFactor(ClimberConstants.kPositionConversionFactor / 60);
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(20));
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(3));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(18));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
-    m_climbingMotor.setSmartCurrentLimit(85);
+    m_climbingMotor.setSmartCurrentLimit(105);
     m_climbingMotor.setInverted(MotorInverted);
+    m_climbingMotor.enableVoltageCompensation(12);
+    m_climbingMotor.setClosedLoopRampRate(1);
+
     m_climbingMotor.burnFlash();
+
+    m_pidController = m_climbingMotor.getPIDController();
+    m_pidController.setP(0, PID_Slot.NO_LOAD.ordinal());
+    m_pidController.setI(0, PID_Slot.NO_LOAD.ordinal());
+    m_pidController.setD(0, PID_Slot.NO_LOAD.ordinal());
+    m_pidController.setFF(0, PID_Slot.NO_LOAD.ordinal());
+
+    m_pidController.setP(0, PID_Slot.CLIMBING.ordinal());
+    m_pidController.setI(0, PID_Slot.CLIMBING.ordinal());
+    m_pidController.setD(0, PID_Slot.CLIMBING.ordinal());
+    m_pidController.setFF(0, PID_Slot.CLIMBING.ordinal());
 
     m_distanceSensor = new LaserCan(LaserCanID);
     ID = LaserCanID;
@@ -67,111 +89,87 @@ public class ClimberModule extends SubsystemBase {
     // m_encoder.setPosition(measure.distance_mm / 1000);
   }
 
-  // Commands
-
-  /**
-   * @param Goal distance in meters to extend from rest
-   * @return command that will run until setpoint is hit
-   */
-  public Command extendClimber(double Goal) {
-    return run(this::extendClimber)
-        .until(() -> hookAtSetpoint(Goal))
-        .finallyDo((interrupted) -> this.stopClimber());
-  }
-
-  /**
-   * @param Goal distance in meters to extend from rest
-   * @return command that will run until setpoint is hit
-   */
-  public Command retractClimber(double Goal) {
-    return run(this::retractClimber)
-        .until(() -> hookAtSetpoint(Goal))
-        .finallyDo((interrupted) -> this.stopClimber());
-  }
-
-  public Command climberForward() {
-    System.out.println(m_encoder.getPosition());
-    return runOnce(() -> runClimber(.3));
-  }
-
-  public Command climberReverse() {
-    System.out.println(m_encoder.getPosition());
-    return runOnce(() -> runClimber(-.4));
-  }
-
-  /**
-   * @param Goal distance in meters to extend from rest
-   * @return command that will run until setpoint is hit
-   */
-  public Command climbClimber(double Goal) {
-    return run(this::retractClimber)
-        .until(() -> hookAtSetpoint(Goal))
-        .finallyDo((interrupted) -> this.holdClimber());
-  }
-
-  public Command emergencyStopClimberCommand() {
-    return runOnce(this::stopClimber);
-  }
-
-  private boolean hookAtSetpoint(double setpoint) {
-    double currentPos =
-        (m_distanceSensor.getMeasurement().distance_mm / 1000.0) + ClimberConstants.kSensorOffset;
-    if (currentPos >= setpoint) {
-      return true;
+  public double getTargetHeight() {
+    if (mode == Mode.POSITION_NO_LOAD || mode == Mode.POSITION_CLIMBING) {
+      return targetHeight;
     }
-    return false;
+    return 0.0;
   }
 
-  private void extendClimber() {
-    m_climbingMotor.set(ClimberConstants.extensionSpeed);
+  public void setTargetHeight(double target, boolean isClimbing) {
+    this.targetHeight = MathUtil.clamp(targetHeight, 0, 20);
+    if (isClimbing) {
+      mode = Mode.POSITION_CLIMBING;
+    } else {
+      mode = Mode.POSITION_NO_LOAD;
+    }
   }
 
-  private void retractClimber() {
-    m_climbingMotor.set(ClimberConstants.retractionSpeed);
+  public void setTargetVoltage(double voltage) {
+    m_climbingMotor.setVoltage(voltage);
+    mode = Mode.VOLTAGE;
   }
 
-  private void runClimber(double Speed) {
-    m_climbingMotor.set(Speed);
+  public void setZeroPosition() {
+    m_encoder.setPosition(0);
   }
 
-  private void holdClimber() {
-    m_climbingMotor.setVoltage(1);
+  public void setZeroed(boolean zeroed) {
+    this.zeroed = zeroed;
   }
 
-  private void stopClimber() {
-    m_climbingMotor.set(0);
+  public boolean isClimberZeroed() {
+    return this.zeroed;
+  }
+
+  public double getCurrentHeight() {
+    return m_encoder.getPosition();
+  }
+
+  public double getCurrentVelocity() {
+    return m_encoder.getVelocity();
+  }
+
+  public boolean isAtTargetPosition() {
+    return Math.abs(getCurrentHeight() - getTargetHeight()) < ALLOWABLE_POSITION_ERROR;
+  }
+
+  public void setGains(PID_Slot slot, double p, double i, double d, double ff) {
+    m_pidController.setP(p, slot.ordinal());
+    m_pidController.setI(i, slot.ordinal());
+    m_pidController.setD(d, slot.ordinal());
+    m_pidController.setFF(ff, slot.ordinal());
   }
 
   @Override
   public void periodic() {
-    // // This method will be called once per scheduler run
-    LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
-    // if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT)
-    // {
-    //   System.out.println("LaserCAN " + ID + ": The target is " + measurement.distance_mm + "mm
-    // away!");
-    // } else {
-    //   System.out.println("Oh no! The target is out of range, or we can't get a reliable
-    // measurement!");
-    //   // You can still use distance_mm in here, if you're ok tolerating a clamped value or an
-    // unreliable measurement.
-    // }
-
-    // m_encoder.setPosition(Units.inchesToMeters(5));
-
-    if (!EncoderSet) {
-      try {
-        m_encoder.setPosition((measurement.distance_mm) / 1000.0);
-        System.out.println(ID + "encoder set at " + m_encoder.getPosition());
-      } catch (Exception e) {
-        // System.out.println("Encoder " + ID + " not yet set");
-      }
+    switch (mode) {
+      case POSITION_NO_LOAD:
+        if (isClimberZeroed()) {
+          m_pidController.setReference(
+              targetHeight, ControlType.kPosition, PID_Slot.NO_LOAD.ordinal());
+        }
+        break;
+      case POSITION_CLIMBING:
+        if (isClimberZeroed()) {
+          m_pidController.setReference(
+              targetHeight, ControlType.kPosition, PID_Slot.CLIMBING.ordinal());
+        }
+        break;
+      case VOLTAGE:
+        m_climbingMotor.setVoltage(targetVoltage);
+        break;
     }
+  }
 
-    if (m_encoder.getPosition() != 0) {
-      EncoderSet = true;
-    }
+  private enum Mode {
+    POSITION_NO_LOAD,
+    POSITION_CLIMBING,
+    VOLTAGE
+  }
 
-    // System.out.println(m_encoder.getPosition());
+  public enum PID_Slot {
+    NO_LOAD,
+    CLIMBING
   }
 }

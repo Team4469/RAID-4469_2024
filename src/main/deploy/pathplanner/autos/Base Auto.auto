@@ -2,50 +2,32 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.64,
+      "x": 1.8,
       "y": 7.07
     },
-    "rotation": 0
+    "rotation": 180.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Intake Position"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Intake"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
-                  "pathName": "Straight 1M"
+                  "pathName": "New Path"
                 }
               }
             ]
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "Stowed"
+            "pathName": "Base Path 2"
           }
         }
       ]

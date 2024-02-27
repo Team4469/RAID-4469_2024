@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 4.046067578246268,
-        "y": 6.369805924797036
+        "x": 2.818711253163247,
+        "y": 6.3078680185138145
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.1333361555612,
-        "y": 6.511972125796103
+        "x": 4.112399928503561,
+        "y": 6.459654488753422
       },
       "isLocked": false,
       "linkedName": "WingShootPoint1"
@@ -20,8 +20,8 @@
         "y": 5.810642621285243
       },
       "prevControl": {
-        "x": 6.814567281912343,
-        "y": 6.080960310068768
+        "x": 5.449795506072494,
+        "y": 6.453300360304424
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,11 +39,14 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 180.0,
     "rotateFast": false
   },
   "reversed": false,
   "folder": "4 Note Auto Near Amp",
-  "previewStartingState": null,
-  "useDefaultConstraints": true
+  "previewStartingState": {
+    "rotation": -165.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
 }

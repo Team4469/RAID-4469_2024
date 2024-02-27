@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.climber.ZERO_CLIMBER;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import monologue.Monologue;
 
@@ -31,6 +32,10 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
+    m_robotContainer
+        .getFrontLimelight()
+        .setPipelineCommand(LimelightPipeline.LOCALIZATION)
+        .schedule();
     SmartDashboard.putData(CommandScheduler.getInstance());
   }
 
@@ -53,6 +58,10 @@ public class Robot extends TimedRobot {
   /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {
+    m_robotContainer
+            .getFrontLimelight()
+            .setPipelineCommand(LimelightPipeline.LOCALIZATION)
+            .schedule();
     // m_robotContainer.disabledInit();
   }
 
@@ -77,6 +86,12 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    if (!m_robotContainer.getLeftClimber().isClimberZeroed()) {
+      new ZERO_CLIMBER(m_robotContainer.getLeftClimber()).schedule();
+    }
+    if (!m_robotContainer.getRightClimber().isClimberZeroed()) {
+      new ZERO_CLIMBER(m_robotContainer.getRightClimber()).schedule();
+    }
     m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();
     m_robotContainer.getRearLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();
     m_robotContainer.stowedCommand().schedule();

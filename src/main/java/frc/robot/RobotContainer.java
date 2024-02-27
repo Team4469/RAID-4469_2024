@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import com.fasterxml.jackson.core.sym.Name;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
@@ -98,7 +97,7 @@ public class RobotContainer implements Logged {
 
   public AmpDirection selectAmpDirection() {
     var ampDir = AmpDirection.REAR;
-    double robotHeading = m_robotDrive.getHeading();
+    double robotHeading = m_robotDrive.getHeading().getDegrees();
     robotHeading = MathUtil.inputModulus(robotHeading, -180, 180);
     SmartDashboard.putNumber("Mod Header", robotHeading);
     if (robotHeading > 0.0) {
@@ -114,6 +113,10 @@ public class RobotContainer implements Logged {
     if (ally.isPresent() && ally.get() == Alliance.Red) {
       return true;
     } else return false;
+  }
+
+  public void autoInit() {
+    m_robotDrive.zeroGyro();
   }
 
   //   private StageLocationAlliance selectStageLocation() {
@@ -187,24 +190,27 @@ public class RobotContainer implements Logged {
 
   public Command intakePositionCommand() {
     return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-                    .andThen(m_levetator.levInRange().withTimeout(1))
-                    .andThen(
-                        m_pivot
-                            .pivotSetpointCommand(PivotSetpoints.kIntake)
-                            .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
+        .andThen(m_levetator.levInRange().withTimeout(1))
+        .andThen(
+            m_pivot
+                .pivotSetpointCommand(PivotSetpoints.kIntake)
+                .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
   }
 
   public Command stowedCommand() {
-    return 
-    m_pivot
-                            .pivotSetpointCommand(PivotSetpoints.kStowed)
-                            .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
-                            .andThen(
-                                m_wrist
-                                    .wristAngleSetpoint(WristSetpoints.kStowed)
-                                    .alongWith(
-                                        m_levetator.levetatorSetpointPosition(
-                                            LevetatorSetpoints.kStowed)));
+    return m_pivot
+        .pivotSetpointCommand(PivotSetpoints.kStowed)
+        .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+        .andThen(
+            m_wrist
+                .wristAngleSetpoint(WristSetpoints.kStowed)
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+  }
+
+  public Command aimCommand() {
+    return new RunCommand(
+        () -> m_robotDrive.drive(0, 0, limelight_aim_proportional(m_frontLimelight), true, true),
+        m_robotDrive);
   }
 
   private final ConditionalCommand m_stageRightConditional =
@@ -288,11 +294,16 @@ public class RobotContainer implements Logged {
                     .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
             .andThen(
                 new shooterVariableDistanceSpeedCommand(
-                    m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters).withTimeout(.5))
-            .andThen(new WaitCommand(.5).andThen(m_intake.intakeShootCommand().withTimeout(1)).andThen(m_shooter.shooterStop())));
-            
+                        m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
+                    .withTimeout(.5))
+            .andThen(
+                new WaitCommand(.5)
+                    .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop())));
+
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
+    NamedCommands.registerCommand("Aim", aimCommand());
     NamedCommands.registerCommand("Stowed", stowedCommand());
 
     // Configure the button bindings
@@ -329,7 +340,7 @@ public class RobotContainer implements Logged {
     boolean fileOnly = false;
     boolean lazyLogging = false;
     Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
-    DriverStation.startDataLog(DataLogManager.getLog());
+    DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
 
   /**
@@ -339,11 +350,6 @@ public class RobotContainer implements Logged {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-
-    // Add a button to SmartDashboard that will create and follow an on-the-fly path
-    // This example will simply move the robot 2m in the +X field direction
-    SmartDashboard.putData("On-the-fly path", m_robotDrive.move1mYCommand());
-
     /* DRIVER CONTROLS */
 
     m_frontLimelight.shooterTargetInRange.onTrue(
@@ -424,10 +430,10 @@ public class RobotContainer implements Logged {
                                 () ->
                                     m_robotDrive.drive(
                                         -MathUtil.applyDeadband(
-                                            m_driverController.getLeftY(),
+                                            m_driverController.getLeftY() / 4,
                                             OIConstants.kDriveDeadband),
                                         -MathUtil.applyDeadband(
-                                            m_driverController.getLeftX(),
+                                            m_driverController.getLeftX() / 4,
                                             OIConstants.kDriveDeadband),
                                         limelight_aim_proportional(m_frontLimelight),
                                         true,
@@ -455,6 +461,25 @@ public class RobotContainer implements Logged {
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
+    // m_driverController
+    //     .povUp()
+    //     .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
+    // m_driverController
+    //     .povUp()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
+
+    // m_driverController
+    //     .povDown()
+    //     .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
+    // m_driverController
+    //     .povDown()
+    //     .onFalse(
+    //         m_rightClimber
+    //             .emergencyStopClimberCommand()
+    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
     /* SMART AMP */
 
     m_driverController
@@ -485,26 +510,6 @@ public class RobotContainer implements Logged {
     /* CLIMBER MOVE */
 
     // NEEDS TO MOVE TO OPERATOR AT SOME POINT
-    m_driverController
-        .povUp()
-        .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
-    m_driverController
-        .povUp()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
-
-    m_driverController
-        .povDown()
-        .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
-    m_driverController
-        .povDown()
-        .onFalse(
-            m_rightClimber
-                .emergencyStopClimberCommand()
-                .alongWith(m_leftClimber.emergencyStopClimberCommand()));
-
     /* SHOOTER SPIN UP */
 
     m_operatorController
@@ -550,7 +555,15 @@ public class RobotContainer implements Logged {
     //             .retractClimber(ClimberSetpoints.kRetractedHeight)
     //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
   }
-  
+
+  public ClimberModule getLeftClimber() {
+    return m_leftClimber;
+  }
+
+  public ClimberModule getRightClimber() {
+    return m_rightClimber;
+  }
+
   public Command getAutonomousCommand() {
     return autoChooser.getSelected();
   }
@@ -573,7 +586,7 @@ public class RobotContainer implements Logged {
 
     var tv = ll.tv();
     var ampDir = selectAmpDirection();
-    var gyroDeg = m_robotDrive.getHeading();
+    var gyroDeg = m_robotDrive.getHeading().getDegrees();
 
     if (tv == 0) {
       // if no target seen, we want to rotate in place

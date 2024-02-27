@@ -4,6 +4,11 @@
 
 package frc.robot.subsystems.utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.NetworkTable;
@@ -86,13 +91,13 @@ public class Limelight extends SubsystemBase {
     return hits;
   }
 
-  public double[] botPose() {
+  public Pose2d botPose() {
     double[] botPose = null;
     // SmartDashboard.putBoolean("Limelight Inititialized", isInitialized());
     if (isInitialized()) {
       botPose = botpose.getDoubleArray(new double[7]);
     }
-    return botPose;
+    return toPose2D(botPose);
   }
 
   public double tl() {
@@ -124,6 +129,18 @@ public class Limelight extends SubsystemBase {
       return 0;
     }
   }
+  
+  private static Pose2d toPose2D(double[] inData) {
+    if (inData.length < 6) {
+      System.err.println("Bad LL 2D Pose Data!");
+      return new Pose2d();
+    }
+    Translation2d tran2d = new Translation2d(inData[0], inData[1]);
+    Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
+    return new Pose2d(tran2d, r2d);
+  }
+
+
 
   public double x() {
     double dx = 0.0;

@@ -17,6 +17,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.SparkRelativeEncoder;
 import com.revrobotics.SparkPIDController.ArbFFUnits;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
@@ -62,7 +63,7 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     m_motor.setClosedLoopRampRate(LevetatorConstants.kClosedLoopRampRate);
 
-    m_encoder = m_motor.getEncoder();
+    m_encoder = m_motor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
     m_encoder.setPositionConversionFactor(LevetatorConstants.kPositionConversionFactor);
     m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
