@@ -554,7 +554,10 @@ public class RobotContainer implements Logged {
 
     m_operatorController.button(9).onTrue(m_shooter.shooterSetRPMCommand(1000));
     m_operatorController.button(4).onTrue(m_shooter.shooterSetRPMCommand(2000));
-    m_operatorController.button(9).or(m_operatorController.button(4)).onFalse(m_shooter.shooterSetRPMCommand(0));
+    m_operatorController
+        .button(9)
+        .or(m_operatorController.button(4))
+        .onFalse(m_shooter.shooterSetRPMCommand(0));
   }
 
   public ClimberModule getLeftClimber() {

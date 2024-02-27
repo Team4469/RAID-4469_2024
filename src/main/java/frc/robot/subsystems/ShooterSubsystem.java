@@ -11,7 +11,6 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -20,12 +19,12 @@ import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
-import monologue.Logged;
-import monologue.Annotations.Log;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
+import monologue.Annotations.Log;
+import monologue.Logged;
 
-public class ShooterSubsystem extends SubsystemBase implements Logged{
+public class ShooterSubsystem extends SubsystemBase implements Logged {
 
   TunableNumber SHOOTER_SPEED_CLOSED_LOOP = new TunableNumber("Shooter/RPMSetpoint", 0);
 
@@ -53,8 +52,10 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
     m_rightShooterMotor.restoreFactoryDefaults();
     m_leftShooterMotor.restoreFactoryDefaults();
 
-    m_rightShooterEncoder = m_rightShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
-    m_leftShooterEncoder = m_leftShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    m_rightShooterEncoder =
+        m_rightShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
+    m_leftShooterEncoder =
+        m_leftShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
 
     m_rightPIDController = m_rightShooterMotor.getPIDController();
     m_leftPIDController = m_leftShooterMotor.getPIDController();
@@ -93,11 +94,9 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
     m_leftPIDController.setIZone(ShooterConstants.kIz_left);
     m_leftPIDController.setFF(.00015);
     m_leftPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
-    
 
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
-
   }
 
   /* Command Factory */
@@ -158,8 +157,7 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
   /* Methods */
 
   public boolean inRange() {
-    var currentSpeed =
-        getVelocity();
+    var currentSpeed = getVelocity();
     if (currentSpeed > (getSetpoint() - 100) && currentSpeed < (getSetpoint() + 100)) {
       return true;
     } else {
@@ -192,7 +190,9 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
 
   // @Log
   private double getVelocity() {
-    return (((Math.abs(m_rightShooterEncoder.getVelocity()) + Math.abs(m_leftShooterEncoder.getVelocity()))) / 2);
+    return (((Math.abs(m_rightShooterEncoder.getVelocity())
+            + Math.abs(m_leftShooterEncoder.getVelocity())))
+        / 2);
   }
 
   @Log
@@ -220,13 +220,12 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
     // This method will be called once per scheduler run
 
     if (mode == Mode.CLOSED_LOOP) {
-    m_leftPIDController.setReference(getSetpoint(), ControlType.kVelocity);
-    m_rightPIDController.setReference(getSetpoint(), ControlType.kVelocity);
+      m_leftPIDController.setReference(getSetpoint(), ControlType.kVelocity);
+      m_rightPIDController.setReference(getSetpoint(), ControlType.kVelocity);
     }
 
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
-
   }
 
   private enum Mode {

@@ -9,7 +9,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
-import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import java.util.function.DoubleSupplier;
 
 public class shooterVariableDistanceSpeedCommand extends Command {

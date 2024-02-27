@@ -59,9 +59,9 @@ public class Robot extends TimedRobot {
   @Override
   public void disabledInit() {
     m_robotContainer
-            .getFrontLimelight()
-            .setPipelineCommand(LimelightPipeline.LOCALIZATION)
-            .schedule();
+        .getFrontLimelight()
+        .setPipelineCommand(LimelightPipeline.LOCALIZATION)
+        .schedule();
     // m_robotContainer.disabledInit();
   }
 

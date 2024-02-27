@@ -30,9 +30,8 @@ import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
 import java.util.Map;
 import java.util.function.DoubleSupplier;
 import monologue.Annotations.Log;
-import monologue.Logged;
 
-public class WristSubsystem extends SubsystemBase{
+public class WristSubsystem extends SubsystemBase {
   private final CANSparkFlex m_wristMotor =
       new CANSparkFlex(WristConstants.kWristMotorID, MotorType.kBrushless);
 

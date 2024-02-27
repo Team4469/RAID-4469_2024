@@ -24,7 +24,6 @@ import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.PivotConstants;
 import frc.robot.SetPoints.PivotSetpoints;
 import monologue.Annotations.Log;
-import monologue.Logged;
 
 public class PivotSubsystem extends SubsystemBase {
 

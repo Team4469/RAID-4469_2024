@@ -16,9 +16,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -30,7 +28,6 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -43,7 +40,6 @@ import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
 import java.util.List;
 import java.util.Optional;
-
 import monologue.Annotations.Log;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -110,10 +106,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
-          DriveConstants.kDriveKinematics,
-          getHeading(),
-          getModulePositions(),
-          new Pose2d());
+          DriveConstants.kDriveKinematics, getHeading(), getModulePositions(), new Pose2d());
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem(Limelight frontLimelight, Limelight rearLimelight) {
@@ -150,13 +143,12 @@ public class DriveSubsystem extends SubsystemBase {
         .withSize(7, 5);
   }
 
-
-  private SwerveModulePosition[] getModulePositions(){
+  private SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
     };
   }
 
@@ -211,10 +203,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_poseEstimator.resetPosition(
-        getHeading(),
-        getModulePositions(),
-        pose);
+    m_poseEstimator.resetPosition(getHeading(), getModulePositions(), pose);
   }
 
   /**
@@ -285,12 +274,12 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-          //get alliance color
-      Optional<Alliance> ally = DriverStation.getAlliance();
-      if (ally.isPresent() && ally.get() == Alliance.Red) {
-          xSpeedDelivered *= -1;
-          ySpeedDelivered *= -1;
-      }
+    // get alliance color
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent() && ally.get() == Alliance.Red) {
+      xSpeedDelivered *= -1;
+      ySpeedDelivered *= -1;
+    }
 
     // var swerveModuleStates =
     //     DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -427,7 +416,8 @@ public class DriveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("Heading", getHeading().getDegrees());
     // if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
-    //   m_poseEstimator.addVisionMeasurement(limelightFront.botPose(),  Timer.getFPGATimestamp() - (limelightFront.tl() / 1000.0) - (limelightFront.cl() / 1000.0));
+    //   m_poseEstimator.addVisionMeasurement(limelightFront.botPose(),  Timer.getFPGATimestamp() -
+    // (limelightFront.tl() / 1000.0) - (limelightFront.cl() / 1000.0));
     // }
   }
 }
