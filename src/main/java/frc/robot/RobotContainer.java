@@ -8,6 +8,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -37,6 +38,7 @@ import frc.robot.commands.amp.INTAKE_SHOOTER_SMART_AMP;
 import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
 import frc.robot.commands.amp.PIVOT_SMART_AMP;
 import frc.robot.commands.amp.WRIST_SMART_AMP;
+import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.shooterVariableDistanceSpeedCommand;
@@ -86,8 +88,9 @@ public class RobotContainer implements Logged {
   // The driver's controller
   CommandXboxController m_driverController =
       new CommandXboxController(OIConstants.kDriverControllerPort);
-  CommandGenericHID m_operatorController =
+  CommandGenericHID m_operatorButtonsTop =
       new CommandGenericHID(OIConstants.kOperatorControllerPort);
+  CommandGenericHID m_operatorButtonsBottom = new CommandGenericHID(OIConstants.kOperatorController2Port);
 
   public AmpDirection AMP_DIRECTION = AmpDirection.REAR;
 
@@ -507,53 +510,25 @@ public class RobotContainer implements Logged {
 
     /* OPERATOR CONTROLS */
 
-    /* CLIMBER MOVE */
-
-    // NEEDS TO MOVE TO OPERATOR AT SOME POINT
     /* SHOOTER SPIN UP */
 
-    m_operatorController
+    m_operatorButtonsTop
         .button(7)
         .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
-    m_operatorController.button(8).onTrue(m_shooter.shooterStop());
+    m_operatorButtonsTop.button(8).onTrue(m_shooter.shooterStop());
 
-    m_operatorController.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
-    m_operatorController.button(5).onFalse(m_intake.intakeStop());
+    m_operatorButtonsTop.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
+    m_operatorButtonsTop.button(5).onFalse(m_intake.intakeStop());
 
-    // Automated Trap Sequence
+    /* CLIMBER */
+
     // m_operatorController.y().onTrue(m_stageLeftConditional);
 
     // m_operatorController.a().onTrue(m_stageRightConditional);
 
     // m_operatorController.b().onTrue(m_stageCenterConditional);
-
-    // m_operatorController
-    //     .rightTrigger()
-    //     .and(m_operatorController.a().or(m_operatorController.b()).or(m_operatorController.y()))
-    //     .whileTrue(
-    //         (m_pivot.pivotSetpointCommand(PivotSetpoints.kTrap))
-    //             .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kTrap))
-    //             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
-    //             .andThen(
-    //                 m_leftClimber
-    //                     .climbClimber(ClimberSetpoints.kRetractedHeight)
-    //
-    // .alongWith(m_rightClimber.climbClimber(ClimberSetpoints.kRetractedHeight)))
-    //             .andThen(m_shooter.shooterFeed().alongWith(m_intake.intakeTransferFwd())));
-
-    // m_operatorController
-    //     .povUp()
-    //     .onTrue(
-    //         m_leftClimber
-    //             .extendClimber(ClimberSetpoints.kTrapHeight)
-    //             .alongWith(m_rightClimber.extendClimber(ClimberSetpoints.kTrapHeight)));
-
-    // m_operatorController
-    //     .povDown()
-    //     .onTrue(
-    //         m_leftClimber
-    //             .retractClimber(ClimberSetpoints.kRetractedHeight)
-    //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
+    m_operatorButtonsBottom.button(1).onTrue(new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(10), false));
+    
   }
 
   public ClimberModule getLeftClimber() {
