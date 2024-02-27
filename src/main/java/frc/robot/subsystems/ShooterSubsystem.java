@@ -31,6 +31,8 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
 
   TunableNumber SHOOTER_SPEED_OPEN_LOOP = new TunableNumber("Shooter/FeedSpeed", 0);
 
+  private Mode mode = Mode.OPEN_LOOP;
+
   private double SETPOINT = 0;
 
   private final CANSparkFlex m_rightShooterMotor;
@@ -48,6 +50,9 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
         new CANSparkFlex(ShooterConstants.kRightShooterCanID, MotorType.kBrushless);
     m_leftShooterMotor = new CANSparkFlex(ShooterConstants.kLeftShooterCanID, MotorType.kBrushless);
 
+    m_rightShooterMotor.restoreFactoryDefaults();
+    m_leftShooterMotor.restoreFactoryDefaults();
+
     m_rightShooterEncoder = m_rightShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
     m_leftShooterEncoder = m_leftShooterMotor.getEncoder(SparkRelativeEncoder.Type.kQuadrature, 7168);
 
@@ -56,9 +61,6 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
 
     m_rightPIDController.setFeedbackDevice(m_rightShooterEncoder);
     m_leftPIDController.setFeedbackDevice(m_leftShooterEncoder);
-
-    m_rightShooterMotor.restoreFactoryDefaults();
-    m_leftShooterMotor.restoreFactoryDefaults();
 
     m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
     m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
@@ -78,22 +80,24 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
     m_rightShooterMotor.enableVoltageCompensation(12);
     m_leftShooterMotor.enableVoltageCompensation(12);
 
-    m_rightShooterMotor.burnFlash();
-    m_leftShooterMotor.burnFlash();
-
-    m_rightPIDController.setP(ShooterConstants.kP_right);
+    m_rightPIDController.setP(.002);
     m_rightPIDController.setI(ShooterConstants.kI_right);
     m_rightPIDController.setD(ShooterConstants.kD_right);
     m_rightPIDController.setIZone(ShooterConstants.kIz_right);
-    m_rightPIDController.setFF(ShooterConstants.kFF_right);
+    m_rightPIDController.setFF(.00015);
     m_rightPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
-    m_leftPIDController.setP(ShooterConstants.kP_left);
+    m_leftPIDController.setP(.002);
     m_leftPIDController.setI(ShooterConstants.kI_left);
     m_leftPIDController.setD(ShooterConstants.kD_left);
     m_leftPIDController.setIZone(ShooterConstants.kIz_left);
-    m_leftPIDController.setFF(ShooterConstants.kFF_left);
+    m_leftPIDController.setFF(.00015);
     m_leftPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
+    
+
+    m_rightShooterMotor.burnFlash();
+    m_leftShooterMotor.burnFlash();
+
   }
 
   /* Command Factory */
@@ -164,31 +168,44 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
   }
 
   public void setSpeed(double speed) {
+    mode = Mode.OPEN_LOOP;
     m_rightShooterMotor.set(speed);
     m_leftShooterMotor.set(speed);
   }
 
   private void shootStop() {
+    mode = Mode.OPEN_LOOP;
     m_rightShooterMotor.set(0);
     m_leftShooterMotor.set(0);
   }
 
   public void setSetpoint(double setpoint) {
+    mode = Mode.CLOSED_LOOP;
     this.SETPOINT = setpoint;
     shootPIDControl(SETPOINT);
   }
 
   @Log
   private double getSetpoint() {
-    return this.getSetpoint();
+    return this.SETPOINT;
   }
 
-  @Log
+  // @Log
   private double getVelocity() {
     return (((Math.abs(m_rightShooterEncoder.getVelocity()) + Math.abs(m_leftShooterEncoder.getVelocity()))) / 2);
   }
 
   @Log
+  private double getLeftVelo() {
+    return m_leftShooterEncoder.getVelocity();
+  }
+
+  @Log
+  private double getRightVelo() {
+    return m_rightShooterEncoder.getVelocity();
+  }
+
+  // @Log
   private double getError() {
     return (getVelocity() - getSetpoint());
   }
@@ -202,8 +219,18 @@ public class ShooterSubsystem extends SubsystemBase implements Logged{
   public void periodic() {
     // This method will be called once per scheduler run
 
+    if (mode == Mode.CLOSED_LOOP) {
+    m_leftPIDController.setReference(getSetpoint(), ControlType.kVelocity);
+    m_rightPIDController.setReference(getSetpoint(), ControlType.kVelocity);
+    }
+
     SmartDashboard.putNumber("Right Shooter RPM", m_rightShooterEncoder.getVelocity());
     SmartDashboard.putNumber("Left Shooter RPM", m_leftShooterEncoder.getVelocity());
 
+  }
+
+  private enum Mode {
+    OPEN_LOOP,
+    CLOSED_LOOP
   }
 }

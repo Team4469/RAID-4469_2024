@@ -26,7 +26,7 @@ import frc.robot.SetPoints.PivotSetpoints;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class PivotSubsystem extends SubsystemBase implements Logged {
+public class PivotSubsystem extends SubsystemBase {
 
   private final CANSparkMax m_leadMotor;
   private final CANSparkMax m_followMotor;

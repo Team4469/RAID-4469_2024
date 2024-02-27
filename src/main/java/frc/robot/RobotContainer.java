@@ -552,9 +552,9 @@ public class RobotContainer implements Logged {
     //             .retractClimber(ClimberSetpoints.kRetractedHeight)
     //             .alongWith(m_rightClimber.retractClimber(ClimberSetpoints.kRetractedHeight)));
 
-    m_driverController.povUp().onTrue(m_shooter.shooterSetRPMCommand(6500));
-    m_driverController.povDown().onTrue(m_shooter.shooterSetRPMCommand(3000));
-    m_driverController.povCenter().onTrue(m_shooter.shooterSetRPMCommand(0));
+    m_operatorController.button(9).onTrue(m_shooter.shooterSetRPMCommand(1000));
+    m_operatorController.button(4).onTrue(m_shooter.shooterSetRPMCommand(2000));
+    m_operatorController.button(9).or(m_operatorController.button(4)).onFalse(m_shooter.shooterSetRPMCommand(0));
   }
 
   public ClimberModule getLeftClimber() {

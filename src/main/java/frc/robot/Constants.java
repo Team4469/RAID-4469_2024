@@ -277,13 +277,13 @@ public final class Constants {
     public static final boolean kRightMotorInverted = true;
     public static final int kCurrentLimit = 80; // Amps
 
-    public static final double kP_right = .0001;
+    public static final double kP_right = .001;
     public static final double kI_right = 0;
     public static final double kD_right = 0;
     public static final double kFF_right = 1 / NeoVortexMotorConstants.kFreeSpeedRpm;
     public static final double kIz_right = 0;
 
-    public static final double kP_left = .0001;
+    public static final double kP_left = .01;
     public static final double kI_left = 0;
     public static final double kD_left = 0;
     public static final double kFF_left = 1 / NeoVortexMotorConstants.kFreeSpeedRpm;

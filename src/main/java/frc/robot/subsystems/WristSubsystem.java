@@ -32,7 +32,7 @@ import java.util.function.DoubleSupplier;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class WristSubsystem extends SubsystemBase implements Logged {
+public class WristSubsystem extends SubsystemBase{
   private final CANSparkFlex m_wristMotor =
       new CANSparkFlex(WristConstants.kWristMotorID, MotorType.kBrushless);
 
