@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkFlex;
@@ -238,6 +239,16 @@ public class WristSubsystem extends SubsystemBase implements Logged {
   @Log
   private double getMeasurement() {
     return m_encoder.getPosition();
+  }
+
+  @Log
+  private boolean getCanRxFault() {
+    return m_wristMotor.getFault(FaultID.kCANRX);
+  }
+
+  @Log
+  private boolean getCanTxFault() {
+    return m_wristMotor.getFault(FaultID.kCANTX);
   }
 
   private void setAngle(double radians) {

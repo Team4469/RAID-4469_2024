@@ -30,6 +30,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry tl = null;
   private NetworkTableEntry cl = null;
   private NetworkTableEntry pipeline = null;
+  private NetworkTableEntry tid = null;
   private String limeLightName = "limelight";
 
   public Limelight(String limeLightName) {
@@ -46,6 +47,7 @@ public class Limelight extends SubsystemBase {
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
       pipeline = table.getEntry("pipeline");
+      tid = table.getEntry("tid");
     } catch (Exception e) {
       // SmartDashboard.putBoolean("couldn't get nt entries", true);
     }
@@ -66,6 +68,7 @@ public class Limelight extends SubsystemBase {
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
       pipeline = table.getEntry("pipeline");
+      tid = table.getEntry("tid");
     } catch (Exception e) {
       return;
     }
@@ -112,6 +115,14 @@ public class Limelight extends SubsystemBase {
       cL = cl.getDouble(0.0);
     }
     return cL;
+  }
+
+  public double getTargetInView() {
+    double tId = 0.0;
+    if (isInitialized()) {
+      tId = tid.getDouble(0.0);
+    }
+    return tId;
   }
 
   public double targetDist() {
@@ -184,7 +195,7 @@ public class Limelight extends SubsystemBase {
   }
 
   private void setPipeline(LimelightPipeline pipeline) {
-    int pipe = pipeline.ordinal();
+    int pipe = pipeline.getValue();
     if (isInitialized()) {
       this.pipeline.setNumber(pipe);
     }

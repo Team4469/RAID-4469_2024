@@ -10,7 +10,7 @@ import frc.robot.subsystems.ClimberModule;
 
 public class ZERO_CLIMBER extends Command {
   private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.5;
-  private static final double REVERSE_VOLTAGE = -1.5;
+  private static final double REVERSE_VOLTAGE = -2;
   private static final double VELOCITY_THRESHOLD = 0.254 / 60.0;
 
   private final ClimberModule climber;

@@ -9,9 +9,9 @@ import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
+import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.IntakeConstants;
 import frc.utils.TunableNumber;
+import monologue.Annotations.Log;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkFlex m_intakeMotor;
@@ -57,11 +58,6 @@ public class IntakeSubsystem extends SubsystemBase {
     m_intakeMotor.setInverted(IntakeConstants.kMotorInverted);
 
     m_intakeMotor.burnFlash();
-
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, IntakeConstants.kStatus3PeriodMs);
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, IntakeConstants.kStatus4PeriodMs);
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, IntakeConstants.kStatus5PeriodMs);
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, IntakeConstants.kStatus6PeriodMs);
 
     try {
       m_IntakeForwardLaserCan.setRangingMode(RangingMode.SHORT);
@@ -216,6 +212,31 @@ public class IntakeSubsystem extends SubsystemBase {
 
   public void stop() {
     m_intakeMotor.set(0);
+  }
+
+  @Log
+  private boolean getCanTxFault() {
+    return m_intakeMotor.getFault(FaultID.kCANTX);
+  }
+
+  @Log
+  private boolean getCanRxFault() {
+    return m_intakeMotor.getFault(FaultID.kCANRX);
+  }
+
+  @Log
+  private double getAppliedOutput() {
+    return m_intakeMotor.getAppliedOutput();
+  }
+
+  @Log
+  private double getCurrent() {
+    return m_intakeMotor.getOutputCurrent();
+  }
+
+  @Log
+  private double getBusVoltage() {
+    return m_intakeMotor.getBusVoltage();
   }
 
   @Override

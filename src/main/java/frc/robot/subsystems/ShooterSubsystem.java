@@ -81,11 +81,11 @@ public class ShooterSubsystem extends SubsystemBase {
     m_leftShooterMotor.setIdleMode(IdleMode.kBrake);
     m_rightShooterMotor.setIdleMode(IdleMode.kBrake);
 
-    m_rightShooterEncoder.setAverageDepth(2);
-    m_rightShooterEncoder.setMeasurementPeriod(8);
+    m_rightShooterEncoder.setAverageDepth(8);
+    m_rightShooterEncoder.setMeasurementPeriod(32);
 
-    m_leftShooterEncoder.setAverageDepth(2);
-    m_leftShooterEncoder.setMeasurementPeriod(8);
+    m_leftShooterEncoder.setAverageDepth(8);
+    m_leftShooterEncoder.setMeasurementPeriod(32);
 
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();

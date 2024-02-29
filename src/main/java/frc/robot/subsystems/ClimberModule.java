@@ -61,7 +61,7 @@ public class ClimberModule extends SubsystemBase {
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
-    m_climbingMotor.setSmartCurrentLimit(105);
+    m_climbingMotor.setSmartCurrentLimit(120);
     m_climbingMotor.setInverted(MotorInverted);
     m_climbingMotor.enableVoltageCompensation(12);
 
@@ -201,7 +201,7 @@ public class ClimberModule extends SubsystemBase {
               targetHeight,
               ControlType.kPosition,
               PID_Slot.CLIMBING.ordinal(),
-              0.67,
+              4,
               ArbFFUnits.kVoltage);
         }
         break;
@@ -215,6 +215,8 @@ public class ClimberModule extends SubsystemBase {
     SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Position", getCurrentHeight());
     SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Setpoint", getTargetHeight());
     SmartDashboard.putNumber(m_climbingMotor.getDeviceId() + " Velocity", getCurrentVelocity());
+    SmartDashboard.putNumber(
+        m_climbingMotor.getDeviceId() + " Current", m_climbingMotor.getOutputCurrent());
   }
 
   private enum Mode {

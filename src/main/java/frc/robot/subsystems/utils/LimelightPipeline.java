@@ -6,10 +6,18 @@ package frc.robot.subsystems.utils;
 
 /** Add your docs here. */
 public enum LimelightPipeline {
-  LOCALIZATION,
-  SHOOT,
-  STAGE_LEFT,
-  STAGE_RIGHT,
-  STAGE_CENTER,
-  AMP
+  LOCALIZATION(0),
+  SHOOT(1),
+  STAGE(2),
+  AMP(5);
+
+  private int value;
+
+  private LimelightPipeline(int value) {
+    this.value = value;
+  }
+
+  public int getValue() {
+    return value;
+  }
 }

@@ -6,19 +6,16 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.SelectCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -29,7 +26,6 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LeftClimberConstants;
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.PathFollowingConstraints;
 import frc.robot.Constants.RightClimberConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
 import frc.robot.SetPoints.PivotSetpoints;
@@ -39,9 +35,9 @@ import frc.robot.commands.amp.LEVETATOR_SMART_AMP;
 import frc.robot.commands.amp.PIVOT_SMART_AMP;
 import frc.robot.commands.amp.WRIST_SMART_AMP;
 import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
-import frc.robot.commands.climber.ZERO_CLIMBER;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
+import frc.robot.commands.drive.STAGE_ALIGN_DRIVE;
 import frc.robot.commands.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.ClimberModule.PID_Slot;
@@ -54,7 +50,6 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import java.util.Map;
-import java.util.Optional;
 import monologue.Logged;
 import monologue.Monologue;
 
@@ -114,84 +109,8 @@ public class RobotContainer implements Logged {
     return ampDir;
   }
 
-  private boolean allianceIsRed() {
-    Optional<Alliance> ally = DriverStation.getAlliance();
-    if (ally.isPresent() && ally.get() == Alliance.Red) {
-      return true;
-    } else return false;
-  }
-
   public void autoInit() {
     m_robotDrive.zeroGyro();
-  }
-
-  //   private StageLocationAlliance selectStageLocation() {
-  //     Optional<Alliance> ally = DriverStation.getAlliance();
-  //     StageLocationAlliance stage;
-  //     if (ally.isPresent()) {
-  //         if (ally.get() == Alliance.Red) {
-  //             switch (StageChooser.getSelected()) {
-  //                 case STAGE_LEFT:
-  //                     stage = StageLocationAlliance.STAGE_LEFT_RED;
-  //                     break;
-  //                 case STAGE_RIGHT:
-  //                     stage = StageLocationAlliance.STAGE_RIGHT_RED;
-  //                 default:
-  //                     stage = StageLocationAlliance.CENTER_STAGE_RED;
-  //                     break;
-  //             }
-  //         } else {
-  //             switch (StageChooser.getSelected()) {
-  //                 case STAGE_LEFT:
-  //                     stage = StageLocationAlliance.STAGE_LEFT_BLUE;
-  //                     break;
-  //                 case STAGE_RIGHT:
-  //                     stage = StageLocationAlliance.STAGE_RIGHT_BLUE;
-  //                 default:
-  //                     stage = StageLocationAlliance.CENTER_STAGE_BLUE;
-  //                     break;
-  //             }
-  //         }
-  //     } else {
-  //         stage = StageLocationAlliance.CENTER_STAGE_BLUE;
-  //     }
-  //     return stage;
-  //   }
-
-  public Command m_alignSlBlueCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("SL_BLUE");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
-  }
-
-  public Command m_alignSrBlueCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("SR_BLUE");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
-  }
-
-  public Command m_alignCsBlueCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("CS_BLUE");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
-  }
-
-  public Command m_alignSlRedCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("SL_RED");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
-  }
-
-  public Command m_alignSrRedCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("SR_RED");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
-  }
-
-  public Command m_alignCsRedCommand() {
-    PathPlannerPath path = PathPlannerPath.fromPathFile("CS_RED");
-    path.preventFlipping = true;
-    return AutoBuilder.pathfindThenFollowPath(path, PathFollowingConstraints.kStagePathConstraints);
   }
 
   public Command intakePositionCommand() {
@@ -206,11 +125,11 @@ public class RobotContainer implements Logged {
   public Command stowedCommand() {
     return m_pivot
         .pivotSetpointCommand(PivotSetpoints.kStowed)
-        .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
-        .andThen(
-            m_wrist
-                .wristAngleSetpoint(WristSetpoints.kStowed)
-                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+        .alongWith(m_shooter.shooterStop().alongWith(m_intake.intakeStop()))
+        .andThen(m_pivot.pivotInRange().withTimeout(1))
+        .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+        .andThen(m_wrist.wristInRange().withTimeout(1))
+        .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed));
   }
 
   public Command aimCommand() {
@@ -218,13 +137,6 @@ public class RobotContainer implements Logged {
         () -> m_robotDrive.drive(0, 0, limelight_aim_proportional(m_frontLimelight), true, true),
         m_robotDrive);
   }
-
-  private final ConditionalCommand m_stageRightConditional =
-      new ConditionalCommand(m_alignSrRedCommand(), m_alignSrBlueCommand(), this::allianceIsRed);
-  private final ConditionalCommand m_stageLeftConditional =
-      new ConditionalCommand(m_alignSlRedCommand(), m_alignSlBlueCommand(), this::allianceIsRed);
-  private final ConditionalCommand m_stageCenterConditional =
-      new ConditionalCommand(m_alignCsRedCommand(), m_alignCsBlueCommand(), this::allianceIsRed);
 
   private final Command m_ampScoringSelectV3Command =
       new SelectCommand<>(
@@ -381,7 +293,9 @@ public class RobotContainer implements Logged {
    * {@link JoystickButton}.
    */
   private void configureButtonBindings() {
-    /* DRIVER CONTROLS */
+    /*********************/
+    /*  DRIVER CONTROLS  */
+    /*********************/
 
     m_frontLimelight.shooterTargetInRange.onTrue(
         rumbleController(.5).andThen(rumbleControllerStop()));
@@ -425,25 +339,6 @@ public class RobotContainer implements Logged {
                                         LevetatorSetpoints.kStowed)))));
 
     /* SHOOTING */
-
-    m_driverController
-        .rightBumper()
-        .whileTrue(
-            m_frontLimelight
-                .setPipelineCommand(LimelightPipeline.SHOOT)
-                .alongWith(
-                    new RunCommand(
-                        () ->
-                            m_robotDrive.drive(
-                                -MathUtil.applyDeadband(
-                                    m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
-                                -MathUtil.applyDeadband(
-                                    m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
-                                limelight_aim_proportional(m_frontLimelight),
-                                true,
-                                true),
-                        m_robotDrive)));
-
     m_driverController
         .leftTrigger()
         .whileTrue(
@@ -492,25 +387,6 @@ public class RobotContainer implements Logged {
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
 
-    // m_driverController
-    //     .povUp()
-    //     .onTrue(m_rightClimber.climberForward().alongWith(m_leftClimber.climberForward()));
-    // m_driverController
-    //     .povUp()
-    //     .onFalse(
-    //         m_rightClimber
-    //             .emergencyStopClimberCommand()
-    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
-
-    // m_driverController
-    //     .povDown()
-    //     .onTrue(m_rightClimber.climberReverse().alongWith(m_leftClimber.climberReverse()));
-    // m_driverController
-    //     .povDown()
-    //     .onFalse(
-    //         m_rightClimber
-    //             .emergencyStopClimberCommand()
-    //             .alongWith(m_leftClimber.emergencyStopClimberCommand()));
     /* SMART AMP */
 
     m_driverController
@@ -536,7 +412,37 @@ public class RobotContainer implements Logged {
                 .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
+    /* CLIMB ALIGNMENT */
+
+    m_driverController
+        .rightBumper()
+        .whileTrue(
+            new STAGE_ALIGN_DRIVE(
+                    m_robotDrive,
+                    () ->
+                        -MathUtil.applyDeadband(
+                            m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
+                    () ->
+                        -MathUtil.applyDeadband(
+                            m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
+                    m_frontLimelight)
+                .andThen(
+                    new RunCommand(
+                        () ->
+                            m_robotDrive.drive(
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
+                                0,
+                                0,
+                                false,
+                                true)))
+                .alongWith(
+                    new CLIMBER_TO_HEIGHT(
+                        m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false)));
+
+    /*********************/
     /* OPERATOR CONTROLS */
+    /*********************/
 
     /* SHOOTER SPIN UP */
 
@@ -548,9 +454,6 @@ public class RobotContainer implements Logged {
     m_operatorButtonsTop.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
     m_operatorButtonsTop.button(5).onFalse(m_intake.intakeStop());
 
-    m_operatorButtonsTop
-        .button(4)
-        .onTrue(new ZERO_CLIMBER(m_leftClimber).alongWith(new ZERO_CLIMBER(m_rightClimber)));
     /* CLIMBER */
 
     // m_operatorController.y().onTrue(m_stageLeftConditional);
@@ -571,26 +474,36 @@ public class RobotContainer implements Logged {
         .onTrue(
             new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(3), false));
 
+    m_operatorButtonsTop
+        .button(4)
+        .onTrue(
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(2), true));
+
     m_operatorButtonsBottom
         .button(9)
         .onTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
                 .andThen(
-                    m_wrist
-                        .wristAngleSetpoint(2.65)
-                        .alongWith(m_pivot.pivotSetpointCommand(3.65)))
+                    m_wrist.wristAngleSetpoint(2.65).alongWith(m_pivot.pivotSetpointCommand(3.65)))
                 .andThen(m_pivot.pivotInRange())
                 .andThen(m_wrist.wristAngleSetpoint(3.2)));
+    // m_operatorButtonsBottom
+    //     .button(9)
+    //     .onTrue(
+    //                 m_wrist
+    //                     .wristAngleSetpoint(WristSetpoints.kIntake).andThen(new WaitCommand(1))
+    //                     .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake)));
 
     m_operatorButtonsBottom
         .button(10)
         .onTrue(
             m_pivot
-                .pivotSetpointCommand(3.14)
+                .pivotSetpointCommand(3)
                 .andThen(m_pivot.pivotInRange())
                 .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront))
-                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)));
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
+                .andThen(m_pivot.pivotSetpointCommand(3.14)));
 
     m_operatorButtonsBottom
         .button(4)

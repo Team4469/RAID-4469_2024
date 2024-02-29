@@ -189,13 +189,13 @@ public final class Constants {
     public static final int kSensorID = 3;
     public static final boolean kMotorInverted = false;
 
-    public static final double kP_Climbing = 0.1;
+    public static final double kP_Climbing = 12;
     public static final double kI_Climbing = 0;
-    public static final double kD_Climbing = 0;
+    public static final double kD_Climbing = 1;
 
-    public static final double kP_No_Climbing = 4;
+    public static final double kP_No_Climbing = 4; // 4
     public static final double kI_No_Climbing = 0;
-    public static final double kD_No_Climbing = 10;
+    public static final double kD_No_Climbing = 10; // 10
   }
 
   public static final class RightClimberConstants {
@@ -203,13 +203,13 @@ public final class Constants {
     public static final int kSensorID = 0;
     public static final boolean kMotorInverted = true;
 
-    public static final double kP_Climbing = 0.1;
+    public static final double kP_Climbing = 12;
     public static final double kI_Climbing = 0;
-    public static final double kD_Climbing = 0;
+    public static final double kD_Climbing = 1;
 
-    public static final double kP_No_Climbing = 3;
+    public static final double kP_No_Climbing = 3; // 3
     public static final double kI_No_Climbing = 0;
-    public static final double kD_No_Climbing = 10;
+    public static final double kD_No_Climbing = 10; // 10
   }
 
   public static final class LevetatorConstants {
