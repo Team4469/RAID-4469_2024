@@ -33,7 +33,7 @@ public final class SetPoints {
     public static final double kStowed = Units.inchesToMeters(.25);
     public static final double kAmpFront = .155;
     public static final double kAmpRear = .202;
-    public static final double kTrap = Units.inchesToMeters(7);
+    public static final double kTrap = Units.inchesToMeters(9);
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(4.25);
     public static final double kMovement = Units.inchesToMeters(3);
@@ -41,7 +41,7 @@ public final class SetPoints {
   }
 
   public final class ClimberSetpoints {
-    public static final double kTrapHeight = Units.inchesToMeters(23);
+    public static final double kTrapHeight = Units.inchesToMeters(12);
     public static final double kRetractedHeight = Units.inchesToMeters(0);
   }
 

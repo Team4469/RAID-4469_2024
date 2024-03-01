@@ -5,9 +5,7 @@
 package frc.robot.subsystems.utils;
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
@@ -32,6 +30,7 @@ public class Limelight extends SubsystemBase {
   private NetworkTableEntry tl = null;
   private NetworkTableEntry cl = null;
   private NetworkTableEntry pipeline = null;
+  private NetworkTableEntry tid = null;
   private String limeLightName = "limelight";
 
   public Limelight(String limeLightName) {
@@ -48,6 +47,7 @@ public class Limelight extends SubsystemBase {
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
       pipeline = table.getEntry("pipeline");
+      tid = table.getEntry("tid");
     } catch (Exception e) {
       // SmartDashboard.putBoolean("couldn't get nt entries", true);
     }
@@ -68,6 +68,7 @@ public class Limelight extends SubsystemBase {
       tl = table.getEntry("tl");
       cl = table.getEntry("cl");
       pipeline = table.getEntry("pipeline");
+      tid = table.getEntry("tid");
     } catch (Exception e) {
       return;
     }
@@ -116,6 +117,14 @@ public class Limelight extends SubsystemBase {
     return cL;
   }
 
+  public double getTargetInView() {
+    double tId = 0.0;
+    if (isInitialized()) {
+      tId = tid.getDouble(0.0);
+    }
+    return tId;
+  }
+
   public double targetDist() {
     double[] targetPose = null;
     if (isInitialized()) {
@@ -129,7 +138,7 @@ public class Limelight extends SubsystemBase {
       return 0;
     }
   }
-  
+
   private static Pose2d toPose2D(double[] inData) {
     if (inData.length < 6) {
       System.err.println("Bad LL 2D Pose Data!");
@@ -139,8 +148,6 @@ public class Limelight extends SubsystemBase {
     Rotation2d r2d = new Rotation2d(Units.degreesToRadians(inData[5]));
     return new Pose2d(tran2d, r2d);
   }
-
-
 
   public double x() {
     double dx = 0.0;
@@ -188,7 +195,7 @@ public class Limelight extends SubsystemBase {
   }
 
   private void setPipeline(LimelightPipeline pipeline) {
-    int pipe = pipeline.ordinal();
+    int pipe = pipeline.getValue();
     if (isInitialized()) {
       this.pipeline.setNumber(pipe);
     }

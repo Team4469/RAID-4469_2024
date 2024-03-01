@@ -25,6 +25,7 @@ public final class Constants {
   public static final class OIConstants {
     public static final int kDriverControllerPort = 0;
     public static final int kOperatorControllerPort = 1;
+    public static final int kOperatorController2Port = 2;
     public static final double kDriveDeadband = 0.02;
   }
 
@@ -187,12 +188,28 @@ public final class Constants {
     public static final int kMotorID = 36;
     public static final int kSensorID = 3;
     public static final boolean kMotorInverted = false;
+
+    public static final double kP_Climbing = 28;
+    public static final double kI_Climbing = 0;
+    public static final double kD_Climbing = 1;
+
+    public static final double kP_No_Climbing = 4; // 4
+    public static final double kI_No_Climbing = 0;
+    public static final double kD_No_Climbing = 10; // 10
   }
 
   public static final class RightClimberConstants {
     public static final int kMotorID = 35;
     public static final int kSensorID = 0;
     public static final boolean kMotorInverted = true;
+
+    public static final double kP_Climbing = 28;
+    public static final double kI_Climbing = 0;
+    public static final double kD_Climbing = 1;
+
+    public static final double kP_No_Climbing = 3; // 3
+    public static final double kI_No_Climbing = 0;
+    public static final double kD_No_Climbing = 10; // 10
   }
 
   public static final class LevetatorConstants {
@@ -247,12 +264,9 @@ public final class Constants {
   public static final class ClimberConstants {
     public static final double kMaxVelocity = 0.25; // mm/s
     public static final double kMaxAcceleration = 0.25; // mm/s^2
-    public static final double kP = 1.3;
+    public static final double kP = .0001;
     public static final double kI = 0.0;
-    public static final double kD = 0.7;
-    public static final double kS = 1.1;
-    public static final double kG = 1.2;
-    public static final double kV = 1.3;
+    public static final double kD = 0.0;
 
     public static final double extensionSpeed = .1;
     public static final double retractionSpeed = -.5;
@@ -260,7 +274,7 @@ public final class Constants {
     public static final double kGearRatio = 15.60;
 
     public static final double kPositionConversionFactor =
-        Units.inchesToMeters(1) * Math.PI * (1.0 / kGearRatio);
+        Units.inchesToMeters(1.18) * Math.PI * (1.0 / kGearRatio);
 
     public static final double kSensorOffset = Units.inchesToMeters(2.56);
 

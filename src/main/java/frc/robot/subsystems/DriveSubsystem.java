@@ -6,9 +6,6 @@ package frc.robot.subsystems;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.GoalEndState;
-import com.pathplanner.lib.path.PathConstraints;
-import com.pathplanner.lib.path.PathPlannerPath;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -16,10 +13,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -30,23 +24,20 @@ import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.utils.Limelight;
 import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
-import java.util.List;
 import java.util.Optional;
-
 import monologue.Annotations.Log;
+import monologue.Logged;
 
-public class DriveSubsystem extends SubsystemBase {
+public class DriveSubsystem extends SubsystemBase implements Logged {
 
   private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
   private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs =
@@ -110,10 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
 
   SwerveDrivePoseEstimator m_poseEstimator =
       new SwerveDrivePoseEstimator(
-          DriveConstants.kDriveKinematics,
-          getHeading(),
-          getModulePositions(),
-          new Pose2d());
+          DriveConstants.kDriveKinematics, getHeading(), getModulePositions(), new Pose2d());
 
   /** Creates a new DriveSubsystem. */
   public DriveSubsystem(Limelight frontLimelight, Limelight rearLimelight) {
@@ -150,46 +138,18 @@ public class DriveSubsystem extends SubsystemBase {
         .withSize(7, 5);
   }
 
-
-  private SwerveModulePosition[] getModulePositions(){
+  private SwerveModulePosition[] getModulePositions() {
     return new SwerveModulePosition[] {
-        m_frontLeft.getPosition(),
-        m_frontRight.getPosition(),
-        m_rearLeft.getPosition(),
-        m_rearRight.getPosition()
+      m_frontLeft.getPosition(),
+      m_frontRight.getPosition(),
+      m_rearLeft.getPosition(),
+      m_rearRight.getPosition()
     };
   }
 
   // COMMANDS
   public Command setXCommand() {
     return this.runOnce(this::setX);
-  }
-
-  public Command move1mYCommand() {
-    return runOnce(
-        () -> {
-          Pose2d currentPose = this.getPose();
-
-          // The rotation component in these poses represents the direction of travel
-          Pose2d startPos = new Pose2d(currentPose.getTranslation(), new Rotation2d());
-          Pose2d endPos =
-              new Pose2d(
-                  currentPose.getTranslation().plus(new Translation2d(0.0, 1.0)), new Rotation2d());
-
-          List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(startPos, endPos);
-          PathPlannerPath path =
-              new PathPlannerPath(
-                  bezierPoints,
-                  new PathConstraints(
-                      4.0, 4.0, Units.degreesToRadians(360), Units.degreesToRadians(540)),
-                  new GoalEndState(0.0, currentPose.getRotation()));
-
-          // Prevent this path from being flipped on the red alliance, since the given positions are
-          // already correct
-          path.preventFlipping = true;
-
-          AutoBuilder.followPath(path).schedule();
-        });
   }
 
   public Command zeroGyro() {
@@ -211,10 +171,7 @@ public class DriveSubsystem extends SubsystemBase {
    * @param pose The pose to which to set the odometry.
    */
   public void resetOdometry(Pose2d pose) {
-    m_poseEstimator.resetPosition(
-        getHeading(),
-        getModulePositions(),
-        pose);
+    m_poseEstimator.resetPosition(getHeading(), getModulePositions(), pose);
   }
 
   /**
@@ -285,12 +242,12 @@ public class DriveSubsystem extends SubsystemBase {
     double ySpeedDelivered = ySpeedCommanded * DriveConstants.kMaxSpeedMetersPerSecond;
     double rotDelivered = m_currentRotation * DriveConstants.kMaxAngularSpeed;
 
-          //get alliance color
-      Optional<Alliance> ally = DriverStation.getAlliance();
-      if (ally.isPresent() && ally.get() == Alliance.Red) {
-          xSpeedDelivered *= -1;
-          ySpeedDelivered *= -1;
-      }
+    // get alliance color
+    Optional<Alliance> ally = DriverStation.getAlliance();
+    if (ally.isPresent() && ally.get() == Alliance.Red) {
+      xSpeedDelivered *= -1;
+      ySpeedDelivered *= -1;
+    }
 
     // var swerveModuleStates =
     //     DriveConstants.kDriveKinematics.toSwerveModuleStates(
@@ -425,9 +382,33 @@ public class DriveSubsystem extends SubsystemBase {
 
     m_field.setRobotPose(getPose());
 
-    SmartDashboard.putNumber("Heading", getHeading().getDegrees());
+    this.log("FL CAN TX", m_frontLeft.getDrivingCanTxFault());
+    this.log("FL CAN RX", m_frontLeft.getDrivingCanRxFault());
+    this.log("FL Output", m_frontLeft.getDrivingOutput());
+    this.log("FL Current", m_frontLeft.getDrivingCurrent());
+    this.log("FL Voltage", m_frontLeft.getBusVoltage());
+
+    this.log("FR CAN TX", m_frontRight.getDrivingCanTxFault());
+    this.log("FR CAN RX", m_frontRight.getDrivingCanRxFault());
+    this.log("FR Output", m_frontRight.getDrivingOutput());
+    this.log("FR Current", m_frontRight.getDrivingCurrent());
+    this.log("FR Voltage", m_frontRight.getBusVoltage());
+
+    this.log("RL CAN TX", m_rearLeft.getDrivingCanTxFault());
+    this.log("RL CAN RX", m_rearLeft.getDrivingCanRxFault());
+    this.log("RL Output", m_rearLeft.getDrivingOutput());
+    this.log("RL Current", m_rearLeft.getDrivingCurrent());
+    this.log("RL Voltage", m_rearLeft.getBusVoltage());
+
+    this.log("RR CAN TX", m_rearRight.getDrivingCanTxFault());
+    this.log("RR CAN RX", m_rearRight.getDrivingCanRxFault());
+    this.log("RR Output", m_rearRight.getDrivingOutput());
+    this.log("RR Current", m_rearRight.getDrivingCurrent());
+    this.log("RR Voltage", m_rearRight.getBusVoltage());
+
     // if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
-    //   m_poseEstimator.addVisionMeasurement(limelightFront.botPose(),  Timer.getFPGATimestamp() - (limelightFront.tl() / 1000.0) - (limelightFront.cl() / 1000.0));
+    //   m_poseEstimator.addVisionMeasurement(limelightFront.botPose(),  Timer.getFPGATimestamp() -
+    // (limelightFront.tl() / 1000.0) - (limelightFront.cl() / 1000.0));
     // }
   }
 }

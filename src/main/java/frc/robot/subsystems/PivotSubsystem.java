@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -50,27 +51,32 @@ public class PivotSubsystem extends SubsystemBase implements Logged {
     m_followMotor.restoreFactoryDefaults();
 
     m_pidController = m_leadMotor.getPIDController();
-
-    m_pidController.setP(PivotConstants.kP, 0); // .4
-    m_pidController.setI(PivotConstants.kI, 0); // 0
-    m_pidController.setD(PivotConstants.kD, 0); // 14
-    m_pidController.setIZone(PivotConstants.kIz);
-    m_pidController.setIAccum(PivotConstants.kIAcum);
-
-    m_pidController.setPositionPIDWrappingEnabled(false);
-
-    m_pidController.setPositionPIDWrappingMaxInput(4);
-    m_pidController.setPositionPIDWrappingMinInput(Math.PI / 2);
-
-    m_pidController.setOutputRange(PivotConstants.kMinOutput, PivotConstants.kMaxOutput);
-
-    m_leadMotor.setClosedLoopRampRate(PivotConstants.kClosedLoopRampRate);
-
     m_encoder = m_leadMotor.getAbsoluteEncoder(Type.kDutyCycle);
-
     m_pidController.setFeedbackDevice(m_encoder);
 
-    m_leadMotor.setInverted(PivotConstants.kLeadMotorInverted);
+    m_pidController.setPositionPIDWrappingEnabled(false);
+    m_pidController.setPositionPIDWrappingMaxInput(4);
+    m_pidController.setPositionPIDWrappingMinInput(Math.PI / 2);
+    m_pidController.setOutputRange(PivotConstants.kMinOutput, PivotConstants.kMaxOutput);
+
+    for (int i = 0; i < 6; i++) {
+      if (m_leadMotor.getClosedLoopRampRate() != PivotConstants.kClosedLoopRampRate) {
+        m_leadMotor.setClosedLoopRampRate(PivotConstants.kClosedLoopRampRate);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_leadMotor.getInverted() != PivotConstants.kLeadMotorInverted) {
+        m_leadMotor.setInverted(PivotConstants.kLeadMotorInverted);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+    m_followMotor.follow(m_leadMotor, PivotConstants.kFollowMotorInverted);
 
     m_leadMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
     m_followMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
@@ -80,15 +86,38 @@ public class PivotSubsystem extends SubsystemBase implements Logged {
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    m_encoder.setZeroOffset(PivotConstants.kPivotZeroOffset);
-
-    m_followMotor.follow(m_leadMotor, PivotConstants.kFollowMotorInverted);
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getZeroOffset() != PivotConstants.kPivotZeroOffset) {
+        m_encoder.setZeroOffset(PivotConstants.kPivotZeroOffset);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_leadMotor.setIdleMode(IdleMode.kBrake);
     m_followMotor.setIdleMode(IdleMode.kBrake);
 
     m_encoder.setPositionConversionFactor(PivotConstants.kPivotEncoderPositionFactor);
     m_encoder.setVelocityConversionFactor(PivotConstants.kPivotEncoderVelocityFactor);
+
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getIMaxAccum(0) != PivotConstants.kIAcum) {
+        m_pidController.setIMaxAccum(PivotConstants.kIAcum, 0);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
+
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getIZone() != PivotConstants.kIz) {
+        m_pidController.setIZone(PivotConstants.kIz);
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     for (int i = 0; i < 6; i++) {
       if (m_pidController.getP() != PivotConstants.kP) {
@@ -117,24 +146,25 @@ public class PivotSubsystem extends SubsystemBase implements Logged {
       Timer.delay(.1);
     }
 
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
+
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
-
-    // m_leadMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus0, PivotConstants.kLeaderStatus0PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, PivotConstants.kStatus3PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, PivotConstants.kStatus4PeriodMs);
-    // m_leadMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus5, PivotConstants.kLeaderStatus5PeriodMs);
-
-    // m_followMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus0, PivotConstants.kFollowerStatus0PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3,
-    // PivotConstants.kStatus3PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4,
-    // PivotConstants.kStatus4PeriodMs);
-    // m_followMotor.setPeriodicFramePeriod(
-    //     PeriodicFrame.kStatus5, PivotConstants.kFollowerStatus5PeriodMs);
 
     SETPOINT_INIT = false;
   }
