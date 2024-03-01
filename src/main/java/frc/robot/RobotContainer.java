@@ -477,7 +477,7 @@ public class RobotContainer implements Logged {
     m_operatorButtonsTop
         .button(4)
         .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(2), true));
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(0), true));
 
     m_operatorButtonsBottom
         .button(9)
@@ -485,9 +485,9 @@ public class RobotContainer implements Logged {
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
                 .andThen(
-                    m_wrist.wristAngleSetpoint(2.65).alongWith(m_pivot.pivotSetpointCommand(3.65)))
+                    m_wrist.wristAngleSetpoint(2.70).alongWith(m_pivot.pivotSetpointCommand(3.3)))
                 .andThen(m_pivot.pivotInRange())
-                .andThen(m_wrist.wristAngleSetpoint(3.2)));
+                .andThen(m_wrist.wristAngleSetpoint(3.75)));
     // m_operatorButtonsBottom
     //     .button(9)
     //     .onTrue(
@@ -501,16 +501,17 @@ public class RobotContainer implements Logged {
             m_pivot
                 .pivotSetpointCommand(3)
                 .andThen(m_pivot.pivotInRange())
-                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kAmpFront))
-                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
-                .andThen(m_pivot.pivotSetpointCommand(3.14)));
+                .andThen(m_wrist.wristAngleSetpoint(3.3))
+                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
+                .andThen(m_pivot.pivotSetpointCommand(3.14))
+                .andThen(m_wrist.wristAngleSetpoint(3.4)));
 
     m_operatorButtonsBottom
         .button(4)
         .onTrue(
             m_shooter
                 .shooterFeed()
-                .alongWith(m_intake.intakeOuttake())
+                .alongWith(m_intake.intakeTransferFwd())
                 .andThen(new WaitCommand(.5))
                 .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop())));
 

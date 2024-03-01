@@ -189,7 +189,7 @@ public final class Constants {
     public static final int kSensorID = 3;
     public static final boolean kMotorInverted = false;
 
-    public static final double kP_Climbing = 12;
+    public static final double kP_Climbing = 28;
     public static final double kI_Climbing = 0;
     public static final double kD_Climbing = 1;
 
@@ -203,7 +203,7 @@ public final class Constants {
     public static final int kSensorID = 0;
     public static final boolean kMotorInverted = true;
 
-    public static final double kP_Climbing = 12;
+    public static final double kP_Climbing = 28;
     public static final double kI_Climbing = 0;
     public static final double kD_Climbing = 1;
 
