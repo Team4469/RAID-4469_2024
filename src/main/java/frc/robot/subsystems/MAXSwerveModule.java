@@ -8,6 +8,7 @@ import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
@@ -106,6 +107,24 @@ public class MAXSwerveModule {
     // operation, it will maintain the above configurations.
     m_drivingSparkFlex.burnFlash();
     m_turningSparkMax.burnFlash();
+
+
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Motor Position
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
+    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
 
     m_chassisAngularOffset = chassisAngularOffset;
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());

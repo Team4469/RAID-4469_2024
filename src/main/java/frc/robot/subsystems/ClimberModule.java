@@ -4,15 +4,16 @@
 
 package frc.robot.subsystems;
 
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
-import au.grapplerobotics.LaserCan.RangingMode;
-import au.grapplerobotics.LaserCan.RegionOfInterest;
-import au.grapplerobotics.LaserCan.TimingBudget;
+// import au.grapplerobotics.ConfigurationFailedException;
+// import au.grapplerobotics.LaserCan;
+// import au.grapplerobotics.LaserCan.RangingMode;
+// import au.grapplerobotics.LaserCan.RegionOfInterest;
+// import au.grapplerobotics.LaserCan.TimingBudget;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -32,7 +33,7 @@ public class ClimberModule extends SubsystemBase {
   private final RelativeEncoder m_encoder;
   private final SparkPIDController m_pidController;
 
-  private LaserCan m_distanceSensor;
+  // private LaserCan m_distanceSensor;
 
   int ID;
 
@@ -79,19 +80,28 @@ public class ClimberModule extends SubsystemBase {
 
     m_climbingMotor.burnFlash();
 
-    m_distanceSensor = new LaserCan(LaserCanID);
-    ID = LaserCanID;
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Motor Position
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
-    try {
-      m_distanceSensor.setRangingMode(RangingMode.SHORT);
-      m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 12, 4, 4));
-      m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
 
-    // LaserCan.Measurement measure = m_distanceSensor.getMeasurement();
-    // m_encoder.setPosition(measure.distance_mm / 1000);
+    // m_distanceSensor = new LaserCan(LaserCanID);
+    // ID = LaserCanID;
+
+    // try {
+    //   m_distanceSensor.setRangingMode(RangingMode.SHORT);
+    //   m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 12, 4, 4));
+    //   m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed! " + e);
+    // }
+
+    // // LaserCan.Measurement measure = m_distanceSensor.getMeasurement();
+    // // m_encoder.setPosition(measure.distance_mm / 1000);
   }
 
   public Command setHeight(double meters) {
@@ -201,7 +211,7 @@ public class ClimberModule extends SubsystemBase {
               targetHeight,
               ControlType.kPosition,
               PID_Slot.CLIMBING.ordinal(),
-              4,
+              5,
               ArbFFUnits.kVoltage);
         }
         break;

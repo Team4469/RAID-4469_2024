@@ -9,6 +9,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 import com.revrobotics.SparkPIDController;
@@ -144,6 +145,23 @@ public class PivotSubsystem extends SubsystemBase implements Logged {
       }
       Timer.delay(.1);
     }
+
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
+    m_leadMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_followMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
 
     m_leadMotor.burnFlash();
     m_followMotor.burnFlash();
