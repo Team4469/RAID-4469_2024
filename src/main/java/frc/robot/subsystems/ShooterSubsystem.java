@@ -147,7 +147,7 @@ public class ShooterSubsystem extends SubsystemBase {
     m_leftPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
     m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500); // Output, Faults, Sticky Faults, Is Follower
-    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
     m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
     m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
@@ -155,12 +155,14 @@ public class ShooterSubsystem extends SubsystemBase {
     m_leftShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500); // Output, Faults, Sticky Faults, Is Follower
-    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
     m_rightShooterMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+
+    Timer.delay(.25);
 
     m_rightShooterMotor.burnFlash();
     m_leftShooterMotor.burnFlash();
