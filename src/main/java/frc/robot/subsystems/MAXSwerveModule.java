@@ -19,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants.ModuleConstants;
-import frc.robot.Constants.ShooterConstants;
 
 public class MAXSwerveModule {
   private final CANSparkFlex m_drivingSparkFlex;
@@ -56,12 +55,12 @@ public class MAXSwerveModule {
     m_drivingPIDController.setFeedbackDevice(m_drivingEncoder);
     m_turningPIDController.setFeedbackDevice(m_turningEncoder);
 
-
     // Apply position and velocity conversion factors for the driving encoder. The
     // native units for position and velocity are rotations and RPM, respectively,
     // but we want meters and meters per second to use with WPILib's swerve APIs.
     for (int i = 0; i < 6; i++) {
-      if (m_drivingEncoder.getPositionConversionFactor() != ModuleConstants.kDrivingEncoderPositionFactor) {
+      if (m_drivingEncoder.getPositionConversionFactor()
+          != ModuleConstants.kDrivingEncoderPositionFactor) {
         m_drivingEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
       } else {
         break;
@@ -69,7 +68,8 @@ public class MAXSwerveModule {
       Timer.delay(.1);
     }
     for (int i = 0; i < 6; i++) {
-      if (m_drivingEncoder.getVelocityConversionFactor() != ModuleConstants.kDrivingEncoderVelocityFactor) {
+      if (m_drivingEncoder.getVelocityConversionFactor()
+          != ModuleConstants.kDrivingEncoderVelocityFactor) {
         m_drivingEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
       } else {
         break;
@@ -81,7 +81,8 @@ public class MAXSwerveModule {
     // want these in radians and radians per second to use with WPILib's swerve
     // APIs.
     for (int i = 0; i < 6; i++) {
-      if (m_turningEncoder.getPositionConversionFactor() != ModuleConstants.kTurningEncoderPositionFactor) {
+      if (m_turningEncoder.getPositionConversionFactor()
+          != ModuleConstants.kTurningEncoderPositionFactor) {
         m_turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
       } else {
         break;
@@ -89,7 +90,8 @@ public class MAXSwerveModule {
       Timer.delay(.1);
     }
     for (int i = 0; i < 6; i++) {
-      if (m_turningEncoder.getVelocityConversionFactor() != ModuleConstants.kTurningEncoderVelocityFactor) {
+      if (m_turningEncoder.getVelocityConversionFactor()
+          != ModuleConstants.kTurningEncoderVelocityFactor) {
         m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
       } else {
         break;
@@ -205,23 +207,35 @@ public class MAXSwerveModule {
     m_drivingSparkFlex.setSmartCurrentLimit(ModuleConstants.kDrivingMotorCurrentLimit);
     m_turningSparkMax.setSmartCurrentLimit(ModuleConstants.kTurningMotorCurrentLimit);
 
-
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Motor Position
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
-    m_drivingSparkFlex.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3,
+        500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_drivingSparkFlex.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
-    m_turningSparkMax.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
-
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3,
+        500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
+    m_turningSparkMax.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
     m_chassisAngularOffset = chassisAngularOffset;
     m_desiredState.angle = new Rotation2d(m_turningEncoder.getPosition());
@@ -229,7 +243,7 @@ public class MAXSwerveModule {
 
     // Save the SPARK MAX configurations. If a SPARK MAX browns out during
     // operation, it will maintain the above configurations.
-    Timer.delay(.25);
+    // Timer.delay(.25);
 
     m_drivingSparkFlex.burnFlash();
     m_turningSparkMax.burnFlash();

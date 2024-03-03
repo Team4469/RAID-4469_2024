@@ -205,13 +205,20 @@ public class WristSubsystem extends SubsystemBase implements Logged {
       Timer.delay(.1);
     }
 
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
-    m_wristMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3,
+        500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, 100); // Absolute Encoder Position, Absolute Encoder Angle
+    m_wristMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, 100); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
     m_wristMotor.burnFlash();
 
