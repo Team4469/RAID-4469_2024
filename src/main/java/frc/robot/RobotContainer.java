@@ -41,7 +41,8 @@ import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.STAGE_ALIGN_DRIVE;
-import frc.robot.commands.shooterVariableDistanceSpeedCommand;
+import frc.robot.commands.shooting.SHOOTER_VARIABLE_POSITIONING_FULL;
+import frc.robot.commands.shooting.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.ClimberModule.PID_Slot;
 import frc.robot.subsystems.DriveSubsystem;
@@ -374,13 +375,13 @@ public class RobotContainer implements Logged {
         .whileTrue(
             m_frontLimelight
                 .setPipelineCommand(LimelightPipeline.SHOOT)
+                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
                 .andThen(
-                    m_levetator
-                        .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-                        .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
-                .andThen(
-                    new shooterVariableDistanceSpeedCommand(
-                            m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
+                    new SHOOTER_VARIABLE_POSITIONING_FULL(
+                            m_shooter,
+                            m_wrist,
+                            m_pivot,
+                            m_frontLimelight::SimpleDistanceToSpeakerMeters)
                         .alongWith(
                             new RunCommand(
                                 () ->

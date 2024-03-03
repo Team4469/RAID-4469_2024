@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static frc.utils.ShootingInterpolationTables.*;
+
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkFlex;
@@ -19,8 +21,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.ShooterConstants;
-import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
-import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
 import java.util.function.DoubleSupplier;
 
@@ -194,7 +194,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param distanceToTarget distance to target in Meters
    */
   public Command shooterVariableSpeakerShot(DoubleSupplier distanceToTarget) {
-    double target = ShooterRPMTable.SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    double target = SHOOTER_RPM_INTERP_TABLE.get(distanceToTarget.getAsDouble());
     return Commands.run(() -> shootPIDControl(target));
   }
 
@@ -202,8 +202,7 @@ public class ShooterSubsystem extends SubsystemBase {
    * @param distanceToTarget distance to target in Meters
    */
   public Command shooterVariableSpeedSpeakerShot(DoubleSupplier distanceToTarget) {
-    double target =
-        ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
+    double target = SHOOTER_SPEED_INTERP_TABLE.get(distanceToTarget.getAsDouble());
     SmartDashboard.putNumber("Target Speed", target);
     return Commands.run(() -> setSpeed(target));
   }
