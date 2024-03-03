@@ -9,7 +9,6 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
-import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -18,8 +17,6 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.math.numbers.N3;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.util.WPIUtilJNI;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -30,7 +27,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.subsystems.utils.Limelight;
 import frc.utils.SwerveUtils;
 import frc.utils.TunableNumber;
 import java.util.Optional;
@@ -39,16 +35,7 @@ import monologue.Logged;
 
 public class DriveSubsystem extends SubsystemBase implements Logged {
 
-  private static final edu.wpi.first.math.Vector<N3> stateStdDevs = VecBuilder.fill(0.1, 0.1, 0.1);
-  private static final edu.wpi.first.math.Vector<N3> visionMeasurementStdDevs =
-      VecBuilder.fill(0.9, 0.9, Units.degreesToRadians(0.9));
-
-  private Limelight limelightFront;
-  private Limelight limelightRear;
-
   private final Field2d m_field = new Field2d();
-
-  private boolean sawTag = false;
 
   private double ANGULAR_VELOCITY_COEFFICIENT_DEFAULT = 0.01;
 
@@ -104,9 +91,7 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
           DriveConstants.kDriveKinematics, getHeading(), getModulePositions(), new Pose2d());
 
   /** Creates a new DriveSubsystem. */
-  public DriveSubsystem(Limelight frontLimelight, Limelight rearLimelight) {
-    this.limelightFront = frontLimelight;
-    this.limelightRear = rearLimelight;
+  public DriveSubsystem() {
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::resetOdometry,
@@ -249,26 +234,6 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
       ySpeedDelivered *= -1;
     }
 
-    // var swerveModuleStates =
-    //     DriveConstants.kDriveKinematics.toSwerveModuleStates(
-    //         fieldRelative
-    //             ? ChassisSpeeds.fromFieldRelativeSpeeds(
-    //                 xSpeedDelivered,
-    //                 ySpeedDelivered,
-    //                 rotDelivered,
-    //                 Rotation2d.fromDegrees(getAngleCorrected())
-    //                     .plus(
-    //                         new Rotation2d(
-    //                             this.getAngularVelocity() * ANGULAR_VELOCITY_COEFFICIENT.get())))
-    //             // Testing this to correct for drift while driving and rotating
-    //             : new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered));
-    // SwerveDriveKinematics.desaturateWheelSpeeds(
-    //     swerveModuleStates, DriveConstants.kMaxSpeedMetersPerSecond);
-    // m_frontLeft.setDesiredState(swerveModuleStates[0]);
-    // m_frontRight.setDesiredState(swerveModuleStates[1]);
-    // m_rearLeft.setDesiredState(swerveModuleStates[2]);
-    // m_rearRight.setDesiredState(swerveModuleStates[3]);
-
     drive(new ChassisSpeeds(xSpeedDelivered, ySpeedDelivered, rotDelivered), fieldRelative);
   }
 
@@ -406,9 +371,5 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
     this.log("RR Current", m_rearRight.getDrivingCurrent());
     this.log("RR Voltage", m_rearRight.getBusVoltage());
 
-    // if (DriverStation.isAutonomous() && DriverStation.isDisabled()) {
-    //   m_poseEstimator.addVisionMeasurement(limelightFront.botPose(),  Timer.getFPGATimestamp() -
-    // (limelightFront.tl() / 1000.0) - (limelightFront.cl() / 1000.0));
-    // }
   }
 }

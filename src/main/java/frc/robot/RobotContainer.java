@@ -14,7 +14,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -25,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LeftClimberConstants;
 import frc.robot.Constants.OIConstants;
@@ -42,7 +40,6 @@ import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.STAGE_ALIGN_DRIVE;
 import frc.robot.commands.shooting.SHOOTER_VARIABLE_POSITIONING_FULL;
-import frc.robot.commands.shooting.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.ClimberModule.PID_Slot;
 import frc.robot.subsystems.DriveSubsystem;
@@ -57,20 +54,14 @@ import java.util.Map;
 import monologue.Logged;
 import monologue.Monologue;
 
-/*
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer implements Logged {
 
   // The robot's subsystems
   private final Limelight m_frontLimelight = new Limelight("limelight-front");
   private final Limelight m_rearLimelight = new Limelight("limelight-rear");
-  private final DriveSubsystem m_robotDrive = new DriveSubsystem(m_frontLimelight, m_rearLimelight);
+  private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem(m_pivot);
+  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem();
   private final ClimberModule m_rightClimber =
       new ClimberModule(
           RightClimberConstants.kMotorID,
@@ -84,7 +75,6 @@ public class RobotContainer implements Logged {
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final WristSubsystem m_wrist = new WristSubsystem(m_pivot);
-  //   private final LedSubsystem m_LedSubsystem = new LedSubsystem();
 
   // The driver's controller
   CommandXboxController m_driverController =
@@ -97,8 +87,6 @@ public class RobotContainer implements Logged {
   public AmpDirection AMP_DIRECTION = AmpDirection.REAR;
 
   private final SendableChooser<Command> autoChooser;
-
-  //   private final SendableChooser<StageLoc> StageChooser;
 
   public AmpDirection selectAmpDirection() {
     var ampDir = AmpDirection.REAR;
@@ -144,8 +132,9 @@ public class RobotContainer implements Logged {
   }
 
   public Command trapPrepCommand() {
-    return m_levetator
-        .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
+    return m_intake
+        .moveNoteCommand()
+        .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed))
         .andThen(m_wrist.wristAngleSetpoint(2.70).alongWith(m_pivot.pivotSetpointCommand(3.3)))
         .andThen(m_pivot.pivotInRange())
         .andThen(m_wrist.wristAngleSetpoint(3.75));
@@ -236,14 +225,15 @@ public class RobotContainer implements Logged {
         "Shoot",
         m_frontLimelight
             .setPipelineCommand(LimelightPipeline.SHOOT)
+            .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
             .andThen(
-                m_levetator
-                    .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-                    .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
-            .andThen(
-                new shooterVariableDistanceSpeedCommand(
-                        m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
-                    .withTimeout(.5))
+                new SHOOTER_VARIABLE_POSITIONING_FULL(
+                        m_shooter,
+                        m_wrist,
+                        m_pivot,
+                        m_frontLimelight::SimpleDistanceToSpeakerMeters)
+                    .withTimeout(.5)
+                    .alongWith(m_intake.intakePrepShoot()))
             .andThen(
                 new WaitCommand(.5)
                     .andThen(m_intake.intakeShootCommand().withTimeout(1))
@@ -254,9 +244,7 @@ public class RobotContainer implements Logged {
     NamedCommands.registerCommand("Aim", aimCommand());
     NamedCommands.registerCommand("Stowed", stowedCommand());
 
-    // Configure the button bindings
     configureButtonBindings();
-    // configureTestButtonBindings();
 
     m_leftClimber.setGains(
         PID_Slot.CLIMBING,
@@ -283,10 +271,7 @@ public class RobotContainer implements Logged {
         RightClimberConstants.kD_No_Climbing,
         0);
 
-    // Configure default commands
     m_robotDrive.setDefaultCommand(
-        // The left stick controls translation of the robot.
-        // Turning is controlled by the X axis of the right stick.
         new RunCommand(
             () ->
                 m_robotDrive.drive(
@@ -300,28 +285,14 @@ public class RobotContainer implements Logged {
                     true),
             m_robotDrive));
 
-    // m_intake.setDefaultCommand(m_intake.intakeStop());
 
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
-    // StageChooser = new SendableChooser<>();
-    // StageChooser.setDefaultOption("Stage Right", StageLoc.STAGE_RIGHT);
-    // StageChooser.addOption("Stage Left", StageLoc.STAGE_LEFT);
-    // StageChooser.addOption("Center Stage", StageLoc.CENTER_STAGE);
 
-    // SmartDashboard.putData("Stage Selector", StageChooser);
     SmartDashboard.putData("Auto Mode", autoChooser);
-    boolean fileOnly = false;
-    boolean lazyLogging = false;
-    Monologue.setupMonologue(this, "Robot", fileOnly, lazyLogging);
+    Monologue.setupMonologue(this, "Robot", false, false);
     DriverStation.startDataLog(DataLogManager.getLog(), true);
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link edu.wpi.first.wpilibj.GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then calling passing it to a
-   * {@link JoystickButton}.
-   */
   private void configureButtonBindings() {
     /*********************/
     /*  DRIVER CONTROLS  */
@@ -557,19 +528,9 @@ public class RobotContainer implements Logged {
   }
 
   double limelight_aim_proportional(Limelight ll) {
-    // kP (constant of proportionality)
-    // this is a hand-tuned number that determines the aggressiveness of our proportional control
-    // loop
-    // if it is too high, the robot will oscillate around.
-    // if it is too low, the robot will never reach its target
-    // if the robot never turns in the correct direction, kP should be inverted.
     double kP = .01;
-
-    // tx ranges from (-hfov/2) to (hfov/2) in degrees. If your target is on the rightmost edge of
-    // your limelight 3 feed, tx should return roughly 31 degrees.
     double targetingAngularVelocity = ll.x() * kP;
 
-    // invert since tx is positive when the target is to the right of the crosshair
     targetingAngularVelocity *= -1.0;
 
     var tv = ll.tv();

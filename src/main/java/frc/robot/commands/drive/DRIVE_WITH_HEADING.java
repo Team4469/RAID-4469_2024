@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveSubsystem;
-import frc.utils.TunableNumber;
 import java.util.Optional;
 import java.util.function.DoubleSupplier;
 
@@ -30,20 +29,6 @@ public class DRIVE_WITH_HEADING extends Command {
   // input suppliers from joysticks
   private final DoubleSupplier m_translationXSupplier;
   private final DoubleSupplier m_translationYSupplier;
-
-  // Set Default Values
-  private double ROTATION_PID_KP_DEFAULT = .1;
-  private double ROTATION_PID_KI_DEFAULT = 0;
-  private double ROTATION_PID_KD_DEFAULT = 100;
-  private double ROTATION_PID_TOLERANCE_DEFAULT = 5; // DEGREES
-
-  // Create Tuneable Numbers
-  private final TunableNumber ROTATION_PID_KP =
-      new TunableNumber("Swerve/DriveConstHead/kP", ROTATION_PID_KP_DEFAULT);
-  private final TunableNumber ROTATION_PID_KD =
-      new TunableNumber("Swerve/DriveConstHead/kD", ROTATION_PID_KD_DEFAULT);
-  private final TunableNumber ROTATION_PID_TOLERANCE_DEGREES =
-      new TunableNumber("Swerve/DriveConstHead/toleranceDeg", ROTATION_PID_TOLERANCE_DEFAULT);
 
   // Create Profiled PID Controller
   private ProfiledPIDController rotationController =
