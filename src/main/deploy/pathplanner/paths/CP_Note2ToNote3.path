@@ -3,25 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.314181577437229,
+        "x": 2.3818203840111387,
         "y": 5.550954736168731
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8158872614041528,
-        "y": 5.298333592037555
+        "x": 1.6802533419881658,
+        "y": 5.580290454582619
       },
       "isLocked": false,
       "linkedName": "Note2"
     },
     {
       "anchor": {
-        "x": 2.344586378987573,
-        "y": 4.275853371151187
+        "x": 1.4749021627672887,
+        "y": 4.837332665406072
       },
       "prevControl": {
-        "x": 1.747417073537851,
-        "y": 4.791487925568444
+        "x": 1.3973461650627008,
+        "y": 5.242334123557137
+      },
+      "nextControl": {
+        "x": 1.5271896135835592,
+        "y": 4.564284874772868
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.3818203840111387,
+        "y": 4.186064191572828
+      },
+      "prevControl": {
+        "x": 2.1060393324490354,
+        "y": 4.293371762669451
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,9 +54,9 @@
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 0,
-    "rotation": 165.0,
-    "rotateFast": false
+    "velocity": 0.0,
+    "rotation": 145.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Clear Close Spike",

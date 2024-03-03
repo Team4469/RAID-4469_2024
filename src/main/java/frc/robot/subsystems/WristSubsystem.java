@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import static frc.utils.ShootingInterpolationTables.*;
+
 import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.FaultID;

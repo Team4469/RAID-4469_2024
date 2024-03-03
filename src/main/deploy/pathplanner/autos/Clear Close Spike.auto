@@ -14,13 +14,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Shoot"
+            "name": "Pos1Shot"
           }
         },
         {
@@ -49,9 +43,22 @@
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "Aim"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stowed"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.0
+                }
+              }
+            ]
           }
         },
         {
@@ -94,12 +101,6 @@
         {
           "type": "named",
           "data": {
-            "name": "Aim"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
             "name": "Shoot"
           }
         },
@@ -126,12 +127,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "Aim"
           }
         },
         {

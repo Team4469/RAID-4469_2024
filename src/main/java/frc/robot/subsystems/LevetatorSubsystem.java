@@ -9,7 +9,6 @@ import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.LaserCan.RangingMode;
 import au.grapplerobotics.LaserCan.RegionOfInterest;
 import au.grapplerobotics.LaserCan.TimingBudget;
-// import edu.wpi.first.math.controller.ElevatorFeedforward;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
@@ -19,7 +18,6 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
-import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -44,25 +42,10 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
 
   int ID;
 
-  private boolean EncoderSet = false;
-
-  private boolean SETPOINT_INIT;
-  private int init_loop_number = 15;
-  private int init_loop_count = 0;
-  MedianFilter Setpoint_init_filter = new MedianFilter(init_loop_number);
-
-  // private final ElevatorFeedforward m_elevatorFeedforward =
-  //     new ElevatorFeedforward(LevetatorConstants.kS, LevetatorConstants.kG,
-  // LevetatorConstants.kV);
-
-  private final PivotSubsystem m_pivot;
-
   /** Creates a new LevSub. */
-  public LevetatorSubsystem(PivotSubsystem pivot) {
+  public LevetatorSubsystem() {
     m_motor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
-
-    m_pivot = pivot;
 
     for (int i = 0; i < 6; i++) {
       if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
@@ -193,7 +176,6 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
     }
 
     m_encoder.setPosition(0.0);
-    SETPOINT_INIT = true;
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampSelect) {
@@ -252,10 +234,6 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
     return SETPOINT;
   }
 
-  public void resetSetpointInit() {
-    SETPOINT_INIT = false;
-  }
-
   @Log
   public double getAppliedOutput() {
     return m_motor.getAppliedOutput();
@@ -274,54 +252,11 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
     m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
   }
 
-  // @Log
-  // public double getLaserMeasurement(){
-  //   return m_motor.getOutputCurrent();
-  // }
-
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
-    SmartDashboard.putNumber("Levetator Laset", measurement.distance_mm / 1000.0);
-
-    // if (!EncoderSet) {
-    //   try {
-    //     m_encoder.setPosition(
-    //         ((measurement.distance_mm) / 1000.0) + LevetatorConstants.kLevetatorOffset);
-    //     System.out.println(ID + "encoder set at " + m_encoder.getPosition());
-    //     EncoderSet = true;
-    //   } catch (Exception e) {
-    //     // System.out.println("Encoder " + ID + " not yet set");
-    //     EncoderSet = false;
-    //   }
-    // }
-
-    // if (!SETPOINT_INIT && EncoderSet) {
-    //   setSetpoint(Setpoint_init_filter.calculate(getMeasurement()));
-    //   if (init_loop_count <= init_loop_number) {
-    //     init_loop_count++;
-    //   } else {
-    //     SETPOINT_INIT = true;
-    //   }
-    // }
-
-    // if (m_encoder.getPosition() != 0) {
-    //   EncoderSet = true;
-    // }
-
-    // System.out.println(m_encoder.getPosition());
 
     m_pidController.setReference(getSetpoint(), ControlType.kPosition);
 
-    // m_pidController.setReference(
-    //     getSetpoint(),
-    //     ControlType.kPosition,
-    //     0,
-    //     LevetatorConstants.kGravity * Math.sin(m_pivot.getRadiansFromHorizontal()),
-    //     ArbFFUnits.kVoltage);
-
-    // SmartDashboard.putNumber("Levetator LaserCAN", measurement.distance_mm);
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
     SmartDashboard.putBoolean("Levetator In Range", inRange(getSetpoint()));
