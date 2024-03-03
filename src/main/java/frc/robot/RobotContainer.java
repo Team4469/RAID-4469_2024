@@ -264,7 +264,7 @@ public class RobotContainer implements Logged {
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(new WaitCommand(.2))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(2.94).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(2.8).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
                     .andThen(m_shooter.shooterStop()));
     
@@ -273,7 +273,7 @@ public class RobotContainer implements Logged {
             m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.45).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
                     .andThen(m_shooter.shooterStop()));
 
@@ -282,7 +282,7 @@ public class RobotContainer implements Logged {
             m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(3.45).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
                     .andThen(m_shooter.shooterStop()));
 
