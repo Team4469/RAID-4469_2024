@@ -4,11 +4,11 @@
 
 package frc.robot.commands.shooting;
 
-import static frc.utils.ShootingInterpolationTables.*;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
+import frc.utils.ShootingInterpolationTables.ShooterLaunchAngleTable;
+import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import java.util.function.DoubleSupplier;
 
 public class shooterVariableDistanceSpeedCommand extends Command {
@@ -40,8 +40,8 @@ public class shooterVariableDistanceSpeedCommand extends Command {
   @Override
   public void execute() {
     distanceMeters = m_distSup.getAsDouble();
-    shooterTarget = SHOOTER_SPEED_INTERP_TABLE.get(distanceMeters);
-    wristTarget = WRIST_LAUNCH_ANGLE_INTERP_TABLE.get(distanceMeters);
+    shooterTarget = ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceMeters);
+    wristTarget = ShooterLaunchAngleTable.SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.get(distanceMeters);
 
     m_wrist.setSetpoint(wristTarget);
     m_shoot.setSpeed(shooterTarget);

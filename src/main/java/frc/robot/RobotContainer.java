@@ -39,7 +39,7 @@ import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.drive.STAGE_ALIGN_DRIVE;
-import frc.robot.commands.shooting.SHOOTER_VARIABLE_POSITIONING_FULL;
+import frc.robot.commands.shooting.shooterVariableDistanceSpeedCommand;
 import frc.robot.subsystems.ClimberModule;
 import frc.robot.subsystems.ClimberModule.PID_Slot;
 import frc.robot.subsystems.DriveSubsystem;
@@ -108,7 +108,7 @@ public class RobotContainer implements Logged {
   public Command intakePositionCommand() {
     return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
         .andThen(m_levetator.levInRange().withTimeout(1))
-        .andThen(m_levetator.setSquishyModeCommand())
+        // .andThen(m_levetator.setSquishyModeCommand())
         .andThen(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -128,7 +128,7 @@ public class RobotContainer implements Logged {
   public Command aimCommand() {
     return new RunCommand(
         () -> m_robotDrive.drive(0, 0, limelight_aim_proportional(m_frontLimelight), true, true),
-        m_robotDrive);
+        m_robotDrive).withTimeout(.5);
   }
 
   public Command trapPrepCommand() {
@@ -220,25 +220,74 @@ public class RobotContainer implements Logged {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
+    NamedCommands.registerCommand(
+        "Pos1Shot",
+        m_pivot
+            .pivotSetpointCommand(PivotSetpoints.kVariableShot)
+            .andThen(m_wrist.wristAngleSetpoint(2.6).alongWith(m_intake.intakePrepShoot()))
+            .andThen(m_shooter.shooterSpeakerShot())
+            .andThen(new WaitCommand(.2))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+            .andThen(m_shooter.shooterStop()));
     NamedCommands.registerCommand("setX", m_robotDrive.setXCommand());
     NamedCommands.registerCommand(
         "Shoot",
+            m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(
+                new shooterVariableDistanceSpeedCommand(
+                        m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters).withTimeout(.5)
+                    )
+            .andThen(m_wrist.wristInRange().withTimeout(1))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand(
+        "Starting Shoot",
         m_frontLimelight
             .setPipelineCommand(LimelightPipeline.SHOOT)
             .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
             .andThen(
-                new SHOOTER_VARIABLE_POSITIONING_FULL(
-                        m_shooter,
-                        m_wrist,
-                        m_pivot,
-                        m_frontLimelight::SimpleDistanceToSpeakerMeters)
-                    .withTimeout(.5)
-                    .alongWith(m_intake.intakePrepShoot()))
-            .andThen(
-                new WaitCommand(.5)
-                    .andThen(m_intake.intakeShootCommand().withTimeout(1))
-                    .andThen(m_shooter.shooterStop())));
+                new shooterVariableDistanceSpeedCommand(
+                        m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters).withTimeout(.5)
+                    )
+            .andThen(m_wrist.wristInRange().withTimeout(1))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop()));
 
+    NamedCommands.registerCommand(
+        "Shoot 1",
+            m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(new WaitCommand(.2))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_wrist.wristAngleSetpoint(2.94).andThen(m_wrist.wristInRange()))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop()));
+    
+    NamedCommands.registerCommand(
+        "Shoot 2",
+            m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange()))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand(
+        "Shoot 3",
+            m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_wrist.wristAngleSetpoint(3.45).andThen(m_wrist.wristInRange()))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+                    .andThen(m_shooter.shooterStop()));
+
+
+                    
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
     NamedCommands.registerCommand("Aim", aimCommand());
@@ -285,9 +334,9 @@ public class RobotContainer implements Logged {
                     true),
             m_robotDrive));
 
-
     autoChooser = AutoBuilder.buildAutoChooser(); // Default auto will be `Commands.none()`
 
+    m_frontLimelight.setPipelineCommand(LimelightPipeline.SHOOT);
     SmartDashboard.putData("Auto Mode", autoChooser);
     Monologue.setupMonologue(this, "Robot", false, false);
     DriverStation.startDataLog(DataLogManager.getLog(), true);
@@ -305,25 +354,28 @@ public class RobotContainer implements Logged {
     m_driverController
         .rightTrigger()
         .whileTrue(
-            (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-                .andThen(m_levetator.levInRange().withTimeout(1))
-                .andThen(m_levetator.setSquishyModeCommand())
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.SHOOT)
                 .andThen(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kIntake)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
-                .andThen(m_intake.intakeAutoIntake())
-                .andThen(
-                    rumbleController(.5)
-                        .alongWith(
+                    (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+                        .andThen(m_levetator.levInRange().withTimeout(1))
+                        // .andThen(m_levetator.setSquishyModeCommand().withTimeout(.1))
+                        .andThen(
                             m_pivot
-                                .pivotSetpointCommand(PivotSetpoints.kStowed)
-                                .andThen(m_pivot.pivotInRange().withTimeout(1))
-                                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                                .andThen(m_wrist.wristInRange().withTimeout(1))
-                                .andThen(
-                                    m_levetator.levetatorSetpointPosition(
-                                        LevetatorSetpoints.kStowed)))));
+                                .pivotSetpointCommand(PivotSetpoints.kIntake)
+                                .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
+                        .andThen(m_intake.intakeAutoIntake())
+                        .andThen(
+                            rumbleController(.5)
+                                .alongWith(
+                                    m_pivot
+                                        .pivotSetpointCommand(PivotSetpoints.kStowed)
+                                        .andThen(m_pivot.pivotInRange().withTimeout(1))
+                                        .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                                        .andThen(m_wrist.wristInRange().withTimeout(1))
+                                        .andThen(
+                                            m_levetator.levetatorSetpointPosition(
+                                                LevetatorSetpoints.kStowed))))));
 
     m_driverController
         .rightTrigger()
@@ -346,13 +398,13 @@ public class RobotContainer implements Logged {
         .whileTrue(
             m_frontLimelight
                 .setPipelineCommand(LimelightPipeline.SHOOT)
-                .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer))
                 .andThen(
-                    new SHOOTER_VARIABLE_POSITIONING_FULL(
-                            m_shooter,
-                            m_wrist,
-                            m_pivot,
-                            m_frontLimelight::SimpleDistanceToSpeakerMeters)
+                    m_levetator
+                        .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+                        .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
+                .andThen(
+                    new shooterVariableDistanceSpeedCommand(
+                            m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
                         .alongWith(
                             new RunCommand(
                                 () ->
@@ -387,23 +439,23 @@ public class RobotContainer implements Logged {
 
     /* SUBWOOFER OVERRIDE */
 
-    m_driverController
-        .leftTrigger()
-        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
-        .whileTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-                .alongWith(
-                    m_pivot
-                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
-                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
-                .alongWith(m_shooter.shooterSpeakerShot()));
+    // m_driverController
+    //     .leftTrigger()
+    //     .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+    //     .whileTrue(
+    //         m_levetator
+    //             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //             .alongWith(
+    //                 m_pivot
+    //                     .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
+    //             .alongWith(m_shooter.shooterSpeakerShot()));
 
-    m_driverController
-        .leftTrigger()
-        .and(m_driverController.a())
-        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
-        .onTrue(m_intake.intakeShootCommand());
+    // m_driverController
+    //     .leftTrigger()
+    //     .and(m_driverController.a())
+    //     .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+    //     .onTrue(m_intake.intakeShootCommand());
 
     // Zero IMU heading
 

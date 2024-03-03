@@ -370,6 +370,5 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
     this.log("RR Output", m_rearRight.getDrivingOutput());
     this.log("RR Current", m_rearRight.getDrivingCurrent());
     this.log("RR Voltage", m_rearRight.getBusVoltage());
-
   }
 }
