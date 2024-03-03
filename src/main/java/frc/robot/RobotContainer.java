@@ -119,6 +119,7 @@ public class RobotContainer implements Logged {
   public Command intakePositionCommand() {
     return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
         .andThen(m_levetator.levInRange().withTimeout(1))
+        .andThen(m_levetator.setSquishyModeCommand())
         .andThen(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -144,6 +145,7 @@ public class RobotContainer implements Logged {
   public Command trapPrepCommand() {
     return m_levetator
         .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
+        .andThen(m_intake.moveNoteCommand())
         .andThen(m_wrist.wristAngleSetpoint(2.70).alongWith(m_pivot.pivotSetpointCommand(3.3)))
         .andThen(m_pivot.pivotInRange())
         .andThen(m_wrist.wristAngleSetpoint(3.75));
@@ -160,10 +162,10 @@ public class RobotContainer implements Logged {
     return m_pivot
         .pivotSetpointCommand(3)
         .andThen(m_pivot.pivotInRange())
-        .andThen(m_wrist.wristAngleSetpoint(3.6))
+        .andThen(m_wrist.wristAngleSetpoint(3.52))
         .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
         .andThen(m_pivot.pivotSetpointCommand(3.14))
-        .andThen(m_wrist.wristAngleSetpoint(3.67));
+        .andThen(m_wrist.wristAngleSetpoint(3.52));
   }
 
   private final Command m_ampScoringSelectV3Command =
@@ -334,6 +336,7 @@ public class RobotContainer implements Logged {
         .whileTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
                 .andThen(m_levetator.levInRange().withTimeout(1))
+                .andThen(m_levetator.setSquishyModeCommand())
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -465,28 +468,32 @@ public class RobotContainer implements Logged {
     m_driverController
         .rightBumper()
         .whileTrue(
-            new STAGE_ALIGN_DRIVE(
-                    m_robotDrive,
-                    () ->
-                        -MathUtil.applyDeadband(
-                            m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
-                    () ->
-                        -MathUtil.applyDeadband(
-                            m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
-                    m_frontLimelight)
+            m_frontLimelight
+                .setPipelineCommand(LimelightPipeline.STAGE)
                 .andThen(
-                    new RunCommand(
-                        () ->
-                            m_robotDrive.drive(
+                    new STAGE_ALIGN_DRIVE(
+                            m_robotDrive,
+                            () ->
                                 -MathUtil.applyDeadband(
                                     m_driverController.getLeftY() / 4, OIConstants.kDriveDeadband),
-                                0,
-                                0,
-                                false,
-                                true)))
-                .alongWith(
-                    new CLIMBER_TO_HEIGHT(
-                        m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false)));
+                            () ->
+                                -MathUtil.applyDeadband(
+                                    m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
+                            m_frontLimelight)
+                        .andThen(
+                            new RunCommand(
+                                () ->
+                                    m_robotDrive.drive(
+                                        -MathUtil.applyDeadband(
+                                            m_driverController.getLeftY() / 4,
+                                            OIConstants.kDriveDeadband),
+                                        0,
+                                        0,
+                                        false,
+                                        true)))
+                        .alongWith(
+                            new CLIMBER_TO_HEIGHT(
+                                m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false))));
 
     /*********************/
     /* OPERATOR CONTROLS */
@@ -534,7 +541,11 @@ public class RobotContainer implements Logged {
 
     m_operatorButtonsTop
         .button(TRAP_OUTTAKE)
-        .onTrue(m_shooter.shooterTrapCommand().alongWith(m_intake.intakeTransferFwd()));
+        .onTrue(
+            (m_intake
+                    .intakePrepTrap()
+                    .alongWith((m_shooter.shooterTrapCommand()).andThen(new WaitCommand(.2))))
+                .andThen(m_intake.intakeTransferFwd()));
 
     m_operatorButtonsTop
         .button(TRAP_OUTTAKE)

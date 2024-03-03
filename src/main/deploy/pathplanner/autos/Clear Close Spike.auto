@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.26,
-      "y": 6.69
+      "x": 0.72,
+      "y": 6.67
     },
-    "rotation": -140.0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -79,10 +79,65 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "Note1ToNote2"
+                  "pathName": "CCS_Note1ToNote2"
                 }
               }
             ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stowed"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Intake Position"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CP_Note2ToNote3"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Aim"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot"
           }
         }
       ]
