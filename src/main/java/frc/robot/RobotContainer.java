@@ -527,7 +527,7 @@ public class RobotContainer implements Logged {
                 .andThen(m_wrist.wristAngleSetpoint(3.6))
                 .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
                 .andThen(m_pivot.pivotSetpointCommand(3.14))
-                .andThen(m_wrist.wristAngleSetpoint(3.57)));
+                .andThen(m_wrist.wristAngleSetpoint(3.67)));
 
     m_operatorButtonsTop
         .button(TRAP_OUTTAKE)
