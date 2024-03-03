@@ -175,7 +175,7 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
       System.out.println("Configuration failed! " + e);
     }
 
-    m_encoder.setPosition(-0.016);
+    m_encoder.setPosition(0.0);
   }
 
   public Command levetatorAmpSmartCommand(AmpDirection ampSelect) {

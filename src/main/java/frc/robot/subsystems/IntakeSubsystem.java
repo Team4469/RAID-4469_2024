@@ -143,6 +143,20 @@ public class IntakeSubsystem extends SubsystemBase {
             });
   }
 
+  public Command intakePrepTrap() {
+    Debouncer debounce =
+        new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+    return run(() -> {
+          setSpeed(-.1);
+        })
+        // Wait until trigger is detected for more than 0.25s
+        .withTimeout(.2)
+        .finallyDo(
+            (interrupted) -> {
+              setSpeed(0);
+            });
+  }
+
   public Command intakeShootCommand() {
     Debouncer debounce =
         new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
