@@ -100,8 +100,8 @@ public class STAGE_ALIGN_DRIVE extends Command {
 
       // if (ally.isPresent() && ally.get() == Alliance.Red) {
 
-        xSpeed *= -1.0;
-        ySpeed *= -1.0;
+      xSpeed *= -1.0;
+      ySpeed *= -1.0;
       // }
 
     } else {

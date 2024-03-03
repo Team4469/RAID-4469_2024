@@ -18,7 +18,6 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.SparkRelativeEncoder;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.util.Units;
@@ -30,8 +29,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.LevetatorConstants;
 import frc.robot.SetPoints.LevetatorSetpoints;
-import monologue.Logged;
 import monologue.Annotations.Log;
+import monologue.Logged;
 
 public class LevetatorSubsystem extends SubsystemBase implements Logged {
   private double SETPOINT;
@@ -258,7 +257,7 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
   }
 
   @Log
-  public double getCurrent(){
+  public double getCurrent() {
     return m_motor.getOutputCurrent();
   }
 
@@ -271,7 +270,7 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
   public void periodic() {
     // This method will be called once per scheduler run
     LaserCan.Measurement measurement = m_distanceSensor.getMeasurement();
-    SmartDashboard.putNumber("Levetator Laset", measurement.distance_mm/1000.0);
+    SmartDashboard.putNumber("Levetator Laset", measurement.distance_mm / 1000.0);
 
     // if (!EncoderSet) {
     //   try {
@@ -300,10 +299,8 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
 
     // System.out.println(m_encoder.getPosition());
 
-        m_pidController.setReference(
-            getSetpoint(),
-            ControlType.kPosition);
-    
+    m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+
     // m_pidController.setReference(
     //     getSetpoint(),
     //     ControlType.kPosition,

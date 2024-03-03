@@ -28,24 +28,23 @@ public final class Constants {
     public static final int kOperatorController2Port = 2;
     public static final double kDriveDeadband = 0.02;
 
-      public static final class TopButtons {
-        public static final int CLIMB_UP = 1;
-        public static final int CLIMB_DOWN = 6;
-        public static final int TRAP_PREP = 2;
-        public static final int TRAP_EXT = 4;
-        public static final int CLIMB_TRAP = 8;
-        public static final int CLIMB_HARM = 5;
-        public static final int TRAP_OUTTAKE = 3;
-        public static final int AUTO_TRAP = 7;
-                
-      }
+    public static final class TopButtons {
+      public static final int CLIMB_UP = 1;
+      public static final int CLIMB_DOWN = 6;
+      public static final int TRAP_PREP = 2;
+      public static final int TRAP_EXT = 4;
+      public static final int CLIMB_TRAP = 8;
+      public static final int CLIMB_HARM = 5;
+      public static final int TRAP_OUTTAKE = 3;
+      public static final int AUTO_TRAP = 7;
+    }
 
-      public static final class BottomButtons {
-        public static final int SHOOTER_ON = 3;
-        public static final int SHOOTER_OFF = 1;
-        public static final int OUTTAKE = 2;
-        public static final int SUBWOOFER_ON = 48;
-      }    
+    public static final class BottomButtons {
+      public static final int SHOOTER_ON = 3;
+      public static final int SHOOTER_OFF = 1;
+      public static final int OUTTAKE = 2;
+      public static final int SUBWOOFER_ON = 48;
+    }
   }
 
   public static final class GlobalConstants {
