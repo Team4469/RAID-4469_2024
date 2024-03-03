@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6077779424077367,
-        "y": 6.843218186436373
+        "x": 1.39,
+        "y": 5.550954736168731
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.952121492205947,
-        "y": 7.033782655528274
+        "x": 1.7876914468960996,
+        "y": 5.550954736168731
       },
       "isLocked": false,
-      "linkedName": "Note1_Intake"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 7.61560315713224,
-        "y": 7.447276079737345
+        "x": 2.314181577437229,
+        "y": 5.550954736168731
       },
       "prevControl": {
-        "x": 6.474354180189841,
-        "y": 7.336286677202985
+        "x": 1.987815792367768,
+        "y": 5.550954736168731
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "CenterNote1"
+      "linkedName": "Note2"
     }
   ],
   "rotationTargets": [],
@@ -43,9 +43,9 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "4 Note Auto Near Amp",
+  "folder": "Clear Close Spike",
   "previewStartingState": {
-    "rotation": -160.0,
+    "rotation": 180.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

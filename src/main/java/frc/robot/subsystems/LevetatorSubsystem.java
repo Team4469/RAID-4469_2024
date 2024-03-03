@@ -211,12 +211,17 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
 
   public Command levetatorSetpointPosition(double meters) {
     double setpoint = meters;
+    this.setFlingyMode();
     return Commands.runOnce(() -> setSetpoint(setpoint));
     // .finallyDo(this::levHold); // .until(() -> inRange(setpoint))
   }
 
   public Command levInRange() {
     return Commands.waitUntil(() -> inRange(getSetpoint()));
+  }
+
+  public Command setSquishyModeCommand() {
+    return runOnce(this::setSquishyMode);
   }
 
   public boolean inRange(double setpoint) {
@@ -259,6 +264,14 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
   @Log
   public double getCurrent() {
     return m_motor.getOutputCurrent();
+  }
+
+  public void setSquishyMode() {
+    m_motor.setSmartCurrentLimit(5);
+  }
+
+  public void setFlingyMode() {
+    m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
   }
 
   // @Log

@@ -119,6 +119,7 @@ public class RobotContainer implements Logged {
   public Command intakePositionCommand() {
     return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
         .andThen(m_levetator.levInRange().withTimeout(1))
+        .andThen(m_levetator.setSquishyModeCommand())
         .andThen(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kIntake)
@@ -334,6 +335,7 @@ public class RobotContainer implements Logged {
         .whileTrue(
             (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
                 .andThen(m_levetator.levInRange().withTimeout(1))
+                .andThen(m_levetator.setSquishyModeCommand())
                 .andThen(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kIntake)
