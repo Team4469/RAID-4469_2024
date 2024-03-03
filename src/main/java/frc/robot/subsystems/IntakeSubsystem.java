@@ -13,7 +13,6 @@ import com.revrobotics.CANSparkBase.FaultID;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
-
 import edu.wpi.first.math.filter.Debouncer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,13 +72,20 @@ public class IntakeSubsystem extends SubsystemBase {
       System.out.println("Configuration failed! " + e);
     }
 
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 500); // Output, Faults, Sticky Faults, Is Follower
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, 500); // Output, Faults, Sticky Faults, Is Follower
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus1, 500); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 500); // Motor Position
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
-    m_intakeMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3,
+        500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_intakeMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
   }
 
   /* Commands */

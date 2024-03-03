@@ -98,11 +98,11 @@ public class STAGE_ALIGN_DRIVE extends Command {
       xSpeed = m_ll.limelight_strafe_x_proportional();
       ySpeed = m_ll.limelight_strafe_y_proportional();
 
-      if (ally.isPresent() && ally.get() == Alliance.Red) {
+      // if (ally.isPresent() && ally.get() == Alliance.Red) {
 
-        xSpeed *= -1.0;
-        ySpeed *= -1.0;
-      }
+      xSpeed *= -1.0;
+      ySpeed *= -1.0;
+      // }
 
     } else {
       xSpeed = this.m_translationXSupplier.getAsDouble();

@@ -30,10 +30,10 @@ public final class SetPoints {
   }
 
   public final class LevetatorSetpoints {
-    public static final double kStowed = Units.inchesToMeters(.25);
+    public static final double kStowed = Units.inchesToMeters(1);
     public static final double kAmpFront = .155;
-    public static final double kAmpRear = .202;
-    public static final double kTrap = Units.inchesToMeters(9);
+    public static final double kAmpRear = .185;
+    public static final double kTrap = .187;
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(4.25);
     public static final double kMovement = Units.inchesToMeters(3);

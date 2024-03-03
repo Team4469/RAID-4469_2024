@@ -78,16 +78,24 @@ public class ClimberModule extends SubsystemBase {
     m_pidController.setD(0, PID_Slot.CLIMBING.ordinal());
     m_pidController.setFF(0, PID_Slot.CLIMBING.ordinal());
 
-    m_climbingMotor.burnFlash();
-
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus1, 20); // Motor Velo, Motor Temp, Motor Volts, Motor Current
     m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus2, 20); // Motor Position
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus3, 500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
-    m_climbingMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus3,
+        500); // Analog Sensor Voltage, Analog Sensor Velocity, Analog Sensor Position
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus4, 500); // Alternate Encoder Velocity, Alternate Encoder Position
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus5, 500); // Absolute Encoder Position, Absolute Encoder Angle
+    m_climbingMotor.setPeriodicFramePeriod(
+        PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
+    Timer.delay(.25);
+
+    m_climbingMotor.burnFlash();
 
     // m_distanceSensor = new LaserCan(LaserCanID);
     // ID = LaserCanID;

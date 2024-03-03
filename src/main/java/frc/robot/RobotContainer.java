@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+import static frc.robot.Constants.OIConstants.BottomButtons.*;
+import static frc.robot.Constants.OIConstants.TopButtons.*;
+
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
@@ -136,6 +139,31 @@ public class RobotContainer implements Logged {
     return new RunCommand(
         () -> m_robotDrive.drive(0, 0, limelight_aim_proportional(m_frontLimelight), true, true),
         m_robotDrive);
+  }
+
+  public Command trapPrepCommand() {
+    return m_levetator
+        .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
+        .andThen(m_wrist.wristAngleSetpoint(2.70).alongWith(m_pivot.pivotSetpointCommand(3.3)))
+        .andThen(m_pivot.pivotInRange())
+        .andThen(m_wrist.wristAngleSetpoint(3.75));
+  }
+
+  public Command trapFinishCommand() {
+    return m_wrist
+        .wristAngleSetpoint(3.14)
+        .andThen(new WaitCommand(.5))
+        .andThen(m_levetator.levetatorSetpointPosition(.1));
+  }
+
+  public Command trapExtensionCommand() {
+    return m_pivot
+        .pivotSetpointCommand(3)
+        .andThen(m_pivot.pivotInRange())
+        .andThen(m_wrist.wristAngleSetpoint(3.6))
+        .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
+        .andThen(m_pivot.pivotSetpointCommand(3.14))
+        .andThen(m_wrist.wristAngleSetpoint(3.67));
   }
 
   private final Command m_ampScoringSelectV3Command =
@@ -383,6 +411,26 @@ public class RobotContainer implements Logged {
                 .andThen(m_wrist.wristInRange().withTimeout(1))
                 .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
 
+    /* SUBWOOFER OVERRIDE */
+
+    m_driverController
+        .leftTrigger()
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+        .whileTrue(
+            m_levetator
+                .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+                .alongWith(
+                    m_pivot
+                        .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
+                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
+                .alongWith(m_shooter.shooterSpeakerShot()));
+
+    m_driverController
+        .leftTrigger()
+        .and(m_driverController.a())
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+        .onTrue(m_intake.intakeShootCommand());
+
     // Zero IMU heading
 
     m_driverController.back().onTrue(m_robotDrive.zeroGyro());
@@ -446,76 +494,51 @@ public class RobotContainer implements Logged {
 
     /* SHOOTER SPIN UP */
 
-    m_operatorButtonsTop
-        .button(7)
-        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
-    m_operatorButtonsTop.button(8).onTrue(m_shooter.shooterStop());
-
-    m_operatorButtonsTop.button(5).onTrue(m_intake.intakeOuttake().withTimeout(.5));
-    m_operatorButtonsTop.button(5).onFalse(m_intake.intakeStop());
-
-    /* CLIMBER */
-
-    // m_operatorController.y().onTrue(m_stageLeftConditional);
-
-    // m_operatorController.a().onTrue(m_stageRightConditional);
-
-    // m_operatorController.b().onTrue(m_stageCenterConditional);
-    // m_driverController.povUp()
-    //     .onTrue(m_leftClimber.setHeight(Units.inchesToMeters(2)));
-
     m_operatorButtonsBottom
-        .button(1)
+        .button(SHOOTER_ON)
+        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
+    m_operatorButtonsBottom.button(SHOOTER_OFF).onTrue(m_shooter.shooterStop());
+
+    m_operatorButtonsBottom.button(OUTTAKE).onTrue(m_intake.intakeOuttake().withTimeout(.5));
+    m_operatorButtonsBottom.button(OUTTAKE).onFalse(m_intake.intakeStop());
+
+    m_operatorButtonsTop
+        .button(CLIMB_UP)
         .onTrue(
             new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false));
 
-    m_operatorButtonsBottom
-        .button(2)
+    m_operatorButtonsTop
+        .button(CLIMB_DOWN)
         .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(3), false));
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(1), false));
 
     m_operatorButtonsTop
-        .button(4)
+        .button(CLIMB_TRAP)
         .onTrue(
             new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(0), true));
 
-    m_operatorButtonsBottom
-        .button(9)
-        .onTrue(
-            m_levetator
-                .levetatorSetpointPosition(LevetatorSetpoints.kStowed)
-                .andThen(
-                    m_wrist.wristAngleSetpoint(2.70).alongWith(m_pivot.pivotSetpointCommand(3.3)))
-                .andThen(m_pivot.pivotInRange())
-                .andThen(m_wrist.wristAngleSetpoint(3.75)));
-    // m_operatorButtonsBottom
-    //     .button(9)
-    //     .onTrue(
-    //                 m_wrist
-    //                     .wristAngleSetpoint(WristSetpoints.kIntake).andThen(new WaitCommand(1))
-    //                     .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake)));
+    m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand());
 
-    m_operatorButtonsBottom
-        .button(10)
-        .onTrue(
-            m_pivot
-                .pivotSetpointCommand(3)
-                .andThen(m_pivot.pivotInRange())
-                .andThen(m_wrist.wristAngleSetpoint(3.3))
-                .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
-                .andThen(m_pivot.pivotSetpointCommand(3.14))
-                .andThen(m_wrist.wristAngleSetpoint(3.4)));
+    m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand());
 
-    m_operatorButtonsBottom
-        .button(4)
+    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
+
+    m_operatorButtonsTop
+        .button(AUTO_TRAP)
         .onTrue(
-            m_shooter
-                .shooterFeed()
-                .alongWith(m_intake.intakeTransferFwd())
+            trapPrepCommand()
                 .andThen(new WaitCommand(.5))
-                .andThen(m_shooter.shooterStop().alongWith(m_intake.intakeStop())));
+                .andThen(trapExtensionCommand())
+                .andThen(new WaitCommand(.5))
+                .andThen(new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true)));
 
-    m_operatorButtonsBottom.button(6).onTrue(stowedCommand());
+    m_operatorButtonsTop
+        .button(TRAP_OUTTAKE)
+        .onTrue(m_shooter.shooterTrapCommand().alongWith(m_intake.intakeTransferFwd()));
+
+    m_operatorButtonsTop
+        .button(TRAP_OUTTAKE)
+        .onFalse(m_shooter.shooterStop().alongWith(m_intake.intakeStop()));
   }
 
   public ClimberModule getLeftClimber() {

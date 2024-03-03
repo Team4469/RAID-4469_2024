@@ -27,6 +27,24 @@ public final class Constants {
     public static final int kOperatorControllerPort = 1;
     public static final int kOperatorController2Port = 2;
     public static final double kDriveDeadband = 0.02;
+
+    public static final class TopButtons {
+      public static final int CLIMB_UP = 1;
+      public static final int CLIMB_DOWN = 6;
+      public static final int TRAP_PREP = 2;
+      public static final int TRAP_EXT = 4;
+      public static final int CLIMB_TRAP = 8;
+      public static final int CLIMB_HARM = 5;
+      public static final int TRAP_OUTTAKE = 3;
+      public static final int AUTO_TRAP = 7;
+    }
+
+    public static final class BottomButtons {
+      public static final int SHOOTER_ON = 3;
+      public static final int SHOOTER_OFF = 1;
+      public static final int OUTTAKE = 2;
+      public static final int SUBWOOFER_ON = 48;
+    }
   }
 
   public static final class GlobalConstants {
@@ -216,13 +234,13 @@ public final class Constants {
     public static final int kLevetatorMotorID = 23;
     public static final int kLevetatorLaserCanID = 50;
 
-    public static final int kCurrentLimit = 115;
+    public static final int kCurrentLimit = 65;
 
     public static final boolean kMotorInverted = true;
 
     public static final double kLevetatorOffset = Units.inchesToMeters(0);
 
-    public static final double kGearRatio = 25;
+    public static final double kGearRatio = 49;
     public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
 
     public static final double kPositionConversionFactor =
@@ -232,7 +250,7 @@ public final class Constants {
     public static final double kMinOutput = -1;
     public static final double kMaxOutput = 1;
 
-    public static final double kForwardSoftLimit = Units.inchesToMeters(8);
+    public static final double kForwardSoftLimit = Units.inchesToMeters(10);
     public static final double kReverseSoftLimit = Units.inchesToMeters(0);
 
     public static final double kMaxVelocityMeterPerSecond = .5; // m/s
