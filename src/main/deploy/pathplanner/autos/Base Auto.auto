@@ -2,32 +2,56 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.8,
-      "y": 7.07
+      "x": 0.72,
+      "y": 4.42
     },
-    "rotation": 180.0
+    "rotation": 120.0
   },
   "command": {
     "type": "sequential",
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "Shoot 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stowed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "OUT OF THE WAY"
+          }
+        },
+        {
           "type": "deadline",
           "data": {
             "commands": [
               {
+                "type": "named",
+                "data": {
+                  "name": "Intake"
+                }
+              },
+              {
                 "type": "path",
                 "data": {
-                  "pathName": "New Path"
+                  "pathName": "OUT OF THE WAY 2"
                 }
               }
             ]
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Base Path 2"
+            "name": "Stowed"
           }
         }
       ]
