@@ -395,6 +395,7 @@ public class RobotContainer implements Logged {
     /* SHOOTING */
     m_driverController
         .leftTrigger()
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON).negate())
         .whileTrue(
             m_frontLimelight
                 .setPipelineCommand(LimelightPipeline.SHOOT)
@@ -439,23 +440,23 @@ public class RobotContainer implements Logged {
 
     /* SUBWOOFER OVERRIDE */
 
-    // m_driverController
-    //     .leftTrigger()
-    //     .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
-    //     .whileTrue(
-    //         m_levetator
-    //             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-    //             .alongWith(
-    //                 m_pivot
-    //                     .pivotSetpointCommand(PivotSetpoints.kSubwoofer)
-    //                     .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
-    //             .alongWith(m_shooter.shooterSpeakerShot()));
+    m_driverController
+        .leftTrigger()
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+        .whileTrue(
+            m_levetator
+                .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+                .alongWith(
+                    m_pivot
+                        .pivotSetpointCommand(PivotSetpoints.kVariableShot)
+                        .alongWith(m_wrist.wristAngleSetpoint(Units.degreesToRadians(170))))
+                .alongWith(m_shooter.shooterSpeakerShot()));
 
-    // m_driverController
-    //     .leftTrigger()
-    //     .and(m_driverController.a())
-    //     .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
-    //     .onTrue(m_intake.intakeShootCommand());
+    m_driverController
+        .leftTrigger()
+        .and(m_driverController.a())
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+        .onTrue(m_intake.intakeShootCommand());
 
     // Zero IMU heading
 

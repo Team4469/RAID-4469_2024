@@ -43,7 +43,7 @@ public final class Constants {
       public static final int SHOOTER_ON = 3;
       public static final int SHOOTER_OFF = 1;
       public static final int OUTTAKE = 2;
-      public static final int SUBWOOFER_ON = 48;
+      public static final int SUBWOOFER_ON = 4;
     }
   }
 
