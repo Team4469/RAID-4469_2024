@@ -47,8 +47,6 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import java.util.Map;
-import java.util.function.Supplier;
-
 import monologue.Logged;
 import monologue.Monologue;
 
@@ -213,6 +211,16 @@ public class RobotContainer implements Logged {
                 () -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0)));
   }
 
+  public Command harmonyClimbExtendCommand() {
+    return new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(12), false)
+        .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+        .andThen(
+            m_wrist
+                .wristAngleSetpoint(WristSetpoints.kIntake)
+                .andThen(new WaitCommand(.6))
+                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake)));
+  }
+
   public Command rumbleControllerStop() {
     return Commands.runOnce(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 0));
   }
@@ -346,8 +354,9 @@ public class RobotContainer implements Logged {
 
     SmartDashboard.putData("Zero Levetator", m_levetator.zeroLevetatorCommand());
 
-    SmartDashboard.putData("Harmony Climb Extend", new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(12), false));
-    SmartDashboard.putData("Harmony Climb Retract", new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true));
+    SmartDashboard.putData("Harmony Climb Extend", harmonyClimbExtendCommand());
+    SmartDashboard.putData(
+        "Harmony Climb Retract", new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true));
   }
 
   private void configureButtonBindings() {
@@ -487,7 +496,8 @@ public class RobotContainer implements Logged {
 
     m_driverController
         .leftBumper()
-        .and(m_driverController.a()).onTrue(new INTAKE_SHOOTER_SMART_AMP(m_intake, m_shooter, this::ampForward));
+        .and(m_driverController.a())
+        .onTrue(new INTAKE_SHOOTER_SMART_AMP(m_intake, m_shooter, this::ampForward));
 
     m_driverController
         .rightBumper()
@@ -501,17 +511,17 @@ public class RobotContainer implements Logged {
 
     m_driverController
         .rightBumper()
-        .and(m_driverController.a()).onTrue(new INTAKE_SHOOTER_SMART_AMP(m_intake, m_shooter, this::ampRear));
-    
+        .and(m_driverController.a())
+        .onTrue(new INTAKE_SHOOTER_SMART_AMP(m_intake, m_shooter, this::ampRear));
 
     m_driverController
-        .leftBumper().or(m_driverController.rightBumper())
+        .leftBumper()
+        .or(m_driverController.rightBumper())
         .onFalse(
             m_pivot
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
                 .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
-        
 
     // m_driverController
     //     .leftBumper()
@@ -685,7 +695,7 @@ public class RobotContainer implements Logged {
     return AmpDirection.REAR;
   }
 
-public AmpDirection ampForward() {
+  public AmpDirection ampForward() {
     return AmpDirection.FRONT;
-}
+  }
 }

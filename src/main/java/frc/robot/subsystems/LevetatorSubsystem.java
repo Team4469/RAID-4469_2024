@@ -191,9 +191,6 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
     return Commands.runOnce(() -> setSetpoint(point));
   }
 
-
-
-
   public Command levetatorSetpointPosition(double meters) {
     double setpoint = meters;
     this.setFlingyMode();
