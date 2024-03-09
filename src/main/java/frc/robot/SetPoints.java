@@ -12,7 +12,7 @@ public final class SetPoints {
     // other subs
     public static final double kStowed = 2.5;
     public static final double kAmpFront = 3.3;
-    public static final double kAmpRear = 2.85;
+    public static final double kAmpRear = 2.9;
     public static final double kTrap = Units.degreesToRadians(190);
     public static final double kSubwoofer = Units.degreesToRadians(155);
     public static final double kVariableShot = 2.5;
@@ -23,7 +23,7 @@ public final class SetPoints {
     // Currently using trap profile subsystem so this needs to be in rads
     public static final double kStowed = Units.degreesToRadians(180);
     public static final double kAmpFront = 3.9;
-    public static final double kAmpRear = 3.14;
+    public static final double kAmpRear = 3.08;
     public static final double kTrap = Units.degreesToRadians(215);
     public static final double kSubwoofer = Units.degreesToRadians(160);
     public static final double kIntake = 3.9;

@@ -150,7 +150,7 @@ public class IntakeSubsystem extends SubsystemBase {
           setSpeed(-.1);
         })
         // Wait until trigger is detected for more than 0.25s
-        .withTimeout(.2)
+        .withTimeout(.4)
         .finallyDo(
             (interrupted) -> {
               setSpeed(0);

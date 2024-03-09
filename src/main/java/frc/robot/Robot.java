@@ -78,7 +78,6 @@ public class Robot extends TimedRobot {
     // m_robotContainer.stowedCommand().schedule();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();
-    
 
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
