@@ -264,9 +264,10 @@ public class RobotContainer implements Logged {
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(new WaitCommand(.4))
+            .andThen(new WaitCommand(.8))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
             .andThen(m_wrist.wristAngleSetpoint(2.83).andThen(m_wrist.wristInRange()))
+            .andThen(new WaitCommand(.4))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
@@ -286,7 +287,7 @@ public class RobotContainer implements Logged {
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(3.313).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.29).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
@@ -342,6 +343,11 @@ public class RobotContainer implements Logged {
     SmartDashboard.putData("Auto Mode", autoChooser);
     Monologue.setupMonologue(this, "Robot", false, false);
     DriverStation.startDataLog(DataLogManager.getLog(), true);
+
+    SmartDashboard.putData("Zero Levetator", m_levetator.zeroLevetatorCommand());
+
+    SmartDashboard.putData("Harmony Climb Extend", new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(12), false));
+    SmartDashboard.putData("Harmony Climb Retract", new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true));
   }
 
   private void configureButtonBindings() {
