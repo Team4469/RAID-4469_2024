@@ -1,0 +1,49 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.23,
+      "y": 7.05
+    },
+    "rotation": -135.0
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot 4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Chaos 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Stowed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Chaos 2"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot 1"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

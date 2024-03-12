@@ -295,6 +295,18 @@ public class RobotContainer implements Logged {
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
+    NamedCommands.registerCommand(
+        "Shoot 4",
+        m_levetator
+            .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+            .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_wrist.wristAngleSetpoint(3.4).andThen(m_wrist.wristInRange()))
+            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+            .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand("ChaosOn", m_intake.intakeIntake().alongWith(m_shooter.shooterChaos()));
+    NamedCommands.registerCommand("ShooterOff", m_shooter.shooterStop());
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
     NamedCommands.registerCommand("Aim", aimCommand());

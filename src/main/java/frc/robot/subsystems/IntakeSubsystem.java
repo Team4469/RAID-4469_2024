@@ -216,7 +216,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command intakeIntake() {
-    return Commands.run(() -> setSpeed(INTAKE_SPEED.get()));
+    return Commands.run(() -> setSpeed(1));
   }
 
   public Command intakeOuttake() {
