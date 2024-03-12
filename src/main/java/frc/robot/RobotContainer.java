@@ -212,13 +212,8 @@ public class RobotContainer implements Logged {
   }
 
   public Command harmonyClimbExtendCommand() {
-    return new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(12), false)
-        .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-        .andThen(
-            m_wrist
-                .wristAngleSetpoint(WristSetpoints.kIntake)
-                .andThen(new WaitCommand(.6))
-                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake)));
+    return new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(18), false)
+        .andThen(m_pivot.pivotSetpointCommand(2.2));
   }
 
   public Command rumbleControllerStop() {
@@ -272,9 +267,9 @@ public class RobotContainer implements Logged {
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(new WaitCommand(.8))
+            .andThen(new WaitCommand(.4))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(2.83).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(2.89).andThen(m_wrist.wristInRange()))
             .andThen(new WaitCommand(.4))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
@@ -285,6 +280,7 @@ public class RobotContainer implements Logged {
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(new WaitCommand(.2))
             .andThen(m_wrist.wristAngleSetpoint(3.28).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
@@ -295,7 +291,7 @@ public class RobotContainer implements Logged {
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-            .andThen(m_wrist.wristAngleSetpoint(3.29).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.325).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
@@ -375,24 +371,23 @@ public class RobotContainer implements Logged {
                 .setPipelineCommand(LimelightPipeline.SHOOT)
                 .andThen(
                     (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
-                        .andThen(m_levetator.levInRange().withTimeout(1))
-                        // .andThen(m_levetator.setSquishyModeCommand().withTimeout(.1))
-                        .andThen(
+                        .andThen(m_levetator.levInRange().withTimeout(.3)))
+                // .andThen(m_levetator.setSquishyModeCommand().withTimeout(.1))
+                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake))
+                .andThen(new WaitCommand(.1))
+                .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake))
+                .andThen(m_intake.intakeAutoIntake())
+                .andThen(
+                    rumbleController(.5)
+                        .alongWith(
                             m_pivot
-                                .pivotSetpointCommand(PivotSetpoints.kIntake)
-                                .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)))
-                        .andThen(m_intake.intakeAutoIntake())
-                        .andThen(
-                            rumbleController(.5)
-                                .alongWith(
-                                    m_pivot
-                                        .pivotSetpointCommand(PivotSetpoints.kStowed)
-                                        .andThen(m_pivot.pivotInRange().withTimeout(1))
-                                        .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
-                                        .andThen(m_wrist.wristInRange().withTimeout(1))
-                                        .andThen(
-                                            m_levetator.levetatorSetpointPosition(
-                                                LevetatorSetpoints.kStowed))))));
+                                .pivotSetpointCommand(PivotSetpoints.kStowed)
+                                .andThen(m_pivot.pivotInRange().withTimeout(1))
+                                .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
+                                .andThen(m_wrist.wristInRange().withTimeout(1))
+                                .andThen(
+                                    m_levetator.levetatorSetpointPosition(
+                                        LevetatorSetpoints.kStowed)))));
 
     m_driverController
         .rightTrigger()
@@ -608,7 +603,7 @@ public class RobotContainer implements Logged {
     m_operatorButtonsTop
         .button(CLIMB_TRAP)
         .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(0), true));
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(-1), true));
 
     m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand());
 
@@ -616,14 +611,15 @@ public class RobotContainer implements Logged {
 
     m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
 
-    m_operatorButtonsTop
-        .button(AUTO_TRAP)
-        .onTrue(
-            trapPrepCommand()
-                .andThen(new WaitCommand(.5))
-                .andThen(trapExtensionCommand())
-                .andThen(new WaitCommand(.5))
-                .andThen(new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true)));
+    m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand());
+    // m_operatorButtonsTop
+    //     .button(AUTO_TRAP)
+    //     .onTrue(
+    //         trapPrepCommand()
+    //             .andThen(new WaitCommand(.5))
+    //             .andThen(trapExtensionCommand())
+    //             .andThen(new WaitCommand(.5))
+    //             .andThen(new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, 0, true)));
 
     m_operatorButtonsTop
         .button(TRAP_OUTTAKE)

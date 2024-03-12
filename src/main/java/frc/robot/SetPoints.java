@@ -33,7 +33,7 @@ public final class SetPoints {
     public static final double kStowed = Units.inchesToMeters(0);
     public static final double kAmpFront = .155;
     public static final double kAmpRear = .165;
-    public static final double kTrap = .185;
+    public static final double kTrap = .180;
     public static final double kSubwoofer = Units.inchesToMeters(1);
     public static final double kIntake = Units.inchesToMeters(3.125);
     public static final double kMovement = Units.inchesToMeters(3);
