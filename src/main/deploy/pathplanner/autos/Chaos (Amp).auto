@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.23,
-      "y": 7.05
+      "x": 0.73,
+      "y": 6.68
     },
-    "rotation": -135.0
+    "rotation": -120.0
   },
   "command": {
     "type": "sequential",
@@ -14,13 +14,25 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 4"
+            "name": "Shoot 1"
           }
         },
         {
           "type": "path",
           "data": {
             "pathName": "Chaos 1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Chaos 3"
           }
         },
         {

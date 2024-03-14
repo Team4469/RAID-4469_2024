@@ -223,7 +223,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   public Command shooterChaos() {
-    return Commands.runOnce(() -> setSpeed(.4));
+    return Commands.runOnce(() -> setSpeed(.3));
   }
 
   public Command shooterAmpSmartCommand(AmpDirection ampSelect) {

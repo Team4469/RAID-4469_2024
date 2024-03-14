@@ -267,7 +267,7 @@ public class RobotContainer implements Logged {
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(new WaitCommand(.4))
+            .andThen(new WaitCommand(.6))
             .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
             .andThen(m_wrist.wristAngleSetpoint(2.89).andThen(m_wrist.wristInRange()))
             .andThen(new WaitCommand(.4))

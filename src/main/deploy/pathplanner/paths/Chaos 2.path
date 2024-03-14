@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 8.02850273756103,
-        "y": 1.190953701351847
+        "x": 8.021376612197669,
+        "y": 1.2795551933696467
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.1639455686318785,
-        "y": 1.3632277820111203
+        "x": 4.156819443268517,
+        "y": 1.45182927402892
       },
       "isLocked": false,
       "linkedName": "ChaosMid"
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 5.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 2.5,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -46,7 +46,7 @@
   "folder": "Chaos",
   "previewStartingState": {
     "rotation": 120.0,
-    "velocity": 0
+    "velocity": 0.5
   },
   "useDefaultConstraints": false
 }

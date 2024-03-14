@@ -75,6 +75,13 @@ public class Robot extends TimedRobot {
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
+    if (!m_robotContainer.getLeftClimber().isClimberZeroed()) {
+      new ZERO_CLIMBER(m_robotContainer.getLeftClimber()).schedule();
+    }
+    if (!m_robotContainer.getRightClimber().isClimberZeroed()) {
+      new ZERO_CLIMBER(m_robotContainer.getRightClimber()).schedule();
+    }
+    
     // m_robotContainer.stowedCommand().schedule();
     m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     m_robotContainer.getFrontLimelight().setPipelineCommand(LimelightPipeline.SHOOT).schedule();

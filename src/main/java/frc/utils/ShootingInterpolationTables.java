@@ -42,6 +42,8 @@ public class ShootingInterpolationTables {
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(6), Units.degreesToRadians(183));
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(7), Units.degreesToRadians(185));
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(8), Units.degreesToRadians(190));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(9), Units.degreesToRadians(192));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(10), Units.degreesToRadians(194));
     }
   }
 }
