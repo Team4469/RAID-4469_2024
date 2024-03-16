@@ -42,11 +42,11 @@ public class IntakeSubsystem extends SubsystemBase {
               (m_IntakeForwardLaserCan.getMeasurement().distance_mm
                   < IntakeConstants.kDetectionDistanceMM));
 
-  public final Trigger laserCanTrigger_REAR =
-      new Trigger(
-          () ->
-              (m_IntakeRearLaserCan.getMeasurement().distance_mm
-                  < IntakeConstants.kDetectionDistanceMM));
+  // public final Trigger laserCanTrigger_REAR =
+  //     new Trigger(
+  //         () ->
+  //             (m_IntakeRearLaserCan.getMeasurement().distance_mm
+  //                 < IntakeConstants.kDetectionDistanceMM));
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -102,7 +102,8 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(INTAKE_SPEED.get());
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+                .withTimeout(3))
+                // .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
         .andThen(
             run(() -> {
                   setSpeed(TRANSFER_BACKWARD_SPEED.get());
@@ -207,7 +208,8 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(TRANSFER_FORWARD_SPEED.get());
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+                .withTimeout(.4))
+                // .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
         // stop motor power
         .finallyDo(
             (interrupted) -> {

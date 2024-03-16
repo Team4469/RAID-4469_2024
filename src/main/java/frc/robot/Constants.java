@@ -407,10 +407,10 @@ public final class Constants {
     public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
     public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
     public static final double kP = .33;
-    public static final double kI = 0.0004;
+    public static final double kI = 0.001;
     public static final double kD = 5;
     public static final double kIz = 0.05;
-    public static final double kIAcum = .01;
+    public static final double kIAcum = .02;
 
     public static final int kSmartCurrentLimit = 115; // A
 

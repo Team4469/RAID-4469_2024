@@ -50,7 +50,7 @@ import java.util.Map;
 import monologue.Logged;
 import monologue.Monologue;
 
-public class RobotContainer implements Logged {
+public class RobotContainer {
 
   // The robot's subsystems
   private final Limelight m_frontLimelight = new Limelight("limelight-front");
@@ -147,7 +147,7 @@ public class RobotContainer implements Logged {
 
   public Command trapExtensionCommand() {
     return m_pivot
-        .pivotSetpointCommand(3)
+        .pivotSetpointCommand(3.05).alongWith(m_wrist.wristAngleSetpoint(3.49))
         .andThen(m_pivot.pivotInRange())
         .andThen(m_wrist.wristAngleSetpoint(3.49))
         .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
@@ -157,8 +157,8 @@ public class RobotContainer implements Logged {
 
     public Command trapExtensionV2Command() {
         return 
-            m_levetator.levetatorSetpointPosition(0.100)
-            .andThen(m_levetator.levInRange())
+            m_levetator.levetatorSetpointPosition(0.030)
+            .andThen(new WaitCommand(.1))
             .andThen(m_pivot.pivotSetpointCommand(3))
             .andThen(m_pivot.pivotInRange().withTimeout(.3))
             .andThen(m_wrist.wristAngleSetpoint(3.49))
@@ -369,7 +369,7 @@ public class RobotContainer implements Logged {
 
     m_frontLimelight.setPipelineCommand(LimelightPipeline.SHOOT);
     SmartDashboard.putData("Auto Mode", autoChooser);
-    Monologue.setupMonologue(this, "Robot", false, false);
+    // Monologue.setupMonologue(this, "Robot", false, false);
     DriverStation.startDataLog(DataLogManager.getLog(), true);
 
     SmartDashboard.putData("Zero Levetator", m_levetator.zeroLevetatorCommand());
@@ -485,7 +485,7 @@ public class RobotContainer implements Logged {
                 .alongWith(
                     m_pivot
                         .pivotSetpointCommand(PivotSetpoints.kVariableShot)
-                        .alongWith(m_wrist.wristAngleSetpoint(Units.degreesToRadians(170))))
+                        .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kSubwoofer)))
                 .alongWith(m_shooter.shooterSpeakerShot()));
 
     m_driverController
@@ -633,7 +633,7 @@ public class RobotContainer implements Logged {
 
     m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand());
 
-    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionV2Command());
+    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
 
     m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand());
     // m_operatorButtonsTop

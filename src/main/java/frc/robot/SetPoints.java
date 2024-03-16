@@ -25,7 +25,7 @@ public final class SetPoints {
     public static final double kAmpFront = 3.9;
     public static final double kAmpRear = 3.08;
     public static final double kTrap = Units.degreesToRadians(218);
-    public static final double kSubwoofer = Units.degreesToRadians(160);
+    public static final double kSubwoofer = Units.degreesToRadians(166.5);
     public static final double kIntake = 3.9;
   }
 
@@ -34,7 +34,7 @@ public final class SetPoints {
     public static final double kAmpFront = .155;
     public static final double kAmpRear = .165;
     public static final double kTrap = .177;
-    public static final double kSubwoofer = Units.inchesToMeters(1);
+    public static final double kSubwoofer = Units.inchesToMeters(0);
     public static final double kIntake = Units.inchesToMeters(3.125);
     public static final double kMovement = Units.inchesToMeters(3);
     public static final double kPodium = Units.inchesToMeters(2);

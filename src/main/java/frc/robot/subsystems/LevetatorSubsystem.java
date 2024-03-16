@@ -30,7 +30,7 @@ import frc.robot.SetPoints.LevetatorSetpoints;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class LevetatorSubsystem extends SubsystemBase implements Logged {
+public class LevetatorSubsystem extends SubsystemBase {
   private double SETPOINT;
   private final CANSparkMax m_motor;
 
