@@ -159,13 +159,13 @@ public class RobotContainer implements Logged {
         return 
             m_levetator.levetatorSetpointPosition(0.100)
             .andThen(m_levetator.levInRange())
-            // .andThen(m_pivot.pivotSetpointCommand(3))
-            // .andThen(m_pivot.pivotInRange())
+            .andThen(m_pivot.pivotSetpointCommand(3))
+            .andThen(m_pivot.pivotInRange().withTimeout(.3))
             .andThen(m_wrist.wristAngleSetpoint(3.49))
             .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
             .andThen(m_pivot.pivotSetpointCommand(3.16))
             .andThen(m_wrist.wristAngleSetpoint(3.49));
-    }
+    } 
 
   private final Command m_ampScoringSelectV3Command =
       new SelectCommand<>(

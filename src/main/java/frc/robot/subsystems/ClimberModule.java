@@ -57,7 +57,7 @@ public class ClimberModule extends SubsystemBase {
         ClimberConstants.kPositionConversionFactor); // Rotations to meters
     m_encoder.setVelocityConversionFactor(ClimberConstants.kPositionConversionFactor / 60);
     m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-.05));
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
