@@ -149,11 +149,23 @@ public class RobotContainer implements Logged {
     return m_pivot
         .pivotSetpointCommand(3)
         .andThen(m_pivot.pivotInRange())
-        .andThen(m_wrist.wristAngleSetpoint(3.52))
+        .andThen(m_wrist.wristAngleSetpoint(3.49))
         .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
-        .andThen(m_pivot.pivotSetpointCommand(3.14))
-        .andThen(m_wrist.wristAngleSetpoint(3.52));
+        .andThen(m_pivot.pivotSetpointCommand(3.12))
+        .andThen(m_wrist.wristAngleSetpoint(3.51));
   }
+
+    public Command trapExtensionV2Command() {
+        return 
+            m_levetator.levetatorSetpointPosition(0.100)
+            .andThen(m_levetator.levInRange())
+            // .andThen(m_pivot.pivotSetpointCommand(3))
+            // .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.49))
+            .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
+            .andThen(m_pivot.pivotSetpointCommand(3.16))
+            .andThen(m_wrist.wristAngleSetpoint(3.49));
+    }
 
   private final Command m_ampScoringSelectV3Command =
       new SelectCommand<>(
@@ -615,13 +627,13 @@ public class RobotContainer implements Logged {
     m_operatorButtonsTop
         .button(CLIMB_TRAP)
         .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(-1), true));
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(-8), true));
 
     m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand());
 
     m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand());
 
-    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
+    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionV2Command());
 
     m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand());
     // m_operatorButtonsTop
