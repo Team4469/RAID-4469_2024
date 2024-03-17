@@ -130,6 +130,8 @@ public class IntakeSubsystem extends SubsystemBase {
         // stop motor power
         .finallyDo(
             (interrupted) -> {
+              // setSpeed(-.05);
+              // new WaitCommand(.2);
               setSpeed(0);
               // moveNoteBackCommand();
             });
