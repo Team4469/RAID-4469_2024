@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.IntakeConstants;
@@ -27,6 +28,9 @@ import monologue.Annotations.Log;
 public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkFlex m_intakeMotor;
 
+  private double LaserCanForwardValue;
+  private double LaserCanRearValue;
+
   TunableNumber INTAKE_SPEED = new TunableNumber("Intake/Intake speed", .5);
   TunableNumber OUTTAKE_SPEED =
       new TunableNumber("Intake/Outtake speed", -.85); // FOR AMP FROM FRONT
@@ -34,7 +38,7 @@ public class IntakeSubsystem extends SubsystemBase {
   TunableNumber TRANSFER_BACKWARD_SPEED = new TunableNumber("Intake/Transfer bck speed", -.2);
 
   LaserCan m_IntakeForwardLaserCan = new LaserCan(IntakeConstants.kIntakeForwardLaserCanID);
-  LaserCan m_IntakeRearLaserCan = new LaserCan(IntakeConstants.kIntakeRearLaserCanID);
+  // LaserCan m_IntakeRearLaserCan = new LaserCan(10);
 
   public final Trigger laserCanTrigger_FORWARD =
       new Trigger(
@@ -45,7 +49,7 @@ public class IntakeSubsystem extends SubsystemBase {
   // public final Trigger laserCanTrigger_REAR =
   //     new Trigger(
   //         () ->
-  //             (m_IntakeRearLaserCan.getMeasurement().distance_mm
+  //             (getLaserCanRear()
   //                 < IntakeConstants.kDetectionDistanceMM));
 
   /** Creates a new IntakeSubsystem. */
@@ -65,9 +69,9 @@ public class IntakeSubsystem extends SubsystemBase {
       m_IntakeForwardLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
       m_IntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
 
-      m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
-      m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-      m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+      // m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
+      // m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+      // m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -102,8 +106,8 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(INTAKE_SPEED.get());
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(3))
-                // .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+                .withTimeout(5))
+                // .until(() -> (laserCanTrigger_REAR.getAsBoolean()))).withTimeout(5)
         .andThen(
             run(() -> {
                   setSpeed(TRANSFER_BACKWARD_SPEED.get());
@@ -113,6 +117,8 @@ public class IntakeSubsystem extends SubsystemBase {
         // stop motor power
         .finallyDo(
             (interrupted) -> {
+              setSpeed(-.05);
+              new WaitCommand(.2);
               setSpeed(0);
             });
   }
@@ -131,7 +137,13 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(-.08);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                .withTimeout(.2))
+        // .andThen(
+            // run(() -> {
+            //       setSpeed(-.08);
+            //     })
+            //     // Wait until trigger is detected for more than 0.25s
+            //     .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
         .andThen(
             run(() -> {
                   setSpeed(.25);
@@ -209,7 +221,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 })
                 // Wait until trigger is detected for more than 0.25s
                 .withTimeout(.4))
-                // .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
+                // .until(() -> (laserCanTrigger_REAR.getAsBoolean()))).ei
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -271,8 +283,29 @@ public class IntakeSubsystem extends SubsystemBase {
     return m_intakeMotor.getBusVoltage();
   }
 
+  private double getLaserCanForward() {
+    return LaserCanForwardValue;
+  }
+
+
+    private double getLaserCanRear() {
+      return LaserCanRearValue;
+    }
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // try {
+    //   LaserCanForwardValue = m_IntakeForwardLaserCan.getMeasurement().distance_mm;
+    // } catch (Exception e) {
+    //   // TODO: handle exception
+    // }
+
+    // try {
+    //   LaserCanRearValue = m_IntakeRearLaserCan.getMeasurement().distance_mm;
+    // } catch (Exception e) {
+    //   LaserCanRearValue = 1000;
+    // }
   }
 }

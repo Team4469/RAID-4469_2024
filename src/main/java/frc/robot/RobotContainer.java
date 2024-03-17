@@ -608,7 +608,7 @@ public class RobotContainer {
 
     m_operatorButtonsBottom
         .button(SHOOTER_ON)
-        .onTrue(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()));
+        .onTrue(m_intake.intakePrepShoot().andThen(new WaitCommand(.2)).andThen(m_shooter.shooterSpeakerShot()));
     m_operatorButtonsBottom.button(SHOOTER_OFF).onTrue(m_shooter.shooterStop());
 
     m_operatorButtonsBottom.button(OUTTAKE).onTrue(m_intake.intakeOuttake().withTimeout(.5));
