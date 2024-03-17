@@ -33,8 +33,8 @@ public class Robot extends TimedRobot {
   public void robotInit() {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
-    DataLogManager.start();
-    URCL.start();
+    // DataLogManager.start();
+    // URCL.start();
     m_robotContainer = new RobotContainer();
     m_robotContainer
         .getFrontLimelight()
@@ -120,7 +120,7 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
-    Monologue.updateAll();
+    // Monologue.updateAll();
     m_robotContainer.AMP_DIRECTION = m_robotContainer.selectAmpDirection();
     SmartDashboard.putString("Amp Direction", "" + m_robotContainer.AMP_DIRECTION);
   }

@@ -370,7 +370,7 @@ public class RobotContainer {
     m_frontLimelight.setPipelineCommand(LimelightPipeline.SHOOT);
     SmartDashboard.putData("Auto Mode", autoChooser);
     // Monologue.setupMonologue(this, "Robot", false, false);
-    DriverStation.startDataLog(DataLogManager.getLog(), true);
+    // DriverStation.startDataLog(DataLogManager.getLog(), true);
 
     SmartDashboard.putData("Zero Levetator", m_levetator.zeroLevetatorCommand());
 
@@ -439,6 +439,7 @@ public class RobotContainer {
                     m_levetator
                         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
                         .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
+                .andThen(m_intake.intakePrepShoot())
                 .andThen(
                     new shooterVariableDistanceSpeedCommand(
                             m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)

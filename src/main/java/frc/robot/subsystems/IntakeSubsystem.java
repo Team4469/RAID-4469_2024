@@ -126,14 +126,17 @@ public class IntakeSubsystem extends SubsystemBase {
                   setSpeed(TRANSFER_BACKWARD_SPEED.get());
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(IntakeConstants.kAutoIntakeBackMoveTime))
+                .withTimeout(.2))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
-              setSpeed(-.05);
-              new WaitCommand(.2);
               setSpeed(0);
+              // moveNoteBackCommand();
             });
+  }
+
+  public Command moveNoteBackCommand() {
+    return run(() -> setSpeed(-.05)).withTimeout(.1).andThen(() -> setSpeed(0));
   }
 
   /* Commands */
@@ -145,18 +148,18 @@ public class IntakeSubsystem extends SubsystemBase {
               debounce.calculate(false);
             })
         // set the intake to intaking speed
+        // .andThen(
+        //     run(() -> {
+        //           setSpeed(-.08);
+        //         })
+        //         // Wait until trigger is detected for more than 0.25s
+        //         .withTimeout(.2))
         .andThen(
             run(() -> {
                   setSpeed(-.08);
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.2))
-        // .andThen(
-            // run(() -> {
-            //       setSpeed(-.08);
-            //     })
-            //     // Wait until trigger is detected for more than 0.25s
-            //     .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
+                .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
         .andThen(
             run(() -> {
                   setSpeed(.25);
