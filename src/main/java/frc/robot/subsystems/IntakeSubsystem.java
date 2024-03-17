@@ -38,19 +38,32 @@ public class IntakeSubsystem extends SubsystemBase {
   TunableNumber TRANSFER_BACKWARD_SPEED = new TunableNumber("Intake/Transfer bck speed", -.2);
 
   LaserCan m_IntakeForwardLaserCan = new LaserCan(IntakeConstants.kIntakeForwardLaserCanID);
-  // LaserCan m_IntakeRearLaserCan = new LaserCan(10);
+  LaserCan m_IntakeRearLaserCan = new LaserCan(IntakeConstants.kIntakeRearLaserCanID);
 
-  public final Trigger laserCanTrigger_FORWARD =
-      new Trigger(
-          () ->
-              (m_IntakeForwardLaserCan.getMeasurement().distance_mm
-                  < IntakeConstants.kDetectionDistanceMM));
+  // public final Trigger laserCanTrigger_FORWARD =
+  //     new Trigger(
+  //         () ->
+  //             (m_IntakeForwardLaserCan.getMeasurement().distance_mm
+  //                 < IntakeConstants.kDetectionDistanceMM));
 
   // public final Trigger laserCanTrigger_REAR =
   //     new Trigger(
   //         () ->
-  //             (getLaserCanRear()
+  //             (m_IntakeRearLaserCan.getMeasurement().distance_mm
   //                 < IntakeConstants.kDetectionDistanceMM));
+
+  public final Trigger laserCanTrigger_FORWARD =
+      new Trigger(
+          () ->
+              (getLaserCanForward()
+                  < IntakeConstants.kDetectionDistanceMM));
+
+  public final Trigger laserCanTrigger_REAR =
+      new Trigger(
+          () ->
+              (getLaserCanRear()
+                  < IntakeConstants.kDetectionDistanceMM));
+
 
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
@@ -69,9 +82,9 @@ public class IntakeSubsystem extends SubsystemBase {
       m_IntakeForwardLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
       m_IntakeForwardLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
 
-      // m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
-      // m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-      // m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
+      m_IntakeRearLaserCan.setRangingMode(RangingMode.SHORT);
+      m_IntakeRearLaserCan.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+      m_IntakeRearLaserCan.setTimingBudget(TimingBudget.TIMING_BUDGET_20MS);
     } catch (ConfigurationFailedException e) {
       System.out.println("Configuration failed! " + e);
     }
@@ -103,11 +116,11 @@ public class IntakeSubsystem extends SubsystemBase {
         // set the intake to intaking speed
         .andThen(
             run(() -> {
-                  setSpeed(INTAKE_SPEED.get());
+                  setSpeed(INTAKE_SPEED.get()); 
                 })
                 // Wait until trigger is detected for more than 0.25s
-                .withTimeout(5))
-                // .until(() -> (laserCanTrigger_REAR.getAsBoolean()))).withTimeout(5)
+                // .withTimeout(5))
+                .until(() -> (laserCanTrigger_REAR.getAsBoolean())))
         .andThen(
             run(() -> {
                   setSpeed(TRANSFER_BACKWARD_SPEED.get());
@@ -221,7 +234,7 @@ public class IntakeSubsystem extends SubsystemBase {
                 })
                 // Wait until trigger is detected for more than 0.25s
                 .withTimeout(.4))
-                // .until(() -> (laserCanTrigger_REAR.getAsBoolean()))).ei
+                .until(() -> (laserCanTrigger_REAR.getAsBoolean()))
         // stop motor power
         .finallyDo(
             (interrupted) -> {
@@ -296,16 +309,16 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
 
-    // try {
-    //   LaserCanForwardValue = m_IntakeForwardLaserCan.getMeasurement().distance_mm;
-    // } catch (Exception e) {
-    //   // TODO: handle exception
-    // }
+    try {
+      LaserCanForwardValue = m_IntakeForwardLaserCan.getMeasurement().distance_mm;
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
 
-    // try {
-    //   LaserCanRearValue = m_IntakeRearLaserCan.getMeasurement().distance_mm;
-    // } catch (Exception e) {
-    //   LaserCanRearValue = 1000;
-    // }
+    try {
+      LaserCanRearValue = m_IntakeRearLaserCan.getMeasurement().distance_mm;
+    } catch (Exception e) {
+      LaserCanRearValue = 1000;
+    }
   }
 }
