@@ -40,29 +40,29 @@ public class IntakeSubsystem extends SubsystemBase {
   LaserCan m_IntakeForwardLaserCan = new LaserCan(IntakeConstants.kIntakeForwardLaserCanID);
   LaserCan m_IntakeRearLaserCan = new LaserCan(IntakeConstants.kIntakeRearLaserCanID);
 
-  // public final Trigger laserCanTrigger_FORWARD =
-  //     new Trigger(
-  //         () ->
-  //             (m_IntakeForwardLaserCan.getMeasurement().distance_mm
-  //                 < IntakeConstants.kDetectionDistanceMM));
-
-  // public final Trigger laserCanTrigger_REAR =
-  //     new Trigger(
-  //         () ->
-  //             (m_IntakeRearLaserCan.getMeasurement().distance_mm
-  //                 < IntakeConstants.kDetectionDistanceMM));
-
   public final Trigger laserCanTrigger_FORWARD =
       new Trigger(
           () ->
-              (getLaserCanForward()
+              (m_IntakeForwardLaserCan.getMeasurement().distance_mm
                   < IntakeConstants.kDetectionDistanceMM));
 
   public final Trigger laserCanTrigger_REAR =
       new Trigger(
           () ->
-              (getLaserCanRear()
+              (m_IntakeRearLaserCan.getMeasurement().distance_mm
                   < IntakeConstants.kDetectionDistanceMM));
+
+  // public final Trigger laserCanTrigger_FORWARD =
+  //     new Trigger(
+  //         () ->
+  //             (getLaserCanForward()
+  //                 < IntakeConstants.kDetectionDistanceMM));
+
+  // public final Trigger laserCanTrigger_REAR =
+  //     new Trigger(
+  //         () ->
+  //             (getLaserCanRear()
+  //                 < IntakeConstants.kDetectionDistanceMM));
 
 
   /** Creates a new IntakeSubsystem. */
@@ -158,16 +158,16 @@ public class IntakeSubsystem extends SubsystemBase {
         //         .withTimeout(.2))
         .andThen(
             run(() -> {
-                  setSpeed(-.08);
+                  setSpeed(-.05);
                 })
                 // Wait until trigger is detected for more than 0.25s
                 .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
-        .andThen(
-            run(() -> {
-                  setSpeed(.25);
-                })
-                // Wait until trigger is detected for more than 0.25s
-                .withTimeout(.04))
+        // .andThen(
+        //     run(() -> {
+        //           setSpeed(.25);
+        //         })
+        //         // Wait until trigger is detected for more than 0.25s
+        //         .withTimeout(.04))
         .finallyDo(
             (interrupted) -> {
               setSpeed(0);

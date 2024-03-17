@@ -439,7 +439,7 @@ public class RobotContainer {
                     m_levetator
                         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
                         .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
-                .andThen(m_intake.intakePrepShoot())
+                // .andThen(m_intake.intakePrepShoot())
                 .andThen(
                     new shooterVariableDistanceSpeedCommand(
                             m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
