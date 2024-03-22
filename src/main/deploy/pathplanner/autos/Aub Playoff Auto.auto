@@ -76,7 +76,19 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 3"
+            "name": "Stowed"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Aub Playoff Path 1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "Shoot 2"
           }
         },
         {
@@ -88,7 +100,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "CCS_Note3ToClearZone"
+            "pathName": "Aub Playoff Path 2"
           }
         }
       ]

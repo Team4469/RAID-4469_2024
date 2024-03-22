@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.64,
-        "y": 7.069650819857195
+        "x": 5.868930446194225,
+        "y": 0.5415855276154996
       },
       "prevControl": null,
       "nextControl": {
-        "x": 1.8299385257220815,
-        "y": 7.069650819857195
+        "x": 6.724860115033836,
+        "y": 0.5172770488164468
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "OutOfWayMid"
     },
     {
       "anchor": {
-        "x": 1.8,
-        "y": 7.07
+        "x": 8.053503560710825,
+        "y": 0.5415855276154996
       },
       "prevControl": {
-        "x": 0.7801617965239762,
-        "y": 7.07
+        "x": 7.121406363183096,
+        "y": 0.5389132306042385
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "BasePoint1"
+      "linkedName": "Test2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -46,7 +46,7 @@
   "folder": "Simple Auto",
   "previewStartingState": {
     "rotation": 180.0,
-    "velocity": 0
+    "velocity": 3.0
   },
   "useDefaultConstraints": false
 }

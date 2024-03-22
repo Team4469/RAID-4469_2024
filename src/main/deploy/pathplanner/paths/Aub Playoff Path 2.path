@@ -3,37 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
-        "y": 7.07
+        "x": 2.4042082945277,
+        "y": 5.554814720740553
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.6559296688396112,
-        "y": 7.045691521200948
+        "x": 4.581477130546854,
+        "y": 6.882886950959088
       },
       "isLocked": false,
-      "linkedName": "BasePoint1"
+      "linkedName": "AubPlayoffPoint1"
     },
     {
       "anchor": {
-        "x": 1.8,
-        "y": 6.169663185305127
+        "x": 7.473674493645284,
+        "y": 5.854527676647947
       },
       "prevControl": {
-        "x": 2.603573862307057,
-        "y": 6.163388332087742
+        "x": 6.247387087366768,
+        "y": 6.69190679122099
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "Test2"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -43,7 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Simple Auto",
-  "previewStartingState": null,
+  "folder": "Clear Close Spike",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
   "useDefaultConstraints": false
 }

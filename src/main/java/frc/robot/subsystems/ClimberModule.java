@@ -57,12 +57,12 @@ public class ClimberModule extends SubsystemBase {
         ClimberConstants.kPositionConversionFactor); // Rotations to meters
     m_encoder.setVelocityConversionFactor(ClimberConstants.kPositionConversionFactor / 60);
     m_climbingMotor.setSoftLimit(SoftLimitDirection.kForward, (float) Units.inchesToMeters(24));
-    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(0));
+    m_climbingMotor.setSoftLimit(SoftLimitDirection.kReverse, (float) Units.inchesToMeters(-.05));
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
-    m_climbingMotor.setSmartCurrentLimit(120);
+    m_climbingMotor.setSmartCurrentLimit(80);
     m_climbingMotor.setInverted(MotorInverted);
     m_climbingMotor.enableVoltageCompensation(12);
 
@@ -219,7 +219,7 @@ public class ClimberModule extends SubsystemBase {
               targetHeight,
               ControlType.kPosition,
               PID_Slot.CLIMBING.ordinal(),
-              5,
+              7,
               ArbFFUnits.kVoltage);
         }
         break;

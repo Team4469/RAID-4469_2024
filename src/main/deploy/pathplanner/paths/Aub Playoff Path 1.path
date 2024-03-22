@@ -3,43 +3,37 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.8,
-        "y": 6.169663185305127
+        "x": 2.5440585047836763,
+        "y": 4.127570579215233
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.9180339887498947,
-        "y": 6.169663185305127
+        "x": 2.5565292241695596,
+        "y": 5.00224308318987
       },
       "isLocked": false,
-      "linkedName": "Test2"
+      "linkedName": "Note3"
     },
     {
       "anchor": {
-        "x": 3.8539592598252996,
-        "y": 6.169663185305127
+        "x": 2.4042082945277,
+        "y": 5.554814720740553
       },
       "prevControl": {
-        "x": 2.333268627250745,
-        "y": 6.169663185305127
+        "x": 2.391024962605481,
+        "y": 4.953844815097039
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "AubPlayoffPoint1"
     }
   ],
-  "rotationTargets": [
-    {
-      "waypointRelativePos": 0.5,
-      "rotationDegrees": 90.0,
-      "rotateFast": true
-    }
-  ],
+  "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.5,
-    "maxAcceleration": 1.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 5.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -49,7 +43,10 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Simple Auto",
-  "previewStartingState": null,
+  "folder": "Clear Close Spike",
+  "previewStartingState": {
+    "rotation": 145.0,
+    "velocity": 0
+  },
   "useDefaultConstraints": false
 }

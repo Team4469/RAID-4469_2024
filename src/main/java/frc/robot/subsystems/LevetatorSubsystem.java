@@ -30,7 +30,7 @@ import frc.robot.SetPoints.LevetatorSetpoints;
 import monologue.Annotations.Log;
 import monologue.Logged;
 
-public class LevetatorSubsystem extends SubsystemBase implements Logged {
+public class LevetatorSubsystem extends SubsystemBase {
   private double SETPOINT;
   private final CANSparkMax m_motor;
 
@@ -204,6 +204,14 @@ public class LevetatorSubsystem extends SubsystemBase implements Logged {
 
   public Command setSquishyModeCommand() {
     return runOnce(this::setSquishyMode);
+  }
+
+  public Command zeroLevetatorCommand() {
+    return runOnce(this::zeroEncoder);
+  }
+
+  private void zeroEncoder() {
+    m_encoder.setPosition(0);
   }
 
   public boolean inRange(double setpoint) {
