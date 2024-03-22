@@ -30,12 +30,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "Intake Position"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [

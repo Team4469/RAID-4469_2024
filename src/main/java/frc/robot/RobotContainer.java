@@ -274,48 +274,97 @@ public class RobotContainer {
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
+    // NamedCommands.registerCommand(
+    //     "Shoot 1",
+    //     m_levetator
+    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+    //         .andThen(new WaitCommand(.6))
+    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+    //         .andThen(m_wrist.wristAngleSetpoint(2.89).andThen(m_wrist.wristInRange()))
+    //         .andThen(new WaitCommand(.4))
+    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
+    //         .andThen(m_shooter.shooterStop()));
+
     NamedCommands.registerCommand(
         "Shoot 1",
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
             .andThen(new WaitCommand(.6))
-            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_intake.intakePrepShoot()).withTimeout(.2)
+            .andThen(m_shooter.shooterSpeakerShot())
             .andThen(m_wrist.wristAngleSetpoint(2.89).andThen(m_wrist.wristInRange()))
             .andThen(new WaitCommand(.4))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
+
+    // NamedCommands.registerCommand(
+    //     "Shoot 2",
+    //     m_levetator
+    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+    //         .andThen(new WaitCommand(.2))
+    //         .andThen(m_wrist.wristAngleSetpoint(3.28).andThen(m_wrist.wristInRange()))
+    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
+    //         .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 2",
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_intake.intakePrepShoot()).withTimeout(.2)
+            .andThen(m_shooter.shooterSpeakerShot())
             .andThen(new WaitCommand(.2))
             .andThen(m_wrist.wristAngleSetpoint(3.28).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
+
+    // NamedCommands.registerCommand(
+    //     "Shoot 3",
+    //     m_levetator
+    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+    //         .andThen(m_wrist.wristAngleSetpoint(3.325).andThen(m_wrist.wristInRange()))
+    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
+    //         .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 3",
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_intake.intakePrepShoot()).withTimeout(.2)
+            .andThen(m_shooter.shooterSpeakerShot())
             .andThen(m_wrist.wristAngleSetpoint(3.325).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
+
+
+    // NamedCommands.registerCommand(
+    //     "Shoot 4",
+    //     m_levetator
+    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
+    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+    //         .andThen(m_wrist.wristAngleSetpoint(3.4).andThen(m_wrist.wristInRange()))
+    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
+    //         .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 4",
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
+            .andThen(m_intake.intakePrepShoot()).withTimeout(.2)
+            .andThen(m_shooter.shooterSpeakerShot())
             .andThen(m_wrist.wristAngleSetpoint(3.4).andThen(m_wrist.wristInRange()))
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
+
 
     NamedCommands.registerCommand("ChaosOn", m_intake.intakeIntake().alongWith(m_shooter.shooterChaos()));
     NamedCommands.registerCommand("ShooterOff", m_shooter.shooterStop());
