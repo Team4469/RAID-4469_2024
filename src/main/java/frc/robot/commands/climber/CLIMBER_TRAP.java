@@ -4,13 +4,13 @@
 
 package frc.robot.commands.climber;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.ClimberModule;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class CLIMBER_TRAP extends SequentialCommandGroup {
+public class CLIMBER_TRAP extends ParallelCommandGroup {
   /** Creates a new CLIMBER_TRAP. */
   public CLIMBER_TRAP(ClimberModule lClimber, ClimberModule rClimber) {
     // Add your commands in the addCommands() call, e.g.

@@ -196,6 +196,10 @@ public class ClimberModule extends SubsystemBase {
     }
   }
 
+  public void setNegativeZeroPosition() {
+    m_encoder.setPosition(.020);
+  }
+
   public void turnSoftLimitOn() {
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
   }

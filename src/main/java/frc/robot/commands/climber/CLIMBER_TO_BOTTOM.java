@@ -9,8 +9,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberModule;
 
 public class CLIMBER_TO_BOTTOM extends Command {
-  private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.5;
-  private static final double REVERSE_VOLTAGE = -4;
+  private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 1;
+  private static final double REVERSE_VOLTAGE = -6;
   private static final double VELOCITY_THRESHOLD = 0.254 / 60.0;
 
   private final ClimberModule climber;
@@ -56,7 +56,7 @@ public class CLIMBER_TO_BOTTOM extends Command {
     climber.setTargetVoltage(0.0);
     climber.turnSoftLimitOn();
     if (!interrupted) {
-      climber.setZeroPosition();
+      climber.setNegativeZeroPosition();
       climber.setTargetHeight(0, true);
       climber.setZeroed(true);
     }
