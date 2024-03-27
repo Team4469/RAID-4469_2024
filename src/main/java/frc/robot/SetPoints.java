@@ -35,7 +35,7 @@ public final class SetPoints {
     public static final double kAmpRear = .165;
     public static final double kTrap = .177;
     public static final double kSubwoofer = Units.inchesToMeters(0);
-    public static final double kIntake = Units.inchesToMeters(3.125);
+    public static final double kIntake = Units.inchesToMeters(4);
     public static final double kMovement = Units.inchesToMeters(3);
     public static final double kPodium = Units.inchesToMeters(2);
   }

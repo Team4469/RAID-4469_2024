@@ -3,49 +3,49 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4042082945277,
-        "y": 5.554814720740553
+        "x": 1.7519302862679802,
+        "y": 3.5254723703891857
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.581477130546854,
-        "y": 6.882886950959088
+        "x": 3.329773210472347,
+        "y": 2.427752142541322
       },
       "isLocked": false,
-      "linkedName": "AubPlayoffPoint1"
+      "linkedName": "CLA_SHOOT1"
     },
     {
       "anchor": {
-        "x": 7.473674493645284,
-        "y": 5.854527676647947
+        "x": 7.761688727081158,
+        "y": 4.10761742819782
       },
       "prevControl": {
-        "x": 6.247387087366768,
-        "y": 6.69190679122099
+        "x": 5.464225909933301,
+        "y": 4.309940004139268
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CLA_Note3"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Clear Close Spike",
+  "folder": "Center Line Auto",
   "previewStartingState": {
-    "rotation": 180.0,
+    "rotation": 135.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

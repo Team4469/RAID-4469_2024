@@ -1,0 +1,63 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 7.761688727081158,
+        "y": 4.10761742819782
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 5.197886974477653,
+        "y": 4.290521312524107
+      },
+      "isLocked": false,
+      "linkedName": "CLA_Note3"
+    },
+    {
+      "anchor": {
+        "x": 1.7519302862679802,
+        "y": 3.5254723703891857
+      },
+      "prevControl": {
+        "x": 3.2650442384218104,
+        "y": 2.2677112437558216
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "CLA_SHOOT1"
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.35,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 0.8,
+      "rotationDegrees": 135.0,
+      "rotateFast": true
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 5.0,
+    "maxAcceleration": 8.0,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 135.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "Center Line Auto",
+  "previewStartingState": {
+    "rotation": 180.0,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

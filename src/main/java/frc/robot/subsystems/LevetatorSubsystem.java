@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -40,12 +41,16 @@ public class LevetatorSubsystem extends SubsystemBase {
 
   private LaserCan m_distanceSensor;
 
+  private PivotSubsystem m_piv;
+
   int ID;
 
   /** Creates a new LevSub. */
-  public LevetatorSubsystem() {
+  public LevetatorSubsystem(PivotSubsystem pivot) {
     m_motor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
+
+    m_piv = pivot;
 
     for (int i = 0; i < 6; i++) {
       if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
@@ -263,7 +268,14 @@ public class LevetatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+    // m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+
+    m_pidController.setReference(
+        SETPOINT,
+        ControlType.kPosition,
+        0,
+        LevetatorConstants.kGravity * Math.sin(m_piv.getRadiansFromHorizontal()),
+        ArbFFUnits.kVoltage);
 
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());

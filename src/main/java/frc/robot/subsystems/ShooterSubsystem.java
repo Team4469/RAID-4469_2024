@@ -186,6 +186,10 @@ public class ShooterSubsystem extends SubsystemBase {
     return Commands.runOnce(() -> setSpeed(1));
   }
 
+  public Command shooterSpeakerShotRPM() {
+    return Commands.runOnce(() -> shootPIDControl(6000));
+  }
+
   public Command shooterTrapCommand() {
     return Commands.runOnce(() -> setSpeed(1));
   }
@@ -249,7 +253,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private boolean aboveSpeed() {
     var currentSpeed =
         Math.min(m_rightShooterEncoder.getVelocity(), m_leftShooterEncoder.getVelocity());
-    if (currentSpeed > 5500) {
+    if (currentSpeed > 5700) {
       return true;
     } else {
       return false;

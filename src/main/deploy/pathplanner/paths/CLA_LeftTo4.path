@@ -3,49 +3,49 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5440585047836763,
-        "y": 4.127570579215233
+        "x": 0.71216921137546,
+        "y": 4.394384589695106
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5565292241695596,
-        "y": 5.00224308318987
+        "x": 2.0911338535640036,
+        "y": 2.4526341969350614
       },
       "isLocked": false,
-      "linkedName": "Note3"
+      "linkedName": null
     },
     {
       "anchor": {
-        "x": 2.4042082945277,
-        "y": 5.554814720740553
+        "x": 7.860148025851607,
+        "y": 2.31919749950611
       },
       "prevControl": {
-        "x": 2.391024962605481,
-        "y": 4.953844815097039
+        "x": 4.95648947779377,
+        "y": 1.424096769489835
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "AubPlayoffPoint1"
+      "linkedName": "CenterNote4"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 8.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
+    "rotation": -170.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Clear Close Spike",
+  "folder": "Center Line Auto",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": 120.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

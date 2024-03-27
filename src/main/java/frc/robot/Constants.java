@@ -240,7 +240,7 @@ public final class Constants {
 
     public static final double kLevetatorOffset = Units.inchesToMeters(0);
 
-    public static final double kGearRatio = 49;
+    public static final double kGearRatio = 25;
     public static final double kSprocketDiameterMeters = Units.inchesToMeters(1.432);
 
     public static final double kPositionConversionFactor =
@@ -255,11 +255,11 @@ public final class Constants {
 
     public static final double kMaxVelocityMeterPerSecond = .5; // m/s
     public static final double kMaxAccelerationMetersPerSecondSquared = 0.25; // m/s^2
-    public static final double kP = 8;
+    public static final double kP = 4;
     public static final double kI = 0.0;
     public static final double kD = 1;
     public static final double kS = 0;
-    public static final double kGravity = 0.17;
+    public static final double kGravity = 0.67;
     public static final double kV = 0;
 
     public static final double kClosedLoopRampRate = 1;

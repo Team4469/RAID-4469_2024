@@ -4,9 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "4 Note Auto Near Amp",
+    "Amp 1 and Move",
     "Chaos",
     "Clear Close Spike",
-    "Amp 1 and Move",
+    "Center Line Auto",
     "Simple Auto",
     "Stage Alignment"
   ],
@@ -15,5 +16,5 @@
   "defaultMaxAccel": 5.0,
   "defaultMaxAngVel": 540.0,
   "defaultMaxAngAccel": 720.0,
-  "maxModuleSpeed": 4.5
+  "maxModuleSpeed": 5.7
 }

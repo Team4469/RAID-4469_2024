@@ -33,6 +33,7 @@ import frc.robot.SetPoints.PivotSetpoints;
 import frc.robot.SetPoints.WristSetpoints;
 import frc.robot.commands.amp.INTAKE_SHOOTER_SMART_AMP;
 import frc.robot.commands.climber.CLIMBER_TO_HEIGHT;
+import frc.robot.commands.climber.CLIMBER_TRAP;
 import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
 import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.commands.shooting.shooterVariableDistanceSpeedCommand;
@@ -57,7 +58,7 @@ public class RobotContainer {
   private final Limelight m_rearLimelight = new Limelight("limelight-rear");
   private final DriveSubsystem m_robotDrive = new DriveSubsystem();
   private final PivotSubsystem m_pivot = new PivotSubsystem();
-  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem();
+  private final LevetatorSubsystem m_levetator = new LevetatorSubsystem(m_pivot);
   private final ClimberModule m_rightClimber =
       new ClimberModule(
           RightClimberConstants.kMotorID,
@@ -110,6 +111,17 @@ public class RobotContainer {
                 .pivotSetpointCommand(PivotSetpoints.kIntake)
                 .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
   }
+
+    public Command intakePositionCommandDCMP() {
+      return (m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake))
+          .andThen(m_levetator.levInRange().withTimeout(.25))
+          // .andThen(m_levetator.setSquishyModeCommand())
+          .andThen(
+              m_pivot
+                  .pivotSetpointCommand(PivotSetpoints.kIntake)
+                  .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
+    }
+  
 
   public Command stowedCommand() {
     return m_pivot
@@ -299,16 +311,14 @@ public class RobotContainer {
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
-    // NamedCommands.registerCommand(
-    //     "Shoot 2",
-    //     m_levetator
-    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-    //         .andThen(new WaitCommand(.2))
-    //         .andThen(m_wrist.wristAngleSetpoint(3.28).andThen(m_wrist.wristInRange()))
-    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
-    //         .andThen(m_shooter.shooterStop()));
+    NamedCommands.registerCommand(
+        "Shoot 2 DCMP",
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
+            .andThen(m_shooter.shooterAboveSpeedCommand())
+            .andThen(m_intake.intakeShootCommandDCMP())
+            .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 2",
@@ -322,15 +332,14 @@ public class RobotContainer {
             .andThen(m_intake.intakeShootCommand().withTimeout(1))
             .andThen(m_shooter.shooterStop()));
 
-    // NamedCommands.registerCommand(
-    //     "Shoot 3",
-    //     m_levetator
-    //         .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-    //         .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-    //         .andThen(m_intake.intakePrepShoot().andThen(m_shooter.shooterSpeakerShot()))
-    //         .andThen(m_wrist.wristAngleSetpoint(3.325).andThen(m_wrist.wristInRange()))
-    //         .andThen(m_intake.intakeShootCommand().withTimeout(1))
-    //         .andThen(m_shooter.shooterStop()));
+    NamedCommands.registerCommand(
+        "Shoot 3 DCMP",
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
+            .andThen(m_shooter.shooterAboveSpeedCommand())
+            .andThen(m_intake.intakeShootCommandDCMP())
+            .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 3",
@@ -366,9 +375,26 @@ public class RobotContainer {
             .andThen(m_shooter.shooterStop()));
 
 
+    NamedCommands.registerCommand(
+        "CLA Shoot Pos DCMP",
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange())));
+
+    NamedCommands.registerCommand(
+        "CLA Shoot DCMP",
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
+            .andThen(m_shooter.shooterAboveSpeedCommand())
+            .andThen(m_intake.intakeShootCommandDCMP())
+            .andThen(m_shooter.shooterStop()));
+    
+
     NamedCommands.registerCommand("ChaosOn", m_intake.intakeIntake().alongWith(m_shooter.shooterChaos()));
     NamedCommands.registerCommand("ShooterOff", m_shooter.shooterStop());
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
+    NamedCommands.registerCommand("Intake Position DCMP", intakePositionCommandDCMP());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
     NamedCommands.registerCommand("Aim", aimCommand());
     NamedCommands.registerCommand("Stowed", stowedCommand());
@@ -676,8 +702,7 @@ public class RobotContainer {
 
     m_operatorButtonsTop
         .button(CLIMB_TRAP)
-        .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(-8), true));
+        .onTrue(new CLIMBER_TRAP(m_leftClimber, m_rightClimber));
 
     m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand());
 

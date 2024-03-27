@@ -208,7 +208,25 @@ public class IntakeSubsystem extends SubsystemBase {
               setSpeed(0);
             });
   }
-
+    public Command intakeShootCommandDCMP() {
+      Debouncer debounce =
+          new Debouncer(IntakeConstants.kSensorDebounceTime, Debouncer.DebounceType.kRising);
+      return runOnce(
+              () -> {
+                debounce.calculate(false);
+              })
+          .andThen(
+              run(() -> {
+                    setSpeed(1);
+                  })
+                  .withTimeout(.3))
+          // stop motor power
+          .finallyDo(
+              (interrupted) -> {
+                setSpeed(0);
+              });
+    }
+    
   public Command intakeAmpSmartCommand(AmpDirection ampSelect) {
     var amp = ampSelect;
     SmartDashboard.putString("Int Amp Dir", "" + amp);
