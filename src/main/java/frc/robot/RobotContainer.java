@@ -313,7 +313,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 2 DCMP",
-            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
@@ -334,7 +334,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 3 DCMP",
-            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
@@ -377,13 +377,13 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "CLA Shoot Pos DCMP",
-            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange())));
 
     NamedCommands.registerCommand(
         "CLA Shoot DCMP",
-            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShotRPM())
+            m_pivot.pivotSetpointCommand(1.7).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())

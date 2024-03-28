@@ -3,16 +3,16 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.748464317279368,
-        "y": 2.311972291155023
+        "x": 7.850440678454641,
+        "y": 0.7870172591948942
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.959536387571657,
-        "y": 1.0216091409842787
+        "x": 4.777468817792343,
+        "y": 0.7870172591948945
       },
       "isLocked": false,
-      "linkedName": "CenterNote4"
+      "linkedName": "CenterNote5"
     },
     {
       "anchor": {
