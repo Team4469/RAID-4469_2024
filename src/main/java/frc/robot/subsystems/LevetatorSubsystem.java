@@ -39,11 +39,11 @@ public class LevetatorSubsystem extends SubsystemBase {
 
   private final SparkPIDController m_pidController;
 
-  private LaserCan m_distanceSensor;
+  // private LaserCan m_distanceSensor;
 
   private PivotSubsystem m_piv;
 
-  int ID;
+  // int ID;
 
   /** Creates a new LevSub. */
   public LevetatorSubsystem(PivotSubsystem pivot) {
@@ -52,57 +52,57 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     m_piv = pivot;
 
-    for (int i = 0; i < 6; i++) {
-      if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
         m_motor.setClosedLoopRampRate(LevetatorConstants.kClosedLoopRampRate);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_encoder = m_motor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_encoder.getPositionConversionFactor() != LevetatorConstants.kPositionConversionFactor) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_encoder.getPositionConversionFactor() != LevetatorConstants.kPositionConversionFactor) {
         m_encoder.setPositionConversionFactor(LevetatorConstants.kPositionConversionFactor);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
     m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_motor.getIdleMode() != IdleMode.kBrake) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_motor.getIdleMode() != IdleMode.kBrake) {
         m_motor.setIdleMode(IdleMode.kBrake);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_motor.getSoftLimit(SoftLimitDirection.kForward)
-          != (float) LevetatorConstants.kForwardSoftLimit) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_motor.getSoftLimit(SoftLimitDirection.kForward)
+    //       != (float) LevetatorConstants.kForwardSoftLimit) {
         m_motor.setSoftLimit(
             SoftLimitDirection.kForward, (float) LevetatorConstants.kForwardSoftLimit);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_motor.getSoftLimit(SoftLimitDirection.kReverse)
-          != (float) LevetatorConstants.kReverseSoftLimit) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_motor.getSoftLimit(SoftLimitDirection.kReverse)
+    //       != (float) LevetatorConstants.kReverseSoftLimit) {
         m_motor.setSoftLimit(
             SoftLimitDirection.kReverse, (float) LevetatorConstants.kForwardSoftLimit);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
     m_motor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_motor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
@@ -114,45 +114,45 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_pidController.setPositionPIDWrappingMaxInput(Units.inchesToMeters(9));
     m_pidController.setPositionPIDWrappingMinInput(Units.inchesToMeters(0));
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getI() != LevetatorConstants.kI) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getI() != LevetatorConstants.kI) {
         m_pidController.setI(LevetatorConstants.kI);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getP() != LevetatorConstants.kP) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getP() != LevetatorConstants.kP) {
         m_pidController.setP(LevetatorConstants.kP);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getD() != LevetatorConstants.kD) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getD() != LevetatorConstants.kD) {
         m_pidController.setD(LevetatorConstants.kD);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_pidController.setOutputRange(LevetatorConstants.kMinOutput, LevetatorConstants.kMaxOutput);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_motor.getInverted() != LevetatorConstants.kMotorInverted) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_motor.getInverted() != LevetatorConstants.kMotorInverted) {
         m_motor.setInverted(LevetatorConstants.kMotorInverted);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    m_motor.burnFlash();
+
 
     m_motor.setPeriodicFramePeriod(
         PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
@@ -169,17 +169,17 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_motor.setPeriodicFramePeriod(
         PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
-    m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
-    ID = LevetatorConstants.kLevetatorLaserCanID;
+    // m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+    // ID = LevetatorConstants.kLevetatorLaserCanID;
 
-    try {
-      m_distanceSensor.setRangingMode(RangingMode.SHORT);
-      m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-      m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
-
+    // try {
+    //   m_distanceSensor.setRangingMode(RangingMode.SHORT);
+    //   m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+    //   m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed! " + e);
+    // }
+    m_motor.burnFlash();
     m_encoder.setPosition(0.0);
   }
 

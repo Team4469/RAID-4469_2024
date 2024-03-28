@@ -59,23 +59,23 @@ public class PivotSubsystem extends SubsystemBase {
     m_pidController.setPositionPIDWrappingMinInput(Math.PI / 2);
     m_pidController.setOutputRange(PivotConstants.kMinOutput, PivotConstants.kMaxOutput);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leadMotor.getClosedLoopRampRate() != PivotConstants.kClosedLoopRampRate) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leadMotor.getClosedLoopRampRate() != PivotConstants.kClosedLoopRampRate) {
         m_leadMotor.setClosedLoopRampRate(PivotConstants.kClosedLoopRampRate);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leadMotor.getInverted() != PivotConstants.kLeadMotorInverted) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leadMotor.getInverted() != PivotConstants.kLeadMotorInverted) {
         m_leadMotor.setInverted(PivotConstants.kLeadMotorInverted);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
     m_followMotor.follow(m_leadMotor, PivotConstants.kFollowMotorInverted);
 
     m_leadMotor.setSmartCurrentLimit(PivotConstants.kMotorCurrentLimit);
@@ -86,14 +86,14 @@ public class PivotSubsystem extends SubsystemBase {
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_leadMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_encoder.getZeroOffset() != PivotConstants.kPivotZeroOffset) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_encoder.getZeroOffset() != PivotConstants.kPivotZeroOffset) {
         m_encoder.setZeroOffset(PivotConstants.kPivotZeroOffset);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_leadMotor.setIdleMode(IdleMode.kBrake);
     m_followMotor.setIdleMode(IdleMode.kBrake);
@@ -101,50 +101,50 @@ public class PivotSubsystem extends SubsystemBase {
     m_encoder.setPositionConversionFactor(PivotConstants.kPivotEncoderPositionFactor);
     m_encoder.setVelocityConversionFactor(PivotConstants.kPivotEncoderVelocityFactor);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getIMaxAccum(0) != PivotConstants.kIAcum) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getIMaxAccum(0) != PivotConstants.kIAcum) {
         m_pidController.setIMaxAccum(PivotConstants.kIAcum, 0);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getIZone() != PivotConstants.kIz) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getIZone() != PivotConstants.kIz) {
         m_pidController.setIZone(PivotConstants.kIz);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getP() != PivotConstants.kP) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getP() != PivotConstants.kP) {
         m_pidController.setP(PivotConstants.kP);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getI() != PivotConstants.kI) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getI() != PivotConstants.kI) {
         m_pidController.setI(PivotConstants.kI);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_pidController.getD() != PivotConstants.kD) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_pidController.getD() != PivotConstants.kD) {
         m_pidController.setD(PivotConstants.kD);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_leadMotor.setPeriodicFramePeriod(
         PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower

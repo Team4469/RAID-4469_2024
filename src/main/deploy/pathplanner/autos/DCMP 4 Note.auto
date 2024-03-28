@@ -128,19 +128,26 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 3"
+            "name": "Shoot 3 DCMP"
           }
         },
         {
-          "type": "named",
+          "type": "parallel",
           "data": {
-            "name": "Stowed"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "CCS_Note1ToClearZone"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "Stowed"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CCS_Note1ToClearZone"
+                }
+              }
+            ]
           }
         }
       ]

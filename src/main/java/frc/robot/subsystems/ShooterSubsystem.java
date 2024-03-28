@@ -58,23 +58,23 @@ public class ShooterSubsystem extends SubsystemBase {
     m_rightPIDController.setFeedbackDevice(m_rightShooterEncoder);
     m_leftPIDController.setFeedbackDevice(m_leftShooterEncoder);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_rightShooterMotor.getInverted() != ShooterConstants.kRightMotorInverted) {
         m_rightShooterMotor.setInverted(ShooterConstants.kRightMotorInverted);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftShooterMotor.getInverted() != ShooterConstants.kLeftMotorInverted) {
         m_leftShooterMotor.setInverted(ShooterConstants.kLeftMotorInverted);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_rightShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
     m_leftShooterMotor.setSmartCurrentLimit(ShooterConstants.kCurrentLimit);
@@ -88,60 +88,60 @@ public class ShooterSubsystem extends SubsystemBase {
     // m_leftShooterEncoder.setAverageDepth(8);
     // m_leftShooterEncoder.setMeasurementPeriod(32);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getI() != ShooterConstants.kI_left) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getI() != ShooterConstants.kI_left) {
         m_leftPIDController.setI(ShooterConstants.kI_left);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getP() != ShooterConstants.kP_left) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getP() != ShooterConstants.kP_left) {
         m_leftPIDController.setP(ShooterConstants.kP_left);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getD() != ShooterConstants.kD_left) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getD() != ShooterConstants.kD_left) {
         m_leftPIDController.setD(ShooterConstants.kD_left);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
     m_rightPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getI() != ShooterConstants.kI_right) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getI() != ShooterConstants.kI_right) {
         m_leftPIDController.setI(ShooterConstants.kI_right);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getP() != ShooterConstants.kP_right) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getP() != ShooterConstants.kP_right) {
         m_leftPIDController.setP(ShooterConstants.kP_right);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_leftPIDController.getD() != ShooterConstants.kD_right) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_leftPIDController.getD() != ShooterConstants.kD_right) {
         m_leftPIDController.setD(ShooterConstants.kD_right);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_leftPIDController.setOutputRange(ShooterConstants.kMinOutput, ShooterConstants.kMaxOutput);
 
@@ -253,7 +253,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private boolean aboveSpeed() {
     var currentSpeed =
         Math.min(m_rightShooterEncoder.getVelocity(), m_leftShooterEncoder.getVelocity());
-    if (currentSpeed > 5700) {
+    if (currentSpeed > 6200) {
       return true;
     } else {
       return false;
