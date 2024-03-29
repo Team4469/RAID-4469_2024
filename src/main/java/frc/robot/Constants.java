@@ -259,7 +259,7 @@ public final class Constants {
     public static final double kI = 0.0;
     public static final double kD = 1;
     public static final double kS = 0;
-    public static final double kGravity = 0.6;
+    public static final double kGravity = 0.2;
     public static final double kV = 0;
 
     public static final double kClosedLoopRampRate = 1;
@@ -361,8 +361,8 @@ public final class Constants {
     public static final boolean kFollowMotorInverted = false;
     public static final boolean kEncoderInverted = true;
 
-    public static final double kP = .4;
-    public static final double kI = .0004;
+    public static final double kP = .65;
+    public static final double kI = .002;
     public static final double kD = 14;
     public static final double kIz = .05;
     public static final double kIAcum = .01;
@@ -406,8 +406,8 @@ public final class Constants {
 
     public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
     public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
-    public static final double kP = .33;
-    public static final double kI = 0.001;
+    public static final double kP = .33; //.33
+    public static final double kI = 0.002;
     public static final double kD = 5;
     public static final double kIz = 0.05;
     public static final double kIAcum = .02;

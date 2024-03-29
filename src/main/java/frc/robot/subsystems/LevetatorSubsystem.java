@@ -52,57 +52,57 @@ public class LevetatorSubsystem extends SubsystemBase {
 
     m_piv = pivot;
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
+    for (int i = 0; i < 6; i++) {
+      if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
         m_motor.setClosedLoopRampRate(LevetatorConstants.kClosedLoopRampRate);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_encoder = m_motor.getEncoder(SparkRelativeEncoder.Type.kHallSensor, 42);
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_encoder.getPositionConversionFactor() != LevetatorConstants.kPositionConversionFactor) {
+    for (int i = 0; i < 6; i++) {
+      if (m_encoder.getPositionConversionFactor() != LevetatorConstants.kPositionConversionFactor) {
         m_encoder.setPositionConversionFactor(LevetatorConstants.kPositionConversionFactor);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
     m_motor.setSmartCurrentLimit(LevetatorConstants.kCurrentLimit);
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_motor.getIdleMode() != IdleMode.kBrake) {
+    for (int i = 0; i < 6; i++) {
+      if (m_motor.getIdleMode() != IdleMode.kBrake) {
         m_motor.setIdleMode(IdleMode.kBrake);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_motor.getSoftLimit(SoftLimitDirection.kForward)
-    //       != (float) LevetatorConstants.kForwardSoftLimit) {
+    for (int i = 0; i < 6; i++) {
+      if (m_motor.getSoftLimit(SoftLimitDirection.kForward)
+          != (float) LevetatorConstants.kForwardSoftLimit) {
         m_motor.setSoftLimit(
             SoftLimitDirection.kForward, (float) LevetatorConstants.kForwardSoftLimit);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_motor.getSoftLimit(SoftLimitDirection.kReverse)
-    //       != (float) LevetatorConstants.kReverseSoftLimit) {
+    for (int i = 0; i < 6; i++) {
+      if (m_motor.getSoftLimit(SoftLimitDirection.kReverse)
+          != (float) LevetatorConstants.kReverseSoftLimit) {
         m_motor.setSoftLimit(
             SoftLimitDirection.kReverse, (float) LevetatorConstants.kForwardSoftLimit);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
     m_motor.enableSoftLimit(SoftLimitDirection.kForward, true);
     m_motor.enableSoftLimit(SoftLimitDirection.kReverse, true);
 
@@ -114,43 +114,43 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_pidController.setPositionPIDWrappingMaxInput(Units.inchesToMeters(9));
     m_pidController.setPositionPIDWrappingMinInput(Units.inchesToMeters(0));
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_pidController.getI() != LevetatorConstants.kI) {
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getI() != LevetatorConstants.kI) {
         m_pidController.setI(LevetatorConstants.kI);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_pidController.getP() != LevetatorConstants.kP) {
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getP() != LevetatorConstants.kP) {
         m_pidController.setP(LevetatorConstants.kP);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_pidController.getD() != LevetatorConstants.kD) {
+    for (int i = 0; i < 6; i++) {
+      if (m_pidController.getD() != LevetatorConstants.kD) {
         m_pidController.setD(LevetatorConstants.kD);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
     m_pidController.setOutputRange(LevetatorConstants.kMinOutput, LevetatorConstants.kMaxOutput);
 
-    // for (int i = 0; i < 6; i++) {
-    //   if (m_motor.getInverted() != LevetatorConstants.kMotorInverted) {
+    for (int i = 0; i < 6; i++) {
+      if (m_motor.getInverted() != LevetatorConstants.kMotorInverted) {
         m_motor.setInverted(LevetatorConstants.kMotorInverted);
-    //   } else {
-    //     break;
-    //   }
-    //   Timer.delay(.1);
-    // }
+      } else {
+        break;
+      }
+      Timer.delay(.1);
+    }
 
 
 
@@ -268,15 +268,17 @@ public class LevetatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
 
-    // m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+    m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+    
+    // m_pidController.setReference(
+    //     SETPOINT,
+    //     ControlType.kPosition,
+    //     0,
+    //     LevetatorConstants.kGravity * Math.sin(m_piv.getRadiansFromHorizontal()),
+    //     ArbFFUnits.kVoltage);
 
-    m_pidController.setReference(
-        SETPOINT,
-        ControlType.kPosition,
-        0,
-        LevetatorConstants.kGravity * Math.sin(m_piv.getRadiansFromHorizontal()),
-        ArbFFUnits.kVoltage);
-
+    SmartDashboard.putNumber("Levetator Output", getAppliedOutput());
+    SmartDashboard.putNumber("Levetator Current", getCurrent());
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
     SmartDashboard.putBoolean("Levetator In Range", inRange(getSetpoint()));

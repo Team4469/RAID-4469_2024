@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.5440585047836763,
-        "y": 4.127570579215233
+        "y": 4.040334927892078
       },
       "prevControl": null,
       "nextControl": {
         "x": 1.8414225439490206,
-        "y": 4.437853954412931
+        "y": 4.350618303089777
       },
       "isLocked": false,
       "linkedName": "Note3"
@@ -39,7 +39,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -150.0,
+    "rotation": -145.0,
     "rotateFast": true
   },
   "reversed": false,
