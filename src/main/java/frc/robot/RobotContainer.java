@@ -313,9 +313,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 2 DCMP",
-            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot().alongWith(m_wrist.wristAngleSetpoint(3.5)))
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristInRange())
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -340,9 +340,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 3 DCMP",
-            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot().alongWith(m_wrist.wristAngleSetpoint(3.52)))
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristInRange())
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -361,9 +361,9 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 4 DCMP",
-            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot().alongWith(m_wrist.wristAngleSetpoint(3.55)))
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristInRange())
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
