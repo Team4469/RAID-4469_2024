@@ -315,10 +315,16 @@ public class RobotContainer {
         "Shoot 2 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.74).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand(
+        "Shoot 2 Pos DCMP",
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange())));
 
     NamedCommands.registerCommand(
         "Shoot 2",
@@ -336,7 +342,7 @@ public class RobotContainer {
         "Shoot 3 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.82).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -357,7 +363,7 @@ public class RobotContainer {
         "Shoot 4 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.79).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -626,6 +632,21 @@ public class RobotContainer {
                 .pivotSetpointCommand(PivotSetpoints.kStowed)
                 .alongWith(m_wrist.wristAngleSetpoint(WristSetpoints.kStowed))
                 .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kStowed)));
+
+        m_driverController.x().onTrue(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake)
+        .andThen(new WaitCommand(.2))
+        .andThen(
+            m_pivot.pivotSetpointCommand(PivotSetpoints.kIntake))
+                    .andThen(m_wrist.wristAngleSetpoint(WristSetpoints.kIntake)));
+
+    m_driverController.b().onTrue(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kIntake)
+            .andThen(new WaitCommand(.2))
+    .andThen(
+        m_pivot.pivotSetpointCommand(2.1))
+                .andThen(m_wrist.wristAngleSetpoint(3.74)));
+        
+    
+
 
     // m_driverController
     //     .leftBumper()

@@ -144,7 +144,7 @@ public final class Constants {
     // 45 teeth on the wheel's bevel gear, 22 teeth on the first-stage spur gear, 15 teeth on the
     // bevel pinion
     public static final double kDrivingMotorReduction =
-        (45.0 * 22) / (kDrivingMotorPinionTeeth * 15);
+        (45.0 * 22.0) / (kDrivingMotorPinionTeeth * 15.0);
     public static final double kDriveWheelFreeSpeedRps =
         (kDrivingMotorFreeSpeedRps * kWheelCircumferenceMeters) / kDrivingMotorReduction;
 
@@ -406,11 +406,11 @@ public final class Constants {
 
     public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
     public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
-    public static final double kP = .33; //.33
-    public static final double kI = 0.002;
-    public static final double kD = 5;
+    public static final double kP = .32; //.33
+    public static final double kI = 0.006;
+    public static final double kD = 3;
     public static final double kIz = 0.05;
-    public static final double kIAcum = .02;
+    public static final double kIAcum = .025;
 
     public static final int kSmartCurrentLimit = 115; // A
 

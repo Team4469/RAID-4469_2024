@@ -231,8 +231,8 @@ public class PivotSubsystem extends SubsystemBase {
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
-    if (setpoint > measurement - Units.degreesToRadians(2)
-        && setpoint < measurement + Units.degreesToRadians(2)) {
+    if (setpoint > measurement - Units.degreesToRadians(1)
+        && setpoint < measurement + Units.degreesToRadians(1)) {
       return true;
     } else {
       return false;
