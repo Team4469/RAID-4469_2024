@@ -432,15 +432,15 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "CLA Shoot Pos DCMP",
-            m_pivot.pivotSetpointCommand(1.8).alongWith(m_shooter.shooterSpeakerShot())
-            .andThen(m_pivot.pivotInRange().withTimeout(.2))
-            .andThen(m_wrist.wristAngleSetpoint(3.75).andThen(m_wrist.wristInRange())));
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.4).andThen(m_wrist.wristInRange())));
 
     NamedCommands.registerCommand(
         "CLA Shoot DCMP",
-            m_pivot.pivotSetpointCommand(1.8).alongWith(m_shooter.shooterSpeakerShot())
-            .andThen(m_pivot.pivotInRange().withTimeout(.2))
-            .andThen(m_wrist.wristAngleSetpoint(3.75).andThen(m_wrist.wristInRange()))
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.4).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -451,6 +451,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake Position DCMP", intakePositionCommandDCMP());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
+    NamedCommands.registerCommand("Intake CLA", m_intake.intakeAutoIntake().withTimeout(2.5));
     NamedCommands.registerCommand("Aim", aimCommand());
     NamedCommands.registerCommand("Stowed", stowedCommand());
 

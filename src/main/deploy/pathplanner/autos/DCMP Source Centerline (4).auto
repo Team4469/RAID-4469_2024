@@ -18,32 +18,19 @@
           }
         },
         {
-          "type": "deadline",
+          "type": "parallel",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "Intake"
+                  "pathName": "CLA_LeftTo5"
                 }
               },
               {
-                "type": "parallel",
+                "type": "named",
                 "data": {
-                  "commands": [
-                    {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Position DCMP"
-                      }
-                    },
-                    {
-                      "type": "path",
-                      "data": {
-                        "pathName": "CLA_LeftTo5"
-                      }
-                    }
-                  ]
+                  "name": "Intake Position DCMP"
                 }
               }
             ]
@@ -81,7 +68,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Intake CLA"
                 }
               },
               {
@@ -138,7 +125,7 @@
               {
                 "type": "named",
                 "data": {
-                  "name": "Intake"
+                  "name": "Intake CLA"
                 }
               },
               {
