@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5440585047836763,
-        "y": 4.625965305073265
+        "x": 2.6738433694028405,
+        "y": 4.350773759810232
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.165895718620533,
-        "y": 5.121821137003856
+        "x": 2.2979931358874017,
+        "y": 4.720053344591152
       },
       "isLocked": false,
       "linkedName": "Note3 Intake"
     },
     {
       "anchor": {
-        "x": 2.252591778312088,
-        "y": 5.550464707920941
+        "x": 1.4288423227270184,
+        "y": 5.535178823712167
       },
       "prevControl": {
-        "x": 2.2744939407604803,
-        "y": 5.083446723214068
+        "x": 1.88404226561278,
+        "y": 5.032022270965446
       },
       "nextControl": null,
       "isLocked": false,
@@ -38,8 +38,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -54,5 +54,5 @@
     "rotation": 120.0,
     "velocity": 0
   },
-  "useDefaultConstraints": true
+  "useDefaultConstraints": false
 }

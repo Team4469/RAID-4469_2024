@@ -246,8 +246,8 @@ public class WristSubsystem extends SubsystemBase implements Logged {
 
   public boolean inRange(double setpoint) {
     double measurement = getMeasurement();
-    if (setpoint > measurement - Units.degreesToRadians(1)
-        && setpoint < measurement + Units.degreesToRadians(1)) {
+    if (setpoint > measurement - Units.degreesToRadians(2)
+        && setpoint < measurement + Units.degreesToRadians(2)) {
       return true;
     } else {
       return false;

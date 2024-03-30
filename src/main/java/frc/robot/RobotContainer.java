@@ -303,22 +303,24 @@ public class RobotContainer {
         m_levetator
             .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
             .andThen(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot))
-            .andThen(new WaitCommand(.6))
-            .andThen(m_intake.intakePrepShoot()).withTimeout(.2)
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_intake.moveNoteBackCommand())
             .andThen(m_shooter.shooterSpeakerShot())
-            .andThen(m_wrist.wristAngleSetpoint(2.89).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(2.91).andThen(m_wrist.wristInRange()))
             .andThen(new WaitCommand(.4))
-            .andThen(m_intake.intakeShootCommand().withTimeout(1))
+            .andThen(m_intake.intakeShootCommand().withTimeout(.3))
             .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
         "Shoot 2 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.5).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.48).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
+
+
 
     NamedCommands.registerCommand(
         "Shoot 2 Pos DCMP",
@@ -361,9 +363,47 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 4 DCMP",
+            m_levetator.levetatorSetpointPosition(Units.inchesToMeters(3))
+            .andThen(new WaitCommand(.2))
+            .andThen(m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot()))
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.52).andThen(m_wrist.wristInRange()))
+            .andThen(m_shooter.shooterAboveSpeedCommand())
+            .andThen(m_intake.intakeShootCommandDCMP())
+            .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand(
+        "Shoot 5 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.55).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange()))
+            .andThen(m_shooter.shooterAboveSpeedCommand())
+            .andThen(m_intake.intakeShootCommandDCMP())
+            .andThen(m_shooter.shooterStop()));
+
+    NamedCommands.registerCommand(
+        "Shoot 5 Pos DCMP",
+            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange())));
+
+
+
+    NamedCommands.registerCommand(
+        "Shoot 6 Pos DCMP",
+            m_levetator.levetatorSetpointPosition(Units.inchesToMeters(3))
+            .andThen(new WaitCommand(.2))
+            .andThen(m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot()))
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange())));
+
+    NamedCommands.registerCommand(
+        "Shoot 6 DCMP",
+            m_levetator.levetatorSetpointPosition(Units.inchesToMeters(3))
+            .andThen(new WaitCommand(.2))
+            .andThen(m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot()))
+            .andThen(m_pivot.pivotInRange())
+            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));

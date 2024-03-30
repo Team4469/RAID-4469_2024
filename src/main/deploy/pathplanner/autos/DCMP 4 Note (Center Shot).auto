@@ -50,9 +50,28 @@
           }
         },
         {
+          "type": "parallel",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "CCS_Note2ToShoot"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 5 Pos DCMP"
+                }
+              }
+            ]
+          }
+        },
+        {
           "type": "named",
           "data": {
-            "name": "Shoot 2 DCMP"
+            "name": "Shoot 5 DCMP"
           }
         },
         {
@@ -92,15 +111,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Shoot 2 Pos DCMP"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "CCS_N3TpN2_Fast"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 5 Pos DCMP"
                 }
               }
             ]
@@ -109,7 +128,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 2 DCMP"
+            "name": "Shoot 5 DCMP"
           }
         },
         {
@@ -127,15 +146,15 @@
                 "data": {
                   "commands": [
                     {
-                      "type": "named",
-                      "data": {
-                        "name": "Intake Position"
-                      }
-                    },
-                    {
                       "type": "path",
                       "data": {
                         "pathName": "CCS_N2ShootToN1"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "Intake Position"
                       }
                     }
                   ]
@@ -149,15 +168,15 @@
           "data": {
             "commands": [
               {
-                "type": "named",
-                "data": {
-                  "name": "Shoot 2 Pos DCMP"
-                }
-              },
-              {
                 "type": "path",
                 "data": {
                   "pathName": "CCS_N1ToN2_Fast"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "Shoot 6 Pos DCMP"
                 }
               }
             ]
@@ -166,7 +185,7 @@
         {
           "type": "named",
           "data": {
-            "name": "Shoot 2 DCMP"
+            "name": "Shoot 6 DCMP"
           }
         },
         {
