@@ -138,7 +138,7 @@ public class IntakeSubsystem extends SubsystemBase {
   }
 
   public Command moveNoteBackCommand() {
-    return run(() -> setSpeed(-.05)).withTimeout(.1).andThen(() -> setSpeed(0));
+    return run(() -> setSpeed(-.08)).withTimeout(.1).andThen(() -> setSpeed(0));
   }
 
   /* Commands */
@@ -158,7 +158,7 @@ public class IntakeSubsystem extends SubsystemBase {
         //         .withTimeout(.2))
         .andThen(
             run(() -> {
-                  setSpeed(-.05);
+                  setSpeed(-.08);
                 })
                 // Wait until trigger is detected for more than 0.25s
                 .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))
@@ -343,5 +343,8 @@ public class IntakeSubsystem extends SubsystemBase {
     } catch (Exception e) {
       LaserCanRearValue = 1000;
     }
+
+    SmartDashboard.putNumber("Intake Side Laser", LaserCanForwardValue);
+    SmartDashboard.putNumber("Shooter Side Laser", LaserCanRearValue);
   }
 }

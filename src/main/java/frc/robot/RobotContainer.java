@@ -159,7 +159,7 @@ public class RobotContainer {
 
   public Command trapExtensionCommand() {
     return m_pivot
-        .pivotSetpointCommand(3.05).alongWith(m_wrist.wristAngleSetpoint(3.49))
+        .pivotSetpointCommand(3.05)
         .andThen(m_pivot.pivotInRange())
         .andThen(m_wrist.wristAngleSetpoint(3.49))
         .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))

@@ -4,6 +4,7 @@
 
 package frc.robot.commands.shooting;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
@@ -40,6 +41,7 @@ public class shooterVariableDistanceSpeedCommand extends Command {
   @Override
   public void execute() {
     distanceMeters = m_distSup.getAsDouble();
+    SmartDashboard.putNumber("Distance to Speaker", distanceMeters);
     shooterTarget = ShooterSpeedTable.SHOOTER_SPEED_INTERP_TABLE.get(distanceMeters);
     wristTarget = ShooterLaunchAngleTable.SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.get(distanceMeters);
 

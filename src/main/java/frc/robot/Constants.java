@@ -333,7 +333,7 @@ public final class Constants {
 
   public static final class IntakeConstants {
     public static final int kMotorID = 22;
-    public static final int kCurrentLimit = 80;
+    public static final int kCurrentLimit = 60;
 
     public static final int kIntakeForwardLaserCanID = 1;
     public static final int kIntakeRearLaserCanID = 4;
@@ -361,11 +361,11 @@ public final class Constants {
     public static final boolean kFollowMotorInverted = false;
     public static final boolean kEncoderInverted = true;
 
-    public static final double kP = .825;
-    public static final double kI = .006;
-    public static final double kD = 6;
+    public static final double kP = .72;
+    public static final double kI = .004;
+    public static final double kD = 8;
     public static final double kIz = .08;
-    public static final double kIAcum = .03;
+    public static final double kIAcum = .015;
 
     public static final double kMinOutput = -1;
     public static final double kMaxOutput = 1;
@@ -407,10 +407,10 @@ public final class Constants {
     public static final double kMaxVelocityRadPerSecond = 1; // rad/sec
     public static final double kMaxAccelerationRadPerSecSquared = 1; // rad/sec/sec
     public static final double kP = .32; //.33
-    public static final double kI = 0.006;
+    public static final double kI = 0.005;
     public static final double kD = 3;
     public static final double kIz = 0.05;
-    public static final double kIAcum = .025;
+    public static final double kIAcum = .015;
 
     public static final int kSmartCurrentLimit = 115; // A
 
