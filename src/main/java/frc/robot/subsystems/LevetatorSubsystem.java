@@ -14,6 +14,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase.SoftLimitDirection;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
+import com.revrobotics.SparkPIDController.ArbFFUnits;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
@@ -38,14 +39,18 @@ public class LevetatorSubsystem extends SubsystemBase {
 
   private final SparkPIDController m_pidController;
 
-  private LaserCan m_distanceSensor;
+  // private LaserCan m_distanceSensor;
 
-  int ID;
+  private PivotSubsystem m_piv;
+
+  // int ID;
 
   /** Creates a new LevSub. */
-  public LevetatorSubsystem() {
+  public LevetatorSubsystem(PivotSubsystem pivot) {
     m_motor = new CANSparkMax(LevetatorConstants.kLevetatorMotorID, MotorType.kBrushless);
     m_motor.restoreFactoryDefaults();
+
+    m_piv = pivot;
 
     for (int i = 0; i < 6; i++) {
       if (m_motor.getClosedLoopRampRate() != LevetatorConstants.kClosedLoopRampRate) {
@@ -147,7 +152,7 @@ public class LevetatorSubsystem extends SubsystemBase {
       Timer.delay(.1);
     }
 
-    m_motor.burnFlash();
+
 
     m_motor.setPeriodicFramePeriod(
         PeriodicFrame.kStatus0, 10); // Output, Faults, Sticky Faults, Is Follower
@@ -164,17 +169,17 @@ public class LevetatorSubsystem extends SubsystemBase {
     m_motor.setPeriodicFramePeriod(
         PeriodicFrame.kStatus6, 500); // Absolute Encoder Velocity, Absolute Encoder Frequency
 
-    m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
-    ID = LevetatorConstants.kLevetatorLaserCanID;
+    // m_distanceSensor = new LaserCan(LevetatorConstants.kLevetatorLaserCanID);
+    // ID = LevetatorConstants.kLevetatorLaserCanID;
 
-    try {
-      m_distanceSensor.setRangingMode(RangingMode.SHORT);
-      m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
-      m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
-    } catch (ConfigurationFailedException e) {
-      System.out.println("Configuration failed! " + e);
-    }
-
+    // try {
+    //   m_distanceSensor.setRangingMode(RangingMode.SHORT);
+    //   m_distanceSensor.setRegionOfInterest(new RegionOfInterest(8, 8, 16, 16));
+    //   m_distanceSensor.setTimingBudget(TimingBudget.TIMING_BUDGET_100MS);
+    // } catch (ConfigurationFailedException e) {
+    //   System.out.println("Configuration failed! " + e);
+    // }
+    m_motor.burnFlash();
     m_encoder.setPosition(0.0);
   }
 
@@ -264,7 +269,16 @@ public class LevetatorSubsystem extends SubsystemBase {
   public void periodic() {
 
     m_pidController.setReference(getSetpoint(), ControlType.kPosition);
+    
+    // m_pidController.setReference(
+    //     SETPOINT,
+    //     ControlType.kPosition,
+    //     0,
+    //     LevetatorConstants.kGravity * Math.sin(m_piv.getRadiansFromHorizontal()),
+    //     ArbFFUnits.kVoltage);
 
+    SmartDashboard.putNumber("Levetator Output", getAppliedOutput());
+    SmartDashboard.putNumber("Levetator Current", getCurrent());
     SmartDashboard.putNumber("Levetator Setpoint", getSetpoint());
     SmartDashboard.putNumber("Levtator Encoder", m_encoder.getPosition());
     SmartDashboard.putBoolean("Levetator In Range", inRange(getSetpoint()));

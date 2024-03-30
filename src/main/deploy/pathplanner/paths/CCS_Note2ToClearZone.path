@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5440585047836763,
-        "y": 4.040334927892078
+        "x": 1.4288423227270184,
+        "y": 5.535178823712167
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.60409611097,
-        "y": 5.1945890836226125
+        "x": 2.538141221233008,
+        "y": 6.011185820923901
       },
       "isLocked": false,
-      "linkedName": "Note3"
+      "linkedName": "Note2 Shoot"
     },
     {
       "anchor": {
-        "x": 3.850217899509873,
-        "y": 5.655471241498039
+        "x": 5.690683728648531,
+        "y": 6.374122904495809
       },
       "prevControl": {
-        "x": 3.3371962577258487,
-        "y": 5.641872218929624
+        "x": 3.7782142813579416,
+        "y": 6.356144879486086
       },
       "nextControl": null,
       "isLocked": false,
@@ -45,8 +45,8 @@
   "reversed": false,
   "folder": "Clear Close Spike",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": 180.0,
     "velocity": 0
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

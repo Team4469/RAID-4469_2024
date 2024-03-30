@@ -58,57 +58,57 @@ public class MAXSwerveModule {
     // Apply position and velocity conversion factors for the driving encoder. The
     // native units for position and velocity are rotations and RPM, respectively,
     // but we want meters and meters per second to use with WPILib's swerve APIs.
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingEncoder.getPositionConversionFactor()
-          != ModuleConstants.kDrivingEncoderPositionFactor) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingEncoder.getPositionConversionFactor()
+    //       != ModuleConstants.kDrivingEncoderPositionFactor) {
         m_drivingEncoder.setPositionConversionFactor(ModuleConstants.kDrivingEncoderPositionFactor);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingEncoder.getVelocityConversionFactor()
-          != ModuleConstants.kDrivingEncoderVelocityFactor) {
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingEncoder.getVelocityConversionFactor()
+    //       != ModuleConstants.kDrivingEncoderVelocityFactor) {
         m_drivingEncoder.setVelocityConversionFactor(ModuleConstants.kDrivingEncoderVelocityFactor);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     // Apply position and velocity conversion factors for the turning encoder. We
     // want these in radians and radians per second to use with WPILib's swerve
     // APIs.
-    for (int i = 0; i < 6; i++) {
-      if (m_turningEncoder.getPositionConversionFactor()
-          != ModuleConstants.kTurningEncoderPositionFactor) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningEncoder.getPositionConversionFactor()
+    //       != ModuleConstants.kTurningEncoderPositionFactor) {
         m_turningEncoder.setPositionConversionFactor(ModuleConstants.kTurningEncoderPositionFactor);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
-    for (int i = 0; i < 6; i++) {
-      if (m_turningEncoder.getVelocityConversionFactor()
-          != ModuleConstants.kTurningEncoderVelocityFactor) {
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningEncoder.getVelocityConversionFactor()
+    //       != ModuleConstants.kTurningEncoderVelocityFactor) {
         m_turningEncoder.setVelocityConversionFactor(ModuleConstants.kTurningEncoderVelocityFactor);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     // Invert the turning encoder, since the output shaft rotates in the opposite direction of
     // the steering motor in the MAXSwerve Module.
-    for (int i = 0; i < 6; i++) {
-      if (m_turningEncoder.getInverted() != ModuleConstants.kTurningEncoderInverted) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningEncoder.getInverted() != ModuleConstants.kTurningEncoderInverted) {
         m_turningEncoder.setInverted(ModuleConstants.kTurningEncoderInverted);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     // Enable PID wrap around for the turning motor. This will allow the PID
     // controller to go through 0 to get to the setpoint i.e. going from 350 degrees
@@ -122,82 +122,82 @@ public class MAXSwerveModule {
 
     // Set the PID gains for the driving motor. Note these are example gains, and you
     // may need to tune them for your own robot!
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingPIDController.getI() != ModuleConstants.kDrivingI) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingPIDController.getI() != ModuleConstants.kDrivingI) {
         m_drivingPIDController.setI(ModuleConstants.kDrivingI);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingPIDController.getP() != ModuleConstants.kDrivingP) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingPIDController.getP() != ModuleConstants.kDrivingP) {
         m_drivingPIDController.setP(ModuleConstants.kDrivingP);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingPIDController.getD() != ModuleConstants.kDrivingD) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingPIDController.getD() != ModuleConstants.kDrivingD) {
         m_drivingPIDController.setD(ModuleConstants.kDrivingD);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_drivingPIDController.getFF() != ModuleConstants.kDrivingFF) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_drivingPIDController.getFF() != ModuleConstants.kDrivingFF) {
         m_drivingPIDController.setFF(ModuleConstants.kDrivingFF);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_drivingPIDController.setOutputRange(
         ModuleConstants.kDrivingMinOutput, ModuleConstants.kDrivingMaxOutput);
 
     // Set the PID gains for the turning motor. Note these are example gains, and you
     // may need to tune them for your own robot!
-    for (int i = 0; i < 6; i++) {
-      if (m_turningPIDController.getI() != ModuleConstants.kTurningI) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningPIDController.getI() != ModuleConstants.kTurningI) {
         m_turningPIDController.setI(ModuleConstants.kTurningI);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_turningPIDController.getP() != ModuleConstants.kTurningP) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningPIDController.getP() != ModuleConstants.kTurningP) {
         m_turningPIDController.setP(ModuleConstants.kTurningP);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_turningPIDController.getD() != ModuleConstants.kTurningD) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningPIDController.getD() != ModuleConstants.kTurningD) {
         m_turningPIDController.setD(ModuleConstants.kTurningD);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
-    for (int i = 0; i < 6; i++) {
-      if (m_turningPIDController.getFF() != ModuleConstants.kTurningFF) {
+    // for (int i = 0; i < 6; i++) {
+    //   if (m_turningPIDController.getFF() != ModuleConstants.kTurningFF) {
         m_turningPIDController.setFF(ModuleConstants.kTurningFF);
-      } else {
-        break;
-      }
-      Timer.delay(.1);
-    }
+    //   } else {
+    //     break;
+    //   }
+    //   Timer.delay(.1);
+    // }
 
     m_turningPIDController.setOutputRange(
         ModuleConstants.kTurningMinOutput, ModuleConstants.kTurningMaxOutput);

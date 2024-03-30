@@ -4,24 +4,24 @@
     {
       "anchor": {
         "x": 2.5440585047836763,
-        "y": 4.040334927892078
+        "y": 7.348130320377872
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.60409611097,
-        "y": 5.1945890836226125
+        "x": 3.6737869123886395,
+        "y": 7.422004486644723
       },
       "isLocked": false,
-      "linkedName": "Note3"
+      "linkedName": "Note1_Intake"
     },
     {
       "anchor": {
-        "x": 3.850217899509873,
-        "y": 5.655471241498039
+        "x": 6.369006293568143,
+        "y": 6.773144620363316
       },
       "prevControl": {
-        "x": 3.3371962577258487,
-        "y": 5.641872218929624
+        "x": 5.067003805303907,
+        "y": 7.6633164470032655
       },
       "nextControl": null,
       "isLocked": false,
@@ -40,12 +40,12 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": 180.0,
-    "rotateFast": false
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Clear Close Spike",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": -145.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

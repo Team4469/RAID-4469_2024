@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 0.72,
-        "y": 4.424433084977282
+        "x": 0.67,
+        "y": 4.41
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.747205994411989,
-        "y": 1.3708289823987065
+        "x": 2.048964642188544,
+        "y": 2.468249607239956
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.868930446194225,
-        "y": 0.5415855276154996
+        "x": 9.075662935047623,
+        "y": 0.23298470149200187
       },
       "prevControl": {
-        "x": 3.7468890817411262,
-        "y": 0.5579756159512325
+        "x": 6.208625208720947,
+        "y": 0.41928260161635017
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "OutOfWayMid"
+      "linkedName": "CenterNote5"
     }
   ],
   "rotationTargets": [],
@@ -33,7 +33,7 @@
   "eventMarkers": [
     {
       "name": "New Event Marker",
-      "waypointRelativePos": 0.35,
+      "waypointRelativePos": 0.9,
       "command": {
         "type": "parallel",
         "data": {
@@ -41,7 +41,7 @@
             {
               "type": "named",
               "data": {
-                "name": "Intake Position"
+                "name": "Intake CLA"
               }
             }
           ]
@@ -50,21 +50,21 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 6.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
-    "velocity": 3.0,
+    "velocity": 0,
     "rotation": 180.0,
     "rotateFast": true
   },
   "reversed": false,
-  "folder": "Simple Auto",
+  "folder": "Center Line Auto",
   "previewStartingState": {
     "rotation": 120.0,
-    "velocity": 0.0
+    "velocity": 0
   },
   "useDefaultConstraints": false
 }

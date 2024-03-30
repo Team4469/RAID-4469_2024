@@ -3,44 +3,44 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.4042082945277,
-        "y": 5.554814720740553
+        "x": 1.4288423227270184,
+        "y": 5.535178823712167
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.581477130546854,
-        "y": 6.882886950959088
+        "x": 1.7591086806467398,
+        "y": 6.12092478069137
       },
       "isLocked": false,
-      "linkedName": "AubPlayoffPoint1"
+      "linkedName": "Note2 Shoot"
     },
     {
       "anchor": {
-        "x": 7.473674493645284,
-        "y": 5.854527676647947
+        "x": 2.5135469179836667,
+        "y": 7.186099947764868
       },
       "prevControl": {
-        "x": 6.247387087366768,
-        "y": 6.69190679122099
+        "x": 2.0631837026385917,
+        "y": 6.716937376318255
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "Note1 v2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxVelocity": 3.0,
+    "maxAcceleration": 3.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
-    "rotateFast": false
+    "rotation": -160.0,
+    "rotateFast": true
   },
   "reversed": false,
   "folder": "Clear Close Spike",

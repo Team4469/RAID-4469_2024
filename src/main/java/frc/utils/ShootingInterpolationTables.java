@@ -36,8 +36,8 @@ public class ShootingInterpolationTables {
         new InterpolatingDoubleTreeMap();
 
     static {
-      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(3), Units.degreesToRadians(162));
-      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(4), Units.degreesToRadians(170));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(3), Units.degreesToRadians(168));
+      SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(4), Units.degreesToRadians(172));
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(5), Units.degreesToRadians(177));
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(6), Units.degreesToRadians(182));
       SHOOTER_LAUNCH_ANGLE_INTERP_TABLE.put(Units.feetToMeters(7), Units.degreesToRadians(184));

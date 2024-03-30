@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.5440585047836763,
-        "y": 4.040334927892078
+        "x": 6.161123926237965,
+        "y": 1.5774124397825076
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.60409611097,
-        "y": 5.1945890836226125
+        "x": 7.32809851919139,
+        "y": 1.321750322702623
       },
       "isLocked": false,
-      "linkedName": "Note3"
+      "linkedName": "CLA_SHOOT1"
     },
     {
       "anchor": {
-        "x": 3.850217899509873,
-        "y": 5.655471241498039
+        "x": 8.971673292922858,
+        "y": 2.513958031976799
       },
       "prevControl": {
-        "x": 3.3371962577258487,
-        "y": 5.641872218929624
+        "x": 8.12969086770332,
+        "y": 2.1418333396200806
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "CenterNote4"
     }
   ],
   "rotationTargets": [],
@@ -33,19 +33,19 @@
   "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 4.0,
-    "maxAcceleration": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 180.0,
-    "rotateFast": false
+    "rotation": -155.0,
+    "rotateFast": true
   },
   "reversed": false,
-  "folder": "Clear Close Spike",
+  "folder": "Center Line Auto",
   "previewStartingState": {
-    "rotation": 145.0,
+    "rotation": 135.0,
     "velocity": 0
   },
   "useDefaultConstraints": false

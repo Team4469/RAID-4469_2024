@@ -62,7 +62,7 @@ public class ClimberModule extends SubsystemBase {
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
 
     m_climbingMotor.setIdleMode(IdleMode.kBrake);
-    m_climbingMotor.setSmartCurrentLimit(80);
+    m_climbingMotor.setSmartCurrentLimit(70);
     m_climbingMotor.setInverted(MotorInverted);
     m_climbingMotor.enableVoltageCompensation(12);
 
@@ -196,8 +196,16 @@ public class ClimberModule extends SubsystemBase {
     }
   }
 
+  public void setNegativeZeroPosition() {
+    m_encoder.setPosition(.020);
+  }
+
   public void turnSoftLimitOn() {
     m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, true);
+  }
+
+  public void turnSoftLimitOff() {
+    m_climbingMotor.enableSoftLimit(SoftLimitDirection.kReverse, false);
   }
 
   @Override
