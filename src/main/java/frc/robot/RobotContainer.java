@@ -159,13 +159,32 @@ public class RobotContainer {
 
   public Command trapExtensionCommand() {
     return m_pivot
-        .pivotSetpointCommand(3.05)
+        .pivotSetpointCommand(3.12)
         .andThen(m_pivot.pivotInRange())
         .andThen(m_wrist.wristAngleSetpoint(3.49))
         .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
         .andThen(m_pivot.pivotSetpointCommand(3.12))
         .andThen(m_wrist.wristAngleSetpoint(3.51));
   }
+
+  public Command trapExtensionV3Command() {
+    return m_pivot
+        .pivotSetpointCommand(3.12)
+        .andThen(m_pivot.pivotInRange())
+        .andThen(m_wrist.wristAngleSetpoint(3.61))
+        .alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kTrap))
+        .andThen(m_pivot.pivotSetpointCommand(3.12))
+        .andThen(m_wrist.wristAngleSetpoint(3.61));
+  }
+  public Command trapExtensionV4Command() {
+    return m_pivot
+        .pivotSetpointCommand(3.12)
+        .andThen(m_pivot.pivotInRange())
+        .andThen(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront))
+        .andThen(new WaitCommand(1))
+        .andThen(m_wrist.wristAngleSetpoint(3.51).alongWith(m_levetator.levetatorSetpointPosition(LevetatorSetpoints.kAmpFront)));
+  }
+
 
     public Command trapExtensionV2Command() {
         return 
@@ -376,7 +395,7 @@ public class RobotContainer {
         "Shoot 5 DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
             .andThen(m_intake.intakeShootCommandDCMP())
             .andThen(m_shooter.shooterStop()));
@@ -385,7 +404,7 @@ public class RobotContainer {
         "Shoot 5 Pos DCMP",
             m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
             .andThen(m_pivot.pivotInRange())
-            .andThen(m_wrist.wristAngleSetpoint(3.32).andThen(m_wrist.wristInRange())));
+            .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange())));
 
 
 
@@ -451,6 +470,8 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake Position DCMP", intakePositionCommandDCMP());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
+    NamedCommands.registerCommand("Intake 4 Note", m_intake.intakeAutoIntake().withTimeout(3));
+
     NamedCommands.registerCommand("Intake CLA", m_intake.intakeAutoIntake().withTimeout(2.5));
     NamedCommands.registerCommand("Aim", aimCommand());
     NamedCommands.registerCommand("Stowed", stowedCommand());
@@ -779,7 +800,7 @@ public class RobotContainer {
 
     m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand());
 
-    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
+    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionV3Command());
 
     m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand());
     // m_operatorButtonsTop
