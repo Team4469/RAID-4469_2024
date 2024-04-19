@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ClimberModule;
 
-public class ZERO_CLIMBER extends Command {
-  private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.5;
+public class ZERO_CLIMBER_Left extends Command {
+  private static final double CLIMBER_ZERO_VELOCITY_TIME_PERIOD = 0.25;
   private static final double REVERSE_VOLTAGE = -5;
   private static final double VELOCITY_THRESHOLD = 0.254 / 60.0;
 
@@ -18,7 +18,7 @@ public class ZERO_CLIMBER extends Command {
   private double zeroVelocityTimestamp;
 
   /** Creates a new ZERO_CLIMBER. */
-  public ZERO_CLIMBER(ClimberModule climber) {
+  public ZERO_CLIMBER_Left(ClimberModule climber) {
     this.climber = climber;
 
     addRequirements(climber);

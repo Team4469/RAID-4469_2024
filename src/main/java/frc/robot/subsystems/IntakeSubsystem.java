@@ -158,7 +158,7 @@ public class IntakeSubsystem extends SubsystemBase {
         //         .withTimeout(.2))
         .andThen(
             run(() -> {
-                  setSpeed(-.08);
+                  setSpeed(-.06);
                 })
                 // Wait until trigger is detected for more than 0.25s
                 .until(() -> (laserCanTrigger_FORWARD.getAsBoolean())))

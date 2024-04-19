@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.climber.ZERO_CLIMBER;
+import frc.robot.commands.climber.ZERO_CLIMBER_Left;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import monologue.Monologue;
 import org.littletonrobotics.urcl.URCL;
@@ -17,7 +18,7 @@ import org.littletonrobotics.urcl.URCL;
 import com.pathplanner.lib.commands.FollowPathCommand;
 
 /**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * The VM is configured to automatically run this class, and src/main/java/frc/robot/commands/climber/ZERO_CLIMBER.javato call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
@@ -79,7 +80,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     if (!m_robotContainer.getLeftClimber().isClimberZeroed()) {
-      new ZERO_CLIMBER(m_robotContainer.getLeftClimber()).schedule();
+      new ZERO_CLIMBER_Left(m_robotContainer.getLeftClimber()).schedule();
     }
     if (!m_robotContainer.getRightClimber().isClimberZeroed()) {
       new ZERO_CLIMBER(m_robotContainer.getRightClimber()).schedule();
@@ -102,7 +103,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     if (!m_robotContainer.getLeftClimber().isClimberZeroed()) {
-      new ZERO_CLIMBER(m_robotContainer.getLeftClimber()).schedule();
+      new ZERO_CLIMBER_Left(m_robotContainer.getLeftClimber()).schedule();
     }
     if (!m_robotContainer.getRightClimber().isClimberZeroed()) {
       new ZERO_CLIMBER(m_robotContainer.getRightClimber()).schedule();
