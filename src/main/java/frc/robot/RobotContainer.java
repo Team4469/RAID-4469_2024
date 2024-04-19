@@ -326,8 +326,8 @@ public class RobotContainer {
             .andThen(m_intake.moveNoteBackCommand())
             .andThen(m_shooter.shooterSpeakerShot())
             .andThen(m_wrist.wristAngleSetpoint(2.91).andThen(m_wrist.wristInRange()))
-            .andThen(new WaitCommand(.4))
-            .andThen(m_intake.intakeShootCommand().withTimeout(.3))
+            .andThen(new WaitCommand(.2))
+            .andThen(m_intake.intakeShootCommand().withTimeout(.15))
             .andThen(m_shooter.shooterStop()));
 
     NamedCommands.registerCommand(
@@ -470,7 +470,7 @@ public class RobotContainer {
     NamedCommands.registerCommand("Intake Position", intakePositionCommand());
     NamedCommands.registerCommand("Intake Position DCMP", intakePositionCommandDCMP());
     NamedCommands.registerCommand("Intake", m_intake.intakeAutoIntake());
-    NamedCommands.registerCommand("Intake 4 Note", m_intake.intakeAutoIntake().withTimeout(3));
+    NamedCommands.registerCommand("Intake 4 Note", m_intake.intakeAutoIntake().withTimeout(2.25));
 
     NamedCommands.registerCommand("Intake CLA", m_intake.intakeAutoIntake().withTimeout(2.5));
     NamedCommands.registerCommand("Aim", aimCommand());
@@ -785,7 +785,7 @@ public class RobotContainer {
     m_operatorButtonsTop
         .button(CLIMB_UP)
         .onTrue(
-            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(24), false));
+            new CLIMBER_TO_HEIGHT(m_leftClimber, m_rightClimber, Units.inchesToMeters(25), false));
 
     m_operatorButtonsTop
         .button(CLIMB_DOWN)
