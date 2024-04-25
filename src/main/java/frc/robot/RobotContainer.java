@@ -775,13 +775,13 @@ public class RobotContainer {
         .button(CLIMB_TRAP)
         .onTrue(new CLIMBER_TRAP(m_leftClimber, m_rightClimber));
 
-    m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand());
+    m_operatorButtonsTop.button(TRAP_PREP).onTrue(trapPrepCommand()); // trap prep
 
-    m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand());
+    m_operatorButtonsTop.button(CLIMB_HARM).onTrue(trapFinishCommand()); // Trap Climb (Button is HARMorny :/)
 
-    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand());
+    m_operatorButtonsTop.button(TRAP_EXT).onTrue(trapExtensionCommand()); // TRAP trap extension
 
-    m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand());
+    m_operatorButtonsTop.button(AUTO_TRAP).onTrue(harmonyClimbExtendCommand()); // HARMONY This is button for operator to do Harmony 
     // m_operatorButtonsTop
     //     .button(AUTO_TRAP)
     //     .onTrue(
