@@ -30,6 +30,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   TunableNumber SHOOTER_SPEED_OPEN_LOOP = new TunableNumber("Shooter/FeedSpeed", 0);
 
+  TunableNumber CARNIVAL_SHOOTER_SPEED_SLIDER = new TunableNumber("Shooter/CarnivalShooterSpeedSlider", .25);
+
   private final CANSparkFlex m_rightShooterMotor;
   private final CANSparkFlex m_leftShooterMotor;
 
@@ -182,6 +184,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
 
   /* Command Factory */
+  //used to change shooter speeeeeeeeeeeeeeed
   public Command shooterSpeakerShot() {
     return Commands.runOnce(() -> setSpeed(1));
   }
