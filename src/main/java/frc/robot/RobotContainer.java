@@ -47,6 +47,8 @@ import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
+import frc.utils.TunableNumber;
+
 import java.util.Map;
 import monologue.Logged;
 import monologue.Monologue;
@@ -502,13 +504,16 @@ public class RobotContainer {
         RightClimberConstants.kI_No_Climbing,
         RightClimberConstants.kD_No_Climbing,
         0);
+        withWidget(double TunableNumber);
+    TunableNumber Carnival_Drive_Speed = new TunableNumber("Carnival Drive Limit", .25);
+double Carnival_Drive_Speed_v = Carnival_Drive_Speed;
 
     m_robotDrive.setDefaultCommand(
         new RunCommand(
-            () ->
+            () -> 
                 m_robotDrive.drive(
                     -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband),
+                        m_driverController.getLeftY(), OIConstants.kDriveDeadband) * Carnival_Drive_Speed_v,
                     -MathUtil.applyDeadband(
                         m_driverController.getLeftX(), OIConstants.kDriveDeadband),
                     -MathUtil.applyDeadband(
