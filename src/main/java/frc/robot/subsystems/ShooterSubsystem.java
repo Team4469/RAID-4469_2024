@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +24,12 @@ import frc.robot.Constants.ShooterConstants;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
+
+import java.util.Map;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -40,6 +47,14 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final SparkPIDController m_rightPIDController;
   private final SparkPIDController m_leftPIDController;
+
+  ShuffleboardTab Tab = Shuffleboard.getTab("Carnival");
+  
+  GenericEntry shooterSpeed = Shuffleboard.getTab("Carnival")
+    .add("Shooter Speed", 1)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(Map.of("min", .25, "max", 1)) // specify widegt properties here
+    .getEntry();
 
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
@@ -186,7 +201,9 @@ public class ShooterSubsystem extends SubsystemBase {
   /* Command Factory */
   //used to change shooter speeeeeeeeeeeeeeed
   public Command shooterSpeakerShot() {
-    return Commands.runOnce(() -> setSpeed(1));
+    double Carnival_Shooter_Speed = shooterSpeed.getDouble(1.0);
+    
+    return Commands.runOnce(() -> setSpeed(Carnival_Shooter_Speed));
   }
 
   public Command shooterSpeakerShotRPM() {
