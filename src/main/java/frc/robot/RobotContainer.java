@@ -11,9 +11,12 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -48,6 +51,9 @@ import frc.robot.subsystems.WristSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
 import frc.utils.TunableNumber;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 import java.util.Map;
 import monologue.Logged;
@@ -504,20 +510,26 @@ public class RobotContainer {
         RightClimberConstants.kI_No_Climbing,
         RightClimberConstants.kD_No_Climbing,
         0);
-        withWidget(double TunableNumber);
-    TunableNumber Carnival_Drive_Speed = new TunableNumber("Carnival Drive Limit", .25);
-double Carnival_Drive_Speed_v = Carnival_Drive_Speed;
+
+    ShuffleboardTab Tab = Shuffleboard.getTab("Carnival");
+
+    GenericEntry driveSpeed = Shuffleboard.getTab("Carnival")
+    .add("Max Speed", 1)
+    .withWidget(BuiltInWidgets.kNumberSlider)
+    .withProperties(Map.of("min", .1, "max", 1))
+    .getEntry();
+
 
     m_robotDrive.setDefaultCommand(
         new RunCommand(
             () -> 
                 m_robotDrive.drive(
                     -MathUtil.applyDeadband(
-                        m_driverController.getLeftY(), OIConstants.kDriveDeadband) * Carnival_Drive_Speed_v,
+                        m_driverController.getLeftY(), OIConstants.kDriveDeadband) * driveSpeed.getDouble(1.0),
                     -MathUtil.applyDeadband(
-                        m_driverController.getLeftX(), OIConstants.kDriveDeadband),
+                        m_driverController.getLeftX(), OIConstants.kDriveDeadband) * driveSpeed.getDouble(1.0),
                     -MathUtil.applyDeadband(
-                        m_driverController.getRightX(), OIConstants.kDriveDeadband),
+                        m_driverController.getRightX(), OIConstants.kDriveDeadband) * driveSpeed.getDouble(1.0),
                     true,
                     true),
             m_robotDrive));
