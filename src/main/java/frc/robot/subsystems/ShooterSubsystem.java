@@ -12,6 +12,8 @@ import com.revrobotics.CANSparkLowLevel.PeriodicFrame;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.SparkRelativeEncoder;
+
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -22,7 +24,12 @@ import frc.robot.Constants.ShooterConstants;
 import frc.utils.ShootingInterpolationTables.ShooterRPMTable;
 import frc.utils.ShootingInterpolationTables.ShooterSpeedTable;
 import frc.utils.TunableNumber;
+
+import java.util.Map;
 import java.util.function.DoubleSupplier;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -31,6 +38,14 @@ public class ShooterSubsystem extends SubsystemBase {
   TunableNumber SHOOTER_SPEED_OPEN_LOOP = new TunableNumber("Shooter/FeedSpeed", 0);
 
   TunableNumber CARNIVAL_SHOOTER_SPEED_SLIDER = new TunableNumber("Shooter/CarnivalShooterSpeedSlider", .25);
+
+  ShuffleboardTab Tab = Shuffleboard.getTab("Carnival");
+
+  GenericEntry shooterSpeed = Shuffleboard.getTab("Carnival")
+  .add("shooter", 1)
+  .withWidget(BuiltInWidgets.kNumberSlider)
+  .withProperties(Map.of("min", .1, "max", 1))
+  .getEntry();
 
   private final CANSparkFlex m_rightShooterMotor;
   private final CANSparkFlex m_leftShooterMotor;
@@ -186,7 +201,7 @@ public class ShooterSubsystem extends SubsystemBase {
   /* Command Factory */
   //used to change shooter speeeeeeeeeeeeeeed
   public Command shooterSpeakerShot() {
-    return Commands.runOnce(() -> setSpeed(1));
+    return Commands.runOnce(() -> setSpeed(shooterSpeed.getDouble(1.0)));
   }
 
   public Command shooterSpeakerShotRPM() {
