@@ -37,7 +37,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   TunableNumber SHOOTER_SPEED_OPEN_LOOP = new TunableNumber("Shooter/FeedSpeed", 0);
 
-  TunableNumber CARNIVAL_SHOOTER_SPEED_SLIDER = new TunableNumber("Shooter/CarnivalShooterSpeedSlider", .25);
+  // TunableNumber CARNIVAL_SHOOTER_SPEED_SLIDER = new TunableNumber("Shooter/CarnivalShooterSpeedSlider", .25);
 
   ShuffleboardTab Tab = Shuffleboard.getTab("Carnival");
 

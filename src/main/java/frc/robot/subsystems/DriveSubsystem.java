@@ -46,7 +46,7 @@ public class DriveSubsystem extends SubsystemBase implements Logged {
 
   TunableNumber ROTATION_SPEED_MULTIPLIER = new TunableNumber("Drive/RotationMultiplier", 1);
 
-  TunableNumber CARNIVAL_SPEED_SLIDER = new TunableNumber("Drive/CarnivalSpeedSlider", .25);
+  // TunableNumber CARNIVAL_SPEED_SLIDER = new TunableNumber("Drive/CarnivalSpeedSlider", .25);
 
   // Create MAXSwerveModules
   private final MAXSwerveModule m_frontLeft =
