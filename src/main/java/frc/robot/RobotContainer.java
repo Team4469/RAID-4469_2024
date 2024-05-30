@@ -600,35 +600,35 @@ public class RobotContainer {
                                         LevetatorSetpoints.kStowed)))));
 
     /* SHOOTING */
-     m_driverController
-     .leftTrigger()
-         .and(m_operatorButtonsBottom.button(SUBWOOFER_ON).negate())
-         .whileTrue(
-             m_frontLimelight
-               .setPipelineCommand(LimelightPipeline.SHOOT)
-                .andThen(
-                    m_levetator
-                        .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
-                        .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
-                  .andThen(m_intake.intakePrepShoot())
-               .andThen(
-                   new shooterVariableDistanceSpeedCommand(
-                            m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
-                       .alongWith(
-                            new RunCommand(
-                                () ->
-                                  m_robotDrive.drive(
-                                       -MathUtil.applyDeadband(
-                                          m_driverController.getLeftY() / 4,
-                                            OIConstants.kDriveDeadband),
-                                       -MathUtil.applyDeadband(
-                                           m_driverController.getLeftX() / 4,
-                                           OIConstants.kDriveDeadband),
-                                       limelight_aim_proportional(m_frontLimelight),
-                                       true,
-                                        true),
-                                m_robotDrive))
-                        .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
+    //  m_driverController
+    //  .leftTrigger()
+    //      .and(m_operatorButtonsBottom.button(SUBWOOFER_ON).negate())
+    //      .whileTrue(
+    //          m_frontLimelight
+    //            .setPipelineCommand(LimelightPipeline.SHOOT)
+    //             .andThen(
+    //                 m_levetator
+    //                     .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
+    //                     .alongWith(m_pivot.pivotSetpointCommand(PivotSetpoints.kVariableShot)))
+    //               .andThen(m_intake.intakePrepShoot())
+    //            .andThen(
+    //                new shooterVariableDistanceSpeedCommand(
+    //                         m_shooter, m_wrist, m_frontLimelight::SimpleDistanceToSpeakerMeters)
+    //                    .alongWith(
+    //                         new RunCommand(
+    //                             () ->
+    //                               m_robotDrive.drive(
+    //                                    -MathUtil.applyDeadband(
+    //                                       m_driverController.getLeftY() / 4,
+    //                                         OIConstants.kDriveDeadband),
+    //                                    -MathUtil.applyDeadband(
+    //                                        m_driverController.getLeftX() / 4,
+    //                                        OIConstants.kDriveDeadband),
+    //                                    limelight_aim_proportional(m_frontLimelight),
+    //                                    true,
+    //                                     true),
+    //                             m_robotDrive))
+    //                     .until(() -> Math.abs(m_driverController.getRightX()) > 0.3)));
 
     m_driverController
         .leftTrigger()
@@ -650,7 +650,7 @@ public class RobotContainer {
 
     m_driverController
         .leftTrigger()
-        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON))
+        .and(m_operatorButtonsBottom.button(SUBWOOFER_ON).negate())
         .whileTrue(
             m_levetator
                 .levetatorSetpointPosition(LevetatorSetpoints.kSubwoofer)
