@@ -325,7 +325,7 @@ public class RobotContainer {
             .andThen(m_pivot.pivotInRange())
             .andThen(m_intake.moveNoteBackCommand())
             .andThen(m_shooter.shooterSpeakerShot())
-            .andThen(m_wrist.wristAngleSetpoint(2.91).andThen(m_wrist.wristInRange()))
+            .andThen(m_wrist.wristAngleSetpoint(2.96).andThen(m_wrist.wristInRange())) // 2.91 10/15 change
             .andThen(new WaitCommand(.2))
             .andThen(m_intake.intakeShootCommand().withTimeout(.15))
             .andThen(m_shooter.shooterStop()));
@@ -393,7 +393,7 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 5 DCMP",
-            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            m_pivot.pivotSetpointCommand(2.15).alongWith(m_shooter.shooterSpeakerShot()) // 2.1 10/12 change
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange()))
             .andThen(m_shooter.shooterAboveSpeedCommand())
@@ -402,7 +402,8 @@ public class RobotContainer {
 
     NamedCommands.registerCommand(
         "Shoot 5 Pos DCMP",
-            m_pivot.pivotSetpointCommand(2.1).alongWith(m_shooter.shooterSpeakerShot())
+            m_pivot.pivotSetpointCommand(2.15).alongWith(m_shooter.shooterSpeakerShot()) // 2.1 10/12 change
+
             .andThen(m_pivot.pivotInRange())
             .andThen(m_wrist.wristAngleSetpoint(3.35).andThen(m_wrist.wristInRange())));
 

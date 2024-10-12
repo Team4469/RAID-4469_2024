@@ -25,7 +25,7 @@ public final class SetPoints {
     public static final double kAmpFront = 3.8;
     public static final double kAmpRear = 3.04;
     public static final double kTrap = Units.degreesToRadians(235);
-    public static final double kSubwoofer = Units.degreesToRadians(166.5);
+    public static final double kSubwoofer = Units.degreesToRadians(168); //166.5 10/12 match 6 change
     public static final double kIntake = 3.9;
   }
 
