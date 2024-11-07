@@ -15,19 +15,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
-import edu.wpi.first.wpilibj2.command.SelectCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.Constants.GlobalConstants.AmpDirection;
 import frc.robot.Constants.OIConstants;
-import frc.robot.commands.drive.AMP_ALIGN_DRIVE;
-import frc.robot.commands.drive.DRIVE_WITH_HEADING;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.utils.Limelight;
 import frc.robot.subsystems.utils.LimelightPipeline;
-import java.util.Map;
 public class RobotContainer {
 
   // The robot's subsystems
@@ -74,55 +69,6 @@ public class RobotContainer {
   }
 
 
-
-
-  private final Command m_ampScoringSelectV3Command =
-      new SelectCommand<>(
-          // Maps selector values to commands
-          Map.ofEntries(
-              Map.entry(
-                  AmpDirection.FRONT,
-                  new SequentialCommandGroup(
-                      m_frontLimelight.setPipelineCommand(LimelightPipeline.AMP),
-                      (new AMP_ALIGN_DRIVE(
-                          m_robotDrive,
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                          AmpDirection.FRONT,
-                          m_frontLimelight)),
-                      new DRIVE_WITH_HEADING(
-                          m_robotDrive,
-                          this::zero,
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
-                          90))),
-              Map.entry(
-                  AmpDirection.REAR,
-                  new SequentialCommandGroup(
-                      m_rearLimelight.setPipelineCommand(LimelightPipeline.AMP),
-                      (new AMP_ALIGN_DRIVE(
-                          m_robotDrive,
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftY(), OIConstants.kDriveDeadband),
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX(), OIConstants.kDriveDeadband),
-                          AmpDirection.REAR,
-                          m_rearLimelight)),
-                      new DRIVE_WITH_HEADING(
-                          m_robotDrive,
-                          this::zero,
-                          () ->
-                              -MathUtil.applyDeadband(
-                                  m_driverController.getLeftX() / 4, OIConstants.kDriveDeadband),
-                          270)))),
-          this::selectAmpDirection);
 
   public Command rumbleController(double seconds) {
     return Commands.runOnce(() -> m_driverController.getHID().setRumble(RumbleType.kBothRumble, 1))
